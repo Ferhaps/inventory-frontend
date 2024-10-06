@@ -54,7 +54,8 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/blue-theme.scss"
             ],
             "scripts": []
           },
@@ -119,7 +120,8 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/blue-theme.scss"
             ],
             "scripts": []
           }
