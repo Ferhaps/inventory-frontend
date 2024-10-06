@@ -11,13 +11,13 @@ export const routes: Routes = [
     path: '',
     loadComponent: () => import('../layout/layout.component').then((c) => c.LayoutComponent),
     canActivate: [authGuard],
-    // children: [
-    //   {
-    //     path: 'settings',
-    //     canActivate: [adminGuard],
-    //     loadComponent: () => import('../features/settings/settings.component').then((c) => c.SettingsComponent)
-    //   }
-    // ]
+    children: [
+      {
+        path: 'products',
+        title: 'Inventory Products',
+        loadComponent: () => import('../products/products.component').then((c) => c.ProductsComponent)
+      }
+    ]
   },
   { path: '**', redirectTo: 'login', pathMatch: 'full' },
 ];

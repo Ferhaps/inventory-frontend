@@ -59,7 +59,7 @@ export class LoginComponent {
           if (res?.accessToken) {
             const token: string = res.accessToken;
             localStorage.setItem(TOKEN_KEY, token);
-            this.router.navigate(['/products']);
+            this.router.navigateByUrl('products');
           }
         },
         error: (err: HttpErrorResponse) => {
@@ -74,7 +74,7 @@ export class LoginComponent {
     this.authService.extendToken(token).subscribe({
       next: () => {
         localStorage.setItem(TOKEN_KEY, token);
-        this.router.navigate(['/products']);
+        this.router.navigateByUrl('products');
       },
       error: (err: HttpErrorResponse) => {
         this.httpError = err;
