@@ -1,0 +1,17 @@
+<header class="centerer">
+  <!-- <img [ngSrc]="'assets/icons/logo.svg'" class="mr1 ml1"
+    alt="logo" width="150" height="40" priority="priority"> -->
+
+  <div class="right flexer">
+    <div class="flexer closed-part pointer" [matMenuTriggerFor]="menu">
+      <mat-icon class="profile-logo">person</mat-icon>
+    </div>
+    
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="onOptionSelected('Logout')">
+        <img ngSrc="assets/images/logout.svg" alt="logout" width="14" height="14" priority="false">
+        <span class="red ml05">Logout</span>
+      </button>
+    </mat-menu>
+  </div>
+</header>
