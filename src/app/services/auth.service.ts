@@ -15,7 +15,7 @@ export class AuthService {
   private router = inject(Router);
 
   public login(body: { email: string, password: string }): Observable<{ accessToken: string }> {
-    return this.http.post<{ accessToken: string }>(this.authUrl + '/login', body, STRING_HTTP_OPTIONS);
+    return this.http.post<{ accessToken: string }>(this.authUrl + '/login', body, JSON_HTTP_OPTIONS);
   }
 
   public extendToken(token: string): Observable<any> {
