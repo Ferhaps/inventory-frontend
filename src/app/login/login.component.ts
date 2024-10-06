@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
 import { TOKEN_KEY } from '../shared/utils';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatIconModule } from '@angular/material/icon';
+import { ErrorDispalyComponent, SystemError } from '../../../projects/ui-lib/src/public-api';
+import { PasswordValidatorDirective } from '../../../projects/ui-lib/src/lib/directives/password-validator.directive';
 
 @Component({
   selector: 'app-login',
@@ -19,14 +21,16 @@ import { MatIconModule } from '@angular/material/icon';
     MatInputModule,
     MatButtonModule,
     MatFormFieldModule,
-    MatProgressSpinnerModule
+    ErrorDispalyComponent,
+    MatProgressSpinnerModule,
+    PasswordValidatorDirective
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
   protected loginModel: { email: string, password: string } = { email: '', password: '' };
-  protected httpError: HttpErrorResponse | null = null;
+  protected httpError: SystemError | null = null;
   protected isLoading = signal(false);
   protected hidePass = signal(true);
 

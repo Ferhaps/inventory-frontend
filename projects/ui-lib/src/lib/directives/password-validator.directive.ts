@@ -3,6 +3,7 @@ import { AbstractControl, NG_VALIDATORS, ValidationErrors, Validator } from '@an
 
 @Directive({
   selector: '[libPasswordValidator]',
+  standalone: true,
   providers: [
     {
       provide: NG_VALIDATORS,
@@ -15,7 +16,7 @@ export class PasswordValidatorDirective implements Validator {
   public validate(control: AbstractControl): ValidationErrors | null {
     const password = control.value;
 
-    const pattern = /^(?=.*[A-Z])(?=.*[!@#\$%\^&\*])(?=.*\d)/;
+    const pattern = /^(?=.*[A-Z])(?=.*[!@#\$%\^&\*\.])(?=.*\d)/;
 
     if (password && !pattern.test(password)) {
       return { passwordInvalid: true };

@@ -12,7 +12,7 @@
 
     <mat-form-field>
       <mat-label>Password</mat-label>
-      <input matInput required
+      <input matInput required libPasswordValidator
         [(ngModel)]="loginModel.password" #passwordField="ngModel" name="password"
         [type]="hidePass() ? 'password' : 'text'">
       <button
@@ -24,7 +24,7 @@
         <mat-icon>{{hidePass() ? 'visibility_off' : 'visibility'}}</mat-icon>
       </button>
       @if (passwordField.invalid) {
-        <mat-error>Invalid password</mat-error>
+        <mat-error>Password must have at least one uppercase letter, one symbol, and one number</mat-error>
       }
     </mat-form-field>
 
@@ -35,6 +35,12 @@
     @if (isLoading()) {
       <div class="centerer w-100">
         <mat-spinner />
+      </div>
+    }
+
+    @if (httpError != null) {
+      <div class="centerer-w-100">
+        <app-error-dispaly [error]="httpError" />
       </div>
     }
   </form>
