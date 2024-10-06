@@ -1,0 +1,12 @@
+<app-default-dialog [title]="'Аn error has occurred'">
+  <div class="dialog-content">
+    <div class="status-info">
+      <div>{{error.status}}</div>
+      <div>{{error.statusText}}</div>
+    </div>
+    <div class="error-info">
+      <div>URL: {{error.url}}</div>
+      <app-error-dispaly [error]="error" />
+    </div>
+  </div>
+</app-default-dialog>
