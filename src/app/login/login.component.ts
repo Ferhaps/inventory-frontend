@@ -45,8 +45,8 @@ export class LoginComponent {
   }
 
   protected onPassEyeClick(event: MouseEvent): void {
+    event.preventDefault();
     this.hidePass.set(!this.hidePass());
-    event.stopPropagation();
   }
 
   protected onLoginSubmit(f: NgForm): void {

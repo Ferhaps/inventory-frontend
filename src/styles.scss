@@ -55,6 +55,10 @@ body {
     flex-direction: column;
   }
 
+  .blue {
+    color: #009DDC !important;
+  }
+
   .red {
     color: #ff0000 !important;
   }
@@ -402,42 +406,11 @@ body {
     align-items: center !important;
   }
   
-  .justify-self-start {
-    justify-self: flex-start !important;
-  }
-  
-  .justify-self-end {
-    justify-self: flex-end !important;
-  }
-  
-  .justify-self-center {
-    justify-self: center !important;
-  }
-  
-  .align-self-start {
-    align-self: flex-start !important;
-  }
-  
-  .align-self-end {
-    align-self: flex-end !important;
-  }
-  
-  .align-self-center {
-    align-self: center;
-  }
-  
-  .flex-wrap {
-    flex-wrap: wrap !important;
-  }
-  
-  .flex-nowrap {
-    flex-wrap: nowrap !important;
-  }
-
   .main-btn {
     background-color: #009DDC !important;
     color: white !important;
     font-size: 20px !important;
+    min-width: 130px !important;
 
     &:disabled {
       pointer-events: none;

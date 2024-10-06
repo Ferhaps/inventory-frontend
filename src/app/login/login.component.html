@@ -1,5 +1,5 @@
 <div class="centerer w-100 mt2 mb2">
-  <form novalidate class="flex-col p1 gap2" (ngSubmit)="onLoginSubmit(f)" #f="ngForm">
+  <form novalidate class="flex-col p2 gap2" (ngSubmit)="onLoginSubmit(f)" #f="ngForm">
     <h1 class="center">Login</h1>
     <mat-form-field>
       <mat-label>Email</mat-label>
@@ -16,12 +16,10 @@
         [(ngModel)]="loginModel.password" #passwordField="ngModel" name="password"
         [type]="hidePass() ? 'password' : 'text'">
       <button
-        mat-icon-button
-        matSuffix
-        (click)="onPassEyeClick($event)"
+        mat-icon-button matSuffix (click)="onPassEyeClick($event)"
         [attr.aria-label]="'Hide password'"
         [attr.aria-pressed]="hidePass()">
-        <mat-icon>{{hidePass() ? 'visibility_off' : 'visibility'}}</mat-icon>
+        <mat-icon>{{ hidePass() ? 'visibility_off' : 'visibility' }}</mat-icon>
       </button>
       @if (passwordField.invalid) {
         <mat-error>Password must have at least one uppercase letter, one symbol, and one number</mat-error>
@@ -39,7 +37,7 @@
     }
 
     @if (httpError != null) {
-      <div class="centerer-w-100">
+      <div class="centerer w-100">
         <app-error-dispaly [error]="httpError" />
       </div>
     }
