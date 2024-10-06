@@ -433,4 +433,15 @@ body {
   .flex-nowrap {
     flex-wrap: nowrap !important;
   }
+
+  .main-btn {
+    background-color: #009DDC !important;
+    color: white !important;
+    font-size: 20px !important;
+
+    &:disabled {
+      pointer-events: none;
+      background-color: #8F8F8F !important;
+    }
+  }
 }

@@ -1,0 +1,41 @@
+<div class="centerer w-100 mt2 mb2">
+  <form novalidate class="flex-col p1 gap2" (ngSubmit)="onLoginSubmit(f)" #f="ngForm">
+    <h1 class="center">Login</h1>
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input matInput required type="email"
+        [(ngModel)]="loginModel.email" #emailField="ngModel" name="email" email>
+      @if (emailField.invalid) {
+        <mat-error>Invalid email</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input matInput required
+        [(ngModel)]="loginModel.password" #passwordField="ngModel" name="password"
+        [type]="hidePass() ? 'password' : 'text'">
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="onPassEyeClick($event)"
+        [attr.aria-label]="'Hide password'"
+        [attr.aria-pressed]="hidePass()">
+        <mat-icon>{{hidePass() ? 'visibility_off' : 'visibility'}}</mat-icon>
+      </button>
+      @if (passwordField.invalid) {
+        <mat-error>Invalid password</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="centerer w-100">
+      <button mat-raised-button class="main-btn" [disabled]="isLoading()">Login</button>
+    </div>
+
+    @if (isLoading()) {
+      <div class="centerer w-100">
+        <mat-spinner />
+      </div>
+    }
+  </form>
+</div>
