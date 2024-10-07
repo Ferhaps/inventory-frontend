@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { HeaderComponent } from './header/header.component';
+import { SideabrComponent } from "./sidebar/sidebar.component";
 
 @Component({
   selector: 'layout',
@@ -10,6 +11,7 @@ import { HeaderComponent } from './header/header.component';
   imports: [
     RouterModule,
     HeaderComponent,
+    SideabrComponent
   ]
 })
 export class LayoutComponent { }
