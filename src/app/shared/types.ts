@@ -2,5 +2,10 @@ export type Product = {
   id: number;
   name: string;
   quantity: number;
-  categoryName: string;
+  categoryId: number;
+};
+
+export type Category = {
+  id: number;
+  name: string;
 };

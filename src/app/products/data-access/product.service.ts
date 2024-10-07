@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { JSON_HTTP_OPTIONS } from '../../shared/utils';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { Product } from '../../shared/types';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,15 @@ export class ProductService {
 
   private http = inject(HttpClient);
 
-  public getProduts(): Observable<any> {
-    return this.http.get(this.productsUrl, JSON_HTTP_OPTIONS);
+  public getProduts(): Observable<Product[]> {
+    return this.http.get<Product[]>(this.productsUrl, JSON_HTTP_OPTIONS);
+  }
+
+  public updateProductQuantity(id: number, newQuantity: number): Observable<any> {
+    return this.http.patch(this.productsUrl + `/${id}?quantity=${newQuantity}`, {});
+  }
+
+  public deleteProduct(id: number): Observable<any> {
+    return this.http.delete(this.productsUrl + `/${id}`);
   }
 }
