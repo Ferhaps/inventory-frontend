@@ -40,7 +40,7 @@ export class LoginComponent {
   constructor () {
     const token = localStorage.getItem(TOKEN_KEY);
     if (token) {
-      this.autoLogin(token);
+      this.router.navigateByUrl('products');
     }
   }
 

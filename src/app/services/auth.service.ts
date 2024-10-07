@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { JSON_HTTP_OPTIONS, STRING_HTTP_OPTIONS, TOKEN_KEY } from '../shared/utils';
+import { JSON_HTTP_OPTIONS, TOKEN_KEY } from '../shared/utils';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 
@@ -23,9 +23,7 @@ export class AuthService {
   }
 
   public logout(): void {
-    this.http.post(this.authUrl + '/logout', { }, JSON_HTTP_OPTIONS).subscribe(() => {
-      localStorage.removeItem(TOKEN_KEY);
-      this.router.navigateByUrl('login');
-    });
+    localStorage.removeItem(TOKEN_KEY);
+    this.router.navigateByUrl('/login');
   }
 }

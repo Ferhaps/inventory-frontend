@@ -13,7 +13,6 @@ export const hTTPInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
 
   const token = localStorage.getItem(TOKEN_KEY);
-
   if (token && !URLS_WITHOUT_TOKEN.some(url => req.url.includes(url))) {
     req = req.clone({
       setHeaders: { Authorization: `Bearer ${token}` }
