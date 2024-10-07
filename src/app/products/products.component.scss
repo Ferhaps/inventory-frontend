@@ -7,13 +7,18 @@
     }
   }
 
-  table {
-    th {
-      font-weight: 600;
-    }
+  .table-wrapper {
+    max-height: calc(100% - 40px);
 
-    td.mat-column-quantity {
-      padding-top: 1.5rem;
+    table {
+      th {
+        font-weight: 600;
+        font-size: 18px;
+      }
+  
+      td.mat-column-quantity {
+        padding-top: 1.5rem;
+      }
     }
   }
 }

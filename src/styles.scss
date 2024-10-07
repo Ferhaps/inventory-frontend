@@ -423,6 +423,11 @@ body {
     height: 90%;
   }
 
+  .table-wrapper {
+    overflow-y: auto;
+    min-height: 500px;
+  }
+
   .action {
     color: #009DDC !important;
   }
