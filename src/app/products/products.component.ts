@@ -14,6 +14,7 @@ import { NgClass } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AddProductPopupComponent } from './add-product-popup/add-product-popup.component';
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
+import { LoaderService } from '../../../projects/ui-lib/src/public-api';
 
 type TableData = {
   actions: string[];
@@ -47,6 +48,7 @@ export class ProductsComponent implements OnInit {
 
   private categoryService = inject(CategoryService);
   private productService = inject(ProductService);
+  private loadingService = inject(LoaderService);
   private dialog = inject(MatDialog);
   
   public ngOnInit(): void {
@@ -54,6 +56,7 @@ export class ProductsComponent implements OnInit {
   }
 
   private getCategories(): void {
+    this.loadingService.setLoading(true);
     this.categoryService.getCategories().subscribe({
       next: (categories: Category[]) => {
         this.categories = categories;
@@ -69,6 +72,7 @@ export class ProductsComponent implements OnInit {
       next: (products: Product[]) => {
         this.allProducts = products;
         this.setCurrentProducts();
+        this.loadingService.setLoading(false);
         console.log(products);
       }
     });

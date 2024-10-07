@@ -7,9 +7,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { TOKEN_KEY } from '../shared/utils';
-import { HttpErrorResponse } from '@angular/common/http';
 import { MatIconModule } from '@angular/material/icon';
-import { ErrorDispalyComponent, SystemError } from '../../../projects/ui-lib/src/public-api';
 import { PasswordValidatorDirective } from '../../../projects/ui-lib/src/lib/directives/password-validator.directive';
 
 @Component({
@@ -21,7 +19,6 @@ import { PasswordValidatorDirective } from '../../../projects/ui-lib/src/lib/dir
     MatInputModule,
     MatButtonModule,
     MatFormFieldModule,
-    ErrorDispalyComponent,
     MatProgressSpinnerModule,
     PasswordValidatorDirective
   ],
@@ -30,7 +27,6 @@ import { PasswordValidatorDirective } from '../../../projects/ui-lib/src/lib/dir
 })
 export class LoginComponent {
   protected loginModel: { email: string, password: string } = { email: '', password: '' };
-  protected httpError: SystemError | null = null;
   protected isLoading = signal(false);
   protected hidePass = signal(true);
 
@@ -50,8 +46,6 @@ export class LoginComponent {
   }
 
   protected onLoginSubmit(f: NgForm): void {
-    this.httpError = null;
-
     if (f.valid) {
       this.isLoading.set(true);
       this.authService.login(this.loginModel).subscribe({
@@ -62,8 +56,7 @@ export class LoginComponent {
             this.router.navigateByUrl('products');
           }
         },
-        error: (err: HttpErrorResponse) => {
-          this.httpError = err;
+        error: () => {
           this.isLoading.set(false);
         }
       });
@@ -76,8 +69,7 @@ export class LoginComponent {
         localStorage.setItem(TOKEN_KEY, token);
         this.router.navigateByUrl('products');
       },
-      error: (err: HttpErrorResponse) => {
-        this.httpError = err;
+      error: () => {
         this.isLoading.set(false);
       }
     })
