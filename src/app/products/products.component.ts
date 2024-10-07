@@ -89,10 +89,17 @@ export class ProductsComponent implements OnInit {
   }
 
   protected openAddProductPopup(): void {
-    this.dialog.open(AddProductPopupComponent, {
+    const popup = this.dialog.open(AddProductPopupComponent, {
       width: '350px',
-      data: { categories: this.categories },
+      data: this.categories,
       scrollStrategy: new NoopScrollStrategy()
+    });
+
+    popup.afterClosed().subscribe((product: Product | undefined) => {
+      if (product) {
+        this.allProducts.push(product);
+        this.setCurrentProducts();
+      }
     });
   }
 

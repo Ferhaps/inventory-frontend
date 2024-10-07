@@ -1,3 +1,5 @@
+export type PopupState = 'default' | 'loading';
+
 export type Product = {
   id: number;
   name: string;

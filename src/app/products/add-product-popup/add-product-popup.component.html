@@ -1,0 +1,28 @@
+<app-default-dialog [title]="'Add product'">
+  <form class="dialog-content flex-col align-items-center gap1" #f="ngForm" (ngSubmit)="onSubmit(f)">
+    <mat-form-field>
+      <mat-label>Product name</mat-label>
+      <input matInput name="product-name" [(ngModel)]="model.name" #nameField="ngModel" type="text" required />
+      @if (nameField.invalid) {
+        <mat-error>Product name is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Category</mat-label>
+      <mat-select [(ngModel)]="model.categoryId" #categoryField="ngModel" name="category" required>
+        @for (category of categories; track category.id) {
+          <mat-option [value]="category.id">{{category.name}}</mat-option>
+        }
+      </mat-select>
+      @if (categoryField.invalid) {
+        <mat-error>Category is required</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="center mt1"><button mat-raised-button class="main-btn" [disabled]="state === 'loading'">Add</button></div>
+    @if (state === 'loading') {
+      <mat-spinner class="mt1" />
+    }
+  </form>
+</app-default-dialog>
