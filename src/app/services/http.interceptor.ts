@@ -8,6 +8,7 @@ import { ErrorService } from '../../../projects/ui-lib/src/public-api';
 
 const URLS_WITHOUT_TOKEN = [
   '/auth/login',
+  '/auth/register'
 ];
 
 export const hTTPInterceptor: HttpInterceptorFn = (req, next) => {
