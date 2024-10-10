@@ -20,7 +20,7 @@ export const routes: Routes = [
       {
         path: 'categories',
         title: 'Inventory Categories',
-        loadComponent: () => import('../categories/categories/categories.component').then((c) => c.CategoriesComponent)
+        loadComponent: () => import('../categories/categories.component').then((c) => c.CategoriesComponent)
       }
     ]
   },

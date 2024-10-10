@@ -2,13 +2,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { DefaultDialogComponent } from '../../../../../projects/ui-lib/src/public-api';
+import { DefaultDialogComponent } from '../../../../projects/ui-lib/src/public-api';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormField } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDialogRef } from '@angular/material/dialog';
-import { CategoryService } from '../../data-access/category.service';
-import { Category, PopupState } from '../../../shared/types';
+import { CategoryService } from '../data-access/category.service';
+import { Category, PopupState } from '../../shared/types';
 
 @Component({
   selector: 'app-add-category-popup',
