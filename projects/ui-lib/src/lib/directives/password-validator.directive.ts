@@ -16,7 +16,7 @@ export class PasswordValidatorDirective implements Validator {
   public validate(control: AbstractControl): ValidationErrors | null {
     const password = control.value;
 
-    const pattern = /^(?=.*[A-Z])(?=.*[!@#\$%\^&\*\.])(?=.*\d)/;
+    const pattern = /^(?=.*[A-Z])(?=.*[!@#\$%\^&\*])(?=.*\d)/;
 
     if (password && !pattern.test(password)) {
       return { passwordInvalid: true };
