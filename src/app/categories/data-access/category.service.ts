@@ -16,4 +16,12 @@ export class CategoryService {
   public getCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(this.categoryUrl, JSON_HTTP_OPTIONS);
   }
+
+  public addCategories(name: string): Observable<Category> {
+    return this.http.post<Category>(this.categoryUrl + `?categoryName=${name}`, {}, JSON_HTTP_OPTIONS);
+  }
+
+  public deletetCategory(id: number): Observable<any> {
+    return this.http.delete(this.categoryUrl + `/${id}`, JSON_HTTP_OPTIONS);
+  }
 }

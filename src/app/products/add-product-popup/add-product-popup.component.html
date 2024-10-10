@@ -20,9 +20,14 @@
       }
     </mat-form-field>
 
-    <div class="center mt1"><button mat-raised-button class="main-btn" [disabled]="state === 'loading'">Add</button></div>
-    @if (state === 'loading') {
-      <mat-spinner class="mt1" />
-    }
+    <div class="center">
+      <button mat-raised-button class="main-btn" [disabled]="state === 'loading'">
+        @if (state === 'loading') {
+          <mat-spinner diameter="25" />
+        } @else {
+          Add
+        }
+      </button>
+    </div>
   </form>
 </lib-default-dialog>

@@ -1,0 +1,28 @@
+.categories {
+  .title-row {
+    margin-block: 1rem;
+
+    h1 {
+      margin: 0 !important;
+    }
+  }
+
+  .table-wrapper {
+    max-height: calc(100% - 40px);
+
+    table {
+      th {
+        font-weight: 600;
+        font-size: 18px;
+      }
+
+      td {
+        padding-block: 0.5rem;
+      }
+  
+      td.mat-column-quantity {
+        padding-top: 1.5rem;
+      }
+    }
+  }
+}
