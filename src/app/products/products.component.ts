@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Category, Product } from '../shared/types';
+import { Category, Product, TableDataSource } from '../shared/types';
 import { ProductService } from './data-access/product.service';
 import { MatChipListboxChange, MatChipsModule } from '@angular/material/chips';
 import { CategoryService } from '../categories/data-access/category.service';
@@ -15,10 +15,6 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AddProductPopupComponent } from './add-product-popup/add-product-popup.component';
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import { LoaderService } from '../../../projects/ui-lib/src/public-api';
-
-type TableData = {
-  actions: string[];
-} & Product;
 
 @Component({
   selector: 'app-products',
@@ -41,7 +37,7 @@ type TableData = {
 export class ProductsComponent implements OnInit {
   protected categories: Category[] = [];
   protected currentCategoryId: number = 0;
-  protected tableDataSource: TableData[] = [];
+  protected tableDataSource: TableDataSource<Product>[] = [];
   protected displayedColumns: string[] = ['name', 'quantity', 'actions'];
   private allProducts: Product[] = [];
   private productActions: string[] = [ 'Delete' ];

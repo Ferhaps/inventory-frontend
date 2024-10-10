@@ -11,3 +11,7 @@ export type Category = {
   id: number;
   name: string;
 };
+
+export type TableDataSource<T> = {
+  actions: string[];
+} & T;

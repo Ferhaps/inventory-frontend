@@ -6,14 +6,10 @@ import { MatTableModule } from '@angular/material/table';
 import { CategoryService } from './data-access/category.service';
 import { LoaderService } from '../../../projects/ui-lib/src/public-api';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { Category } from '../shared/types';
+import { Category, TableDataSource } from '../shared/types';
 import { AddCategoryPopupComponent } from './add-category-popup/add-category-popup.component';
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import { MatButtonModule } from '@angular/material/button';
-
-type TableData = {
-  actions: string[];
-} & Category;
 
 @Component({
   selector: 'app-categories',
@@ -30,7 +26,7 @@ type TableData = {
   styleUrl: './categories.component.scss'
 })
 export class CategoriesComponent implements OnInit {
-  protected categories: TableData[] = [];
+  protected categories: TableDataSource<Category>[] = [];
   protected displayedColumns: string[] = ['name', 'actions'];
   private categoryService = inject(CategoryService);
   private loadingService = inject(LoaderService);
