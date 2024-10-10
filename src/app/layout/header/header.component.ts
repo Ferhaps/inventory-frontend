@@ -1,8 +1,8 @@
-import { MatIconModule } from '@angular/material/icon';
 import { NgOptimizedImage } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { AuthService } from '../../services/auth.service';
+import { CustomMatIconModule } from '../../shared/custom-icons.module';
 
 @Component({
   selector: 'app-header',
@@ -12,7 +12,7 @@ import { AuthService } from '../../services/auth.service';
   imports: [
     NgOptimizedImage,
     MatMenuModule,
-    MatIconModule
+    CustomMatIconModule
   ]
 })
 export class HeaderComponent {

@@ -8,9 +8,9 @@
     </div>
     
     <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="onOptionSelected('Logout')">
-        <img ngSrc="assets/images/logout.svg" alt="logout" width="14" height="14" priority="false">
-        <span class="red ml05 fw500">Logout</span>
+      <button mat-menu-item (click)="onOptionSelected('logout')">
+        <mat-icon [svgIcon]="'logoutIcon'"></mat-icon>
+        <span class="fw500 red">Logout</span>
       </button>
     </mat-menu>
   </div>
