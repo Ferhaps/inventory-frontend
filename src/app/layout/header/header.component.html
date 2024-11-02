@@ -3,8 +3,11 @@
     alt="logo" width="150" height="40" priority="priority"> -->
 
   <div class="right flexer">
-    <div class="flexer closed-part pointer" [matMenuTriggerFor]="menu">
-      <mat-icon class="profile-logo">person</mat-icon>
+    <mat-divider vertical="true" />
+    <div class="flexer ml1 mr1 pointer" [matMenuTriggerFor]="menu">
+      <button mat-icon-button>
+        <mat-icon>more_vert</mat-icon>
+      </button>
     </div>
     
     <mat-menu #menu="matMenu">
