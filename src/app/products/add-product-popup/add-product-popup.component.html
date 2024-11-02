@@ -1,6 +1,6 @@
 <lib-default-dialog [title]="'Add product'">
-  <form class="dialog-content flex-col align-items-center gap1" #f="ngForm" (ngSubmit)="onSubmit(f)">
-    <mat-form-field>
+  <form class="dialog-content flex-col align-items-center gap1 w-75" #f="ngForm" (ngSubmit)="onSubmit(f)">
+    <mat-form-field class="w-100">
       <mat-label>Product name</mat-label>
       <input matInput name="product-name" [(ngModel)]="model.name" #nameField="ngModel" type="text" required />
       @if (nameField.invalid) {
@@ -8,7 +8,7 @@
       }
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field class="w-100">
       <mat-label>Category</mat-label>
       <mat-select [(ngModel)]="model.categoryId" #categoryField="ngModel" name="category" required>
         @for (category of categories; track category.id) {
