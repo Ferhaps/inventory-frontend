@@ -12,7 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 type AddProductModel = {
   name: string;
-  categoryId: number;
+  categoryId: number | undefined;
 };
 
 @Component({
@@ -33,19 +33,23 @@ type AddProductModel = {
 export class AddProductPopupComponent {
   protected model: AddProductModel = {
     name: '',
-    categoryId: this.categories[0].id
+    categoryId: undefined
   };
   protected state: PopupState = 'default';
 
   private productService = inject(ProductService);
   private ref = inject(MatDialogRef);
 
-  constructor(@Inject(MAT_DIALOG_DATA) public categories: Category[]) { }
+  constructor(@Inject(MAT_DIALOG_DATA) public categories: Category[]) {
+    if (categories.length > 0) {
+      this.model.categoryId = categories[0].id;
+    }
+  }
 
   protected onSubmit(form: NgForm): void {
     if (form.valid) {
       this.state = 'loading';
-      this.productService.addProduct(this.model.name, this.model.categoryId).subscribe({
+      this.productService.addProduct(this.model.name, this.model.categoryId as number).subscribe({
         next: (product: Product) => {
           this.ref.close(product);
         },

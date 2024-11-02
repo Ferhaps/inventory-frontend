@@ -15,8 +15,11 @@
           <mat-option [value]="category.id">{{category.name}}</mat-option>
         }
       </mat-select>
-      @if (categoryField.invalid) {
+      @if (categoryField.invalid && categories.length > 0) {
         <mat-error>Category is required</mat-error>
+      }
+      @if (categories.length === 0) {
+        <mat-error>You must create a category first</mat-error>
       }
     </mat-form-field>
 

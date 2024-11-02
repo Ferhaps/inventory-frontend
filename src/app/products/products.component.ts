@@ -55,9 +55,13 @@ export class ProductsComponent implements OnInit {
     this.loadingService.setLoading(true);
     this.categoryService.getCategories().subscribe({
       next: (categories: Category[]) => {
-        this.categories = categories;
-        this.currentCategoryId = categories[0].id;
-        this.getProducts();
+        if (categories.length) {
+          this.categories = categories;
+          this.currentCategoryId = categories[0].id;
+          this.getProducts();
+        } else {
+          this.loadingService.setLoading(false);
+        }
         console.log(categories);
       },
       error: () => this.loadingService.setLoading(false)
