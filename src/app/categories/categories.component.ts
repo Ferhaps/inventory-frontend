@@ -44,9 +44,7 @@ export class CategoriesComponent implements OnInit {
         this.loadingService.setLoading(false);
         console.log(categories);
       },
-      error: () => {
-        this.loadingService.setLoading(false);
-      }
+      error: () => this.loadingService.setLoading(false)
     });
   }
 

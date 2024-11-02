@@ -59,7 +59,8 @@ export class ProductsComponent implements OnInit {
         this.currentCategoryId = categories[0].id;
         this.getProducts();
         console.log(categories);
-      }
+      },
+      error: () => this.loadingService.setLoading(false)
     });
   }
 
@@ -70,7 +71,8 @@ export class ProductsComponent implements OnInit {
         this.setCurrentProducts();
         this.loadingService.setLoading(false);
         console.log(products);
-      }
+      },
+      error: () => this.loadingService.setLoading(false)
     });
   }
 
