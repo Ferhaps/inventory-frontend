@@ -22,8 +22,8 @@ table {
   margin-left: auto;
 }
 
-.ml05 {
-  margin-left: 0.5rem;
+.gap05 {
+  gap: 0.5rem;
 }
 
 .upper-row {
@@ -39,7 +39,7 @@ table {
   font-size: 20px;
 }
 
-.selected-row {
+.selected-row td {
   background-color: #d3edf8;
 }
 
@@ -56,15 +56,11 @@ table {
     padding: 3px !important;
     width: auto !important;
   }
-  .row-heading-labels {
-    font-size: 16px !important;
-  }
 }
 
 td, th {
   padding: 1rem;
   font-size: 14px;
-  color: #707070;
 }
 
 th {
@@ -73,6 +69,7 @@ th {
   position: sticky;
   top: 0;
   z-index: 2;
+  border-top: 2px solid #E5E4E7;
 }
 
 td {

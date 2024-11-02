@@ -27,6 +27,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
       padding: 0;
       margin-left: 1rem;
       width: 100%;
+      background-color: transparent;
     }
     .search-input:focus {
       border: none;

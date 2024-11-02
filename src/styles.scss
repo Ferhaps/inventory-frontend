@@ -412,7 +412,7 @@ body {
 
     &:disabled {
       pointer-events: none;
-      background-color: #D0D5DD !important;
+      opacity: 0.5 !important;
     }
   }
 
