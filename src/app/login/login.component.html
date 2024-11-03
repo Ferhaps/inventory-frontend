@@ -27,13 +27,13 @@
     </mat-form-field>
 
     <div class="centerer w-100">
-      <button mat-raised-button class="main-btn" [disabled]="isLoading()">Login</button>
+      <button mat-raised-button class="main-btn" [disabled]="isLoading()">
+        @if (isLoading()) {
+          <mat-spinner diameter="25" />
+        } @else {
+          Login
+        }
+      </button>
     </div>
-
-    @if (isLoading()) {
-      <div class="centerer w-100">
-        <mat-spinner />
-      </div>
-    }
   </form>
 </div>

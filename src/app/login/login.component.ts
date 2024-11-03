@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { TOKEN_KEY } from '../shared/utils';
 import { MatIconModule } from '@angular/material/icon';
 import { PasswordValidatorDirective } from '../../../projects/ui-lib/src/lib/directives/password-validator.directive';
+import { LoggedUserInfo } from '../shared/types';
 
 @Component({
   selector: 'app-login',
@@ -34,8 +35,8 @@ export class LoginComponent {
   private router = inject(Router);
   
   constructor () {
-    const token = localStorage.getItem(TOKEN_KEY);
-    if (token) {
+    const userInfo: LoggedUserInfo = JSON.parse(localStorage.getItem(TOKEN_KEY)!);
+    if (userInfo?.token) {
       this.router.navigateByUrl('products');
     }
   }
@@ -49,11 +50,12 @@ export class LoginComponent {
     if (f.valid) {
       this.isLoading.set(true);
       this.authService.login(this.loginModel).subscribe({
-        next: (res: { accessToken: string }) => {
-          if (res?.accessToken) {
-            const token: string = res.accessToken;
-            localStorage.setItem(TOKEN_KEY, token);
+        next: (userInfo: LoggedUserInfo) => {
+          if (userInfo?.token) {
+            localStorage.setItem(TOKEN_KEY, JSON.stringify(userInfo));
             this.router.navigateByUrl('products');
+          } else {
+            this.isLoading.set(false);
           }
         },
         error: () => {
@@ -63,15 +65,15 @@ export class LoginComponent {
     }
   }
 
-  private autoLogin(token: string): void {
-    this.authService.extendToken(token).subscribe({
-      next: () => {
-        localStorage.setItem(TOKEN_KEY, token);
-        this.router.navigateByUrl('products');
-      },
-      error: () => {
-        this.isLoading.set(false);
-      }
-    })
-  }
+  // private autoLogin(token: string): void {
+  //   this.authService.extendToken(token).subscribe({
+  //     next: () => {
+  //       localStorage.setItem(TOKEN_KEY, token);
+  //       this.router.navigateByUrl('products');
+  //     },
+  //     error: () => {
+  //       this.isLoading.set(false);
+  //     }
+  //   })
+  // }
 }

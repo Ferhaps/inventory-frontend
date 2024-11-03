@@ -1,3 +1,16 @@
+export type UserRole = 'ADMIN' | 'OPERATOR';
+
+export type User = {
+  id: number;
+  email: string;
+  role: UserRole;
+};
+
+export type LoggedUserInfo = {
+  token: string;
+  user: User;
+}
+
 export type PopupState = 'default' | 'loading';
 
 export type Product = {

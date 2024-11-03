@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { JSON_HTTP_OPTIONS, TOKEN_KEY } from '../shared/utils';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
+import { LoggedUserInfo } from '../shared/types';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +15,8 @@ export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  public login(body: { email: string, password: string }): Observable<{ accessToken: string }> {
-    return this.http.post<{ accessToken: string }>(this.authUrl + '/login', body, JSON_HTTP_OPTIONS);
+  public login(body: { email: string, password: string }): Observable<LoggedUserInfo> {
+    return this.http.post<LoggedUserInfo>(this.authUrl + '/login', body, JSON_HTTP_OPTIONS);
   }
 
   public extendToken(token: string): Observable<any> {
