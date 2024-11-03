@@ -24,7 +24,7 @@ export class HeaderComponent {
 
   protected onOptionSelected(option: string): void {
     switch (option) {
-      case 'Logout':
+      case 'logout':
         this.authService.logout();
         break;
       default:
