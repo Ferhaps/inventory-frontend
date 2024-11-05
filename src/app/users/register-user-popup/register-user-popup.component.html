@@ -1,0 +1,56 @@
+<lib-default-dialog title="Add user">
+  <form novalidate autocomplete="off" class="dialog-content flex-col align-items-center gap1 w-75" #f="ngForm" (ngSubmit)="onSubmit(f)">
+    <mat-form-field class="w-100">
+      <mat-label>Email</mat-label>
+      <input matInput name="email" [(ngModel)]="model.email" 
+        #emailField="ngModel" type="email" required email />
+      @if (emailField.invalid) {
+        <mat-error>Invalid email</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Role</mat-label>
+      <mat-select [(ngModel)]="model.role" #roleField="ngModel" name="role" required>
+        <mat-option value="ADMIN">ADMIN</mat-option>
+        <mat-option value="OPERATOR">OPERATOR</mat-option>
+      </mat-select>
+      @if (roleField.invalid) {
+        <mat-error>Role is required</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Password</mat-label>
+      <input matInput required libPasswordValidator
+        [(ngModel)]="model.password" #passwordField="ngModel" name="password"
+        type="password">
+      @if (passwordField.invalid) {
+        <mat-error>Password must have at least one uppercase letter, one symbol, and one number</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field class="w-100">
+      <mat-label>Repeat password</mat-label>
+      <input matInput required libFieldsMatchValidator fieldToMatch="password"
+        [(ngModel)]="model.passwordRepeat" #repeatPassField="ngModel" name="passwordRepeat"
+        type="password" />
+        @if (repeatPassField.errors?.['required']) {
+          <mat-error>Repeat password is required</mat-error>
+        }
+        @if (repeatPassField.errors?.['mismatch']) {
+          <mat-error>Does not match password</mat-error>
+        }
+    </mat-form-field>
+
+    <div class="center">
+      <button mat-raised-button class="main-btn" [disabled]="state === 'loading'">
+        @if (state === 'loading') {
+          <mat-spinner diameter="25" />
+        } @else {
+          Add
+        }
+      </button>
+    </div>
+  </form>
+</lib-default-dialog>
