@@ -66,9 +66,7 @@ export class CategoriesComponent implements OnInit {
 
     popup.afterClosed().subscribe((category: Category | undefined) => {
       if (category) {
-        console.log(category);
         this.categories = [({ ...category, actions: ['Delete'] }), ...this.categories];
-        console.log(this.categories);
       }
     });
   }
