@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Category, Product, TableDataSource } from '../shared/types';
+import { Category, LoggedUserInfo, Product, TableDataSource } from '../shared/types';
 import { ProductService } from './data-access/product.service';
 import { MatChipListboxChange, MatChipsModule } from '@angular/material/chips';
 import { CategoryService } from '../categories/data-access/category.service';
@@ -15,6 +15,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AddProductPopupComponent } from './add-product-popup/add-product-popup.component';
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import { LoaderService } from '../../../projects/ui-lib/src/public-api';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-products',
@@ -38,14 +39,23 @@ export class ProductsComponent implements OnInit {
   protected categories: Category[] = [];
   protected currentCategoryId: number = 0;
   protected tableDataSource: TableDataSource<Product>[] = [];
-  protected displayedColumns: string[] = ['name', 'quantity', 'actions'];
+  protected displayedColumns: string[] = ['name', 'quantity'];
   private allProducts: Product[] = [];
-  private productActions: string[] = [ 'Delete' ];
+  private productActions: string[] = [];
 
   private categoryService = inject(CategoryService);
   private productService = inject(ProductService);
   private loadingService = inject(LoaderService);
+  private authService = inject(AuthService);
   private dialog = inject(MatDialog);
+
+  constructor() {
+    const loggedUser: LoggedUserInfo = this.authService.getLoggedUserInfo();
+    if (loggedUser.user.role === 'ADMIN') {
+      this.displayedColumns.push('actions');
+      this.productActions.push('Delete');
+    }
+  }
   
   public ngOnInit(): void {
     this.getCategories();

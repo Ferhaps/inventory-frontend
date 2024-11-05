@@ -23,6 +23,10 @@ export class AuthService {
     return this.http.get(this.authUrl + `/token/extend?accessToken=${token}`, JSON_HTTP_OPTIONS);
   }
 
+  public getLoggedUserInfo(): LoggedUserInfo {
+    return JSON.parse(localStorage.getItem(TOKEN_KEY)!);
+  }
+
   public logout(): void {
     localStorage.removeItem(TOKEN_KEY);
     this.router.navigateByUrl('/login');

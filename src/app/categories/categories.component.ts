@@ -6,10 +6,11 @@ import { MatTableModule } from '@angular/material/table';
 import { CategoryService } from './data-access/category.service';
 import { LoaderService } from '../../../projects/ui-lib/src/public-api';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { Category, TableDataSource } from '../shared/types';
+import { Category, LoggedUserInfo, TableDataSource } from '../shared/types';
 import { AddCategoryPopupComponent } from './add-category-popup/add-category-popup.component';
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import { MatButtonModule } from '@angular/material/button';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-categories',
@@ -27,10 +28,19 @@ import { MatButtonModule } from '@angular/material/button';
 })
 export class CategoriesComponent implements OnInit {
   protected categories: TableDataSource<Category>[] = [];
-  protected displayedColumns: string[] = ['name', 'actions'];
+  protected displayedColumns: string[] = ['name'];
+  
   private categoryService = inject(CategoryService);
   private loadingService = inject(LoaderService);
+  private authService = inject(AuthService);
   private dialog = inject(MatDialog);
+
+  constructor() {
+    const loggedUser: LoggedUserInfo = this.authService.getLoggedUserInfo();
+    if (loggedUser.user.role === 'ADMIN') {
+      this.displayedColumns.push('actions');
+    }
+  }
 
   public ngOnInit(): void {
     this.getCategories();
