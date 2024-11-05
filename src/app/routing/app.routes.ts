@@ -21,6 +21,11 @@ export const routes: Routes = [
         path: 'categories',
         title: 'Inventory Categories',
         loadComponent: () => import('../categories/categories.component').then((c) => c.CategoriesComponent)
+      },
+      {
+        path: 'users',
+        title: 'Inventory Users',
+        loadComponent: () => import('../users/users.component').then((c) => c.UsersComponent)
       }
     ]
   },

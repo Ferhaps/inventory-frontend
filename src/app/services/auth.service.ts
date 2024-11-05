@@ -4,7 +4,7 @@ import { environment } from '../../environments/environment';
 import { JSON_HTTP_OPTIONS, TOKEN_KEY } from '../shared/utils';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { LoggedUserInfo } from '../shared/types';
+import { LoggedUserInfo, User, UserRole } from '../shared/types';
 
 @Injectable({
   providedIn: 'root'
@@ -19,8 +19,8 @@ export class AuthService {
     return this.http.post<LoggedUserInfo>(this.authUrl + '/login', body, JSON_HTTP_OPTIONS);
   }
 
-  public extendToken(token: string): Observable<any> {
-    return this.http.get(this.authUrl + `/token/extend?accessToken=${token}`, JSON_HTTP_OPTIONS);
+  public register(body: { email: string, password: string, role: UserRole }): Observable<User> {
+    return this.http.post<User>(this.authUrl + '/register', body, JSON_HTTP_OPTIONS);
   }
 
   public getLoggedUserInfo(): LoggedUserInfo {
