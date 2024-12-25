@@ -4,13 +4,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 import { CategoryService } from './data-access/category.service';
-import { LoaderService } from '../../../projects/ui-lib/src/public-api';
+import { LoaderService } from '../../../../projects/ui-lib/src/public-api';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { Category, LoggedUserInfo, TableDataSource } from '../shared/types';
+import { Category, LoggedUserInfo, TableDataSource } from '../../shared/types';
 import { AddCategoryPopupComponent } from './add-category-popup/add-category-popup.component';
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import { MatButtonModule } from '@angular/material/button';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-categories',

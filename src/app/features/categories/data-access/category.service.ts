@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Category } from '../../shared/types';
-import { JSON_HTTP_OPTIONS } from '../../shared/utils';
+import { Category } from '../../../shared/types';
+import { JSON_HTTP_OPTIONS } from '../../../shared/utils';
 
 @Injectable({
   providedIn: 'root'

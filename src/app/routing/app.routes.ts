@@ -15,17 +15,17 @@ export const routes: Routes = [
       {
         path: 'products',
         title: 'Inventory Products',
-        loadComponent: () => import('../products/products.component').then((c) => c.ProductsComponent)
+        loadComponent: () => import('../features/products/products.component').then((c) => c.ProductsComponent)
       },
       {
         path: 'categories',
         title: 'Inventory Categories',
-        loadComponent: () => import('../categories/categories.component').then((c) => c.CategoriesComponent)
+        loadComponent: () => import('../features/categories/categories.component').then((c) => c.CategoriesComponent)
       },
       {
         path: 'users',
         title: 'Inventory Users',
-        loadComponent: () => import('../users/users.component').then((c) => c.UsersComponent)
+        loadComponent: () => import('../features/users/users.component').then((c) => c.UsersComponent)
       }
     ]
   },

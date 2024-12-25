@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Category, LoggedUserInfo, Product, TableDataSource } from '../shared/types';
+import { Category, LoggedUserInfo, Product, TableDataSource } from '../../shared/types';
 import { ProductService } from './data-access/product.service';
 import { MatChipListboxChange, MatChipsModule } from '@angular/material/chips';
 import { CategoryService } from '../categories/data-access/category.service';
@@ -14,8 +14,8 @@ import { NgClass } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AddProductPopupComponent } from './add-product-popup/add-product-popup.component';
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
-import { LoaderService } from '../../../projects/ui-lib/src/public-api';
-import { AuthService } from '../services/auth.service';
+import { LoaderService } from '../../../../projects/ui-lib/src/public-api';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-products',

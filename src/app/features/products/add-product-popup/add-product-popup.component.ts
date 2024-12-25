@@ -1,7 +1,7 @@
 import { Component, Inject, inject } from '@angular/core';
-import { DefaultDialogComponent } from '../../../../projects/ui-lib/src/public-api';
+import { DefaultDialogComponent } from '../../../../../projects/ui-lib/src/public-api';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Category, PopupState, Product } from '../../shared/types';
+import { Category, PopupState, Product } from '../../../shared/types';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProductService } from '../data-access/product.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';

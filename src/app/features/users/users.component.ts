@@ -1,19 +1,17 @@
-import { NgClass } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
-import { LoggedUserInfo, TableDataSource, User } from '../shared/types';
-import { AuthService } from '../services/auth.service';
-import { LoaderService } from '../../../projects/ui-lib/src/public-api';
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import { UserService } from './data-access/user.service';
 import { RegisterUserPopupComponent } from './register-user-popup/register-user-popup.component';
+import { LoggedUserInfo, TableDataSource, User } from '../../shared/types';
+import { LoaderService } from '../../../../projects/ui-lib/src/public-api';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-users',
   standalone: true,
   imports: [
-    NgClass,
     MatTableModule,
     MatDialogModule,
   ],
