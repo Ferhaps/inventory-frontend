@@ -105,8 +105,8 @@ export class LogComponent implements OnInit {
     }
 
     if (this.range.start && this.range.end) {
-      body.startDate = this.range.start.toISOString().split('T')[0];
-      body.endDate = this.range.end.toISOString().split('T')[0];
+      body.startDate = this.range.start;
+      body.endDate = this.range.end;
     }
 
     this.logService.getLogs(body).subscribe({

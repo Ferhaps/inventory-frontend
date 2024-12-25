@@ -53,6 +53,6 @@ export type LogBody = {
   product?: string;
   category?: string;
   event?: string;
-  startDate?: string;
-  endDate?: string;
+  startDate?: Date;
+  endDate?: Date;
 };
