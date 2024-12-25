@@ -1,0 +1,66 @@
+@if (!loading) {
+  <div class="log-container"
+    #scrollContainer
+    (scroll)="onScroll()">
+    <table>
+      @if (headings()) {
+        <thead>
+          <tr>
+            @for (heading of headings(); track heading; let headIndex = $index) {
+              <th class="log-heading">
+                <div>{{heading}}</div>
+              </th>
+            }
+          </tr>
+        </thead>
+      }
+
+      @if (data() && data().length > 0) {
+        <tbody>
+          @for (obj of data(); let i = $index; track i;) {
+            <tr>
+              <td class="log-cell">
+                {{obj.timestamp | date: 'dd.MM.yyyy HH:mm:ss'}}
+              </td>
+              <td class="log-cell">
+                {{obj.event | snakeCaseParser}}
+              </td>
+              <td class="description-cell">
+                <div class="flexer">
+                  @if (obj.user) {
+                    <div class="mr02">User:</div>
+                    <div class="link mr05" (click)="navigate('users', obj.user.id)">
+                      {{obj.user.email | blankFiller}}
+                    </div>
+                  }
+
+                  @if (obj.product) {
+                    <div class="mr02">Product:</div>
+                    <div class="link mr05" (click)="navigate('products', obj.product.id)">
+                      {{obj.product.name | blankFiller}}
+                    </div>
+                  }
+
+                  @if (obj.category) {
+                    <div class="mr02">Category:</div>
+                    <div class="link mr05" (click)="navigate('products', obj.category.id)">
+                      {{obj.category.name | blankFiller}}
+                    </div>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      }
+    </table>
+    @if (data().length == 0) {
+      <div class="no-data centerer mt1">No Data!</div>
+    }
+    <ng-content></ng-content>
+  </div>
+} @else {
+  <div class="centerer">
+    <mat-spinner />
+  </div>
+}

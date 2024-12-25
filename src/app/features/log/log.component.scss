@@ -1,0 +1,35 @@
+.logs {
+  .main-area {
+    display: flex;
+    height: calc(100vh - 67px);
+  
+    .main-filters {
+      min-width: 380px;
+      padding-right: 1rem;
+      overflow-y: auto;
+      height: 100%;
+  
+      ::ng-deep {
+        .mat-mdc-standard-chip .mdc-evolution-chip__graphic {
+          width: 0 !important;
+          height: 0 !important;
+        }
+      }
+  
+      .upper-part {
+        padding-block: 0.87rem;
+        border-bottom: 2px solid #E5E4E7;
+      }
+  
+      p {
+        margin: 0 !important;
+        font-weight: 500;
+      }
+    }
+  }
+
+  .log-table {
+    width: 100%;
+    background-color: #EAF6FC;
+  }
+}

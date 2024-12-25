@@ -1,7 +1,7 @@
 export type UserRole = 'ADMIN' | 'OPERATOR';
 
 export type User = {
-  id: number;
+  id: string;
   email: string;
   role: UserRole;
 };
@@ -9,7 +9,7 @@ export type User = {
 export type LoggedUserInfo = {
   token: string;
   user: User;
-}
+};
 
 export type PopupState = 'default' | 'loading';
 
@@ -28,3 +28,31 @@ export type Category = {
 export type TableDataSource<T> = {
   actions: string[];
 } & T;
+
+export type Log = {
+  id: number;
+  timestamp: string;
+  event: string;
+  user?: {
+    id: string;
+    email: string;
+  };
+  product?: {
+    id: string;
+    name: string;
+  };
+  category?: {
+    id: string;
+    name: string;
+  };
+};
+
+export type LogBody = {
+  pageSize: number;
+  user?: string;
+  product?: string;
+  category?: string;
+  event?: string;
+  startDate?: string;
+  endDate?: string;
+};

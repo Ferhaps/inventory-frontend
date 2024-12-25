@@ -14,18 +14,23 @@ export const routes: Routes = [
     children: [
       {
         path: 'products',
-        title: 'Inventory Products',
+        title: 'Products',
         loadComponent: () => import('../features/products/products.component').then((c) => c.ProductsComponent)
       },
       {
         path: 'categories',
-        title: 'Inventory Categories',
+        title: 'Categories',
         loadComponent: () => import('../features/categories/categories.component').then((c) => c.CategoriesComponent)
       },
       {
         path: 'users',
-        title: 'Inventory Users',
+        title: 'Users',
         loadComponent: () => import('../features/users/users.component').then((c) => c.UsersComponent)
+      },
+      {
+        path: 'log',
+        title: 'Log',
+        loadComponent: () => import('../features/log/log.component').then((c) => c.LogComponent)
       }
     ]
   },

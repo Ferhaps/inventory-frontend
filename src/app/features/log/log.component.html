@@ -1,0 +1,90 @@
+<div class="logs">
+  <div class="main-area ml1">
+    <div class="main-filters">
+      <div class="flexer upper-part">
+        <div class="fw700 fs20">Filters</div>
+        @if (selectedEvent || selectedUserId || range.start || range.end || selectedDateFilter) {
+          <div class="action right pointer flexer" (click)="clearFilters(eventsAuto)">
+            <strong>Clear</strong>
+          </div>
+        }
+      </div>
+      <div class="mt1">
+        <div class="flexer">
+          <p>Dates</p>
+          <mat-chip-listbox class="ml05" name="dates" [(ngModel)]="selectedDateFilter" #filterChips="ngModel"
+            (ngModelChange)="onDateFilterChange()">
+            @for (filter of quickDateFiltes; track $index) {
+              <mat-chip-option>{{filter}}</mat-chip-option>
+            }
+          </mat-chip-listbox>
+          <button class="ml05" mat-icon-button [matMenuTriggerFor]="quickFiltersMenu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #quickFiltersMenu="matMenu">
+            @for (filter of moreFilters; track $index; let i = $index) {
+              <button mat-menu-item (click)="selectedDateFilter = filter; onDateFilterChange(); switchPlaces(filter, i)">
+                <span>{{filter}}</span>
+              </button>
+            }
+          </mat-menu>
+        </div>
+        <mat-form-field class="w-100">
+          <mat-date-range-input name="datepicker" [rangePicker]="picker" #rangePicker>
+            <input matStartDate placeholder="Start date" name="startDate" [(ngModel)]="range.start"
+              (dateInput)="onDateChange()">
+            <input matEndDate placeholder="End date" name="endDate" [(ngModel)]="range.end"
+              (dateInput)="onDateChange()">
+          </mat-date-range-input>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+      </div>
+      <div class="mt1">
+        <div class="mb05">
+          <p>Events</p>
+        </div>
+        <mat-form-field class="w-100">
+          <input type="text" matInput placeholder="Select event" #eventsAutoComplete="ngModel"
+            [matAutocomplete]="eventsAuto" [(ngModel)]="searchEvent" (input)="filterAutocomplete('events', this.searchEvent)" name="event" />
+          <mat-autocomplete #eventsAuto="matAutocomplete" name="eventsOptions">
+            @for (event of filteredLogEvents; track $index) {
+              <mat-option [value]="event" (click)="selectedEvent = event; onEventOptionClick(eventsAuto);">
+                {{event | snakeCaseParser}}
+              </mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <div class="mt1">
+        <div class="mb05">
+          <p>Users</p>
+        </div>
+        <mat-form-field class="w-100">
+          <input type="text" placeholder="Search users" name="users"
+            [matAutocomplete]="usersAuto" matInput [(ngModel)]="searchUser" #searchUserField="ngModel"
+            (input)="filterAutocomplete('users', searchUser)" />
+          <mat-autocomplete #usersAuto="matAutocomplete">
+            @for (user of filteredUsers; track $index) {
+              <mat-option [value]="user.email"
+                (click)="this.selectedUserId = user.id; searchUser = user.email; onUsersClick(usersAuto);">
+                {{user.email}}
+              </mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="log-table">
+      <app-log-table [headings]="['Date', 'Event', 'Data']" [data]="logs" (scrolled)="onScroll()"
+        (action)="onAction($event)" #logTable>
+        @if (isFetching) {
+          <div class="centerer spinner">
+            <mat-spinner />
+          </div>
+        }
+      </app-log-table>
+    </div>
+  </div>
+</div>

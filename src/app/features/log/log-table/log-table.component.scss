@@ -1,0 +1,53 @@
+.log-container {
+  overflow-y: scroll;
+  max-height: 100%;
+
+  table {
+    th {
+      border-bottom: 2px solid #cccccc !important;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      background-color: #eaf6fc !important;
+    }
+
+    td, th {
+      padding: 0.7rem !important;
+    }
+
+    .log-heading {
+      height: 30px;
+      width: 110px;
+      border-top: none !important;
+    }
+
+    .log-cell {
+      width: 110px;
+    }
+
+    tbody {
+      .description-cell {
+        width: 650px !important;
+
+        .link {
+          width: max-content !important;
+        }
+      }
+
+      tr {
+        border-top: 2px solid #E5E4E7;
+      }
+
+      td {
+        text-align: left;
+        color: black;
+        border: none;
+      }
+    }
+  }
+
+  .no-data {
+    height: 200px;
+    font-size: 20px;
+  }
+}
