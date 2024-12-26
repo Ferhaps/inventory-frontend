@@ -43,7 +43,7 @@
 
                   @if (obj.category) {
                     <div class="mr02">Category:</div>
-                    <div class="link mr05" (click)="navigate('products', obj.category.id)">
+                    <div class="link mr05" (click)="navigate('categories', obj.category.id)">
                       {{obj.category.name | blankFiller}}
                     </div>
                   }

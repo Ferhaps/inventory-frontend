@@ -9,13 +9,6 @@
       overflow-y: auto;
       height: 100%;
   
-      ::ng-deep {
-        .mat-mdc-standard-chip .mdc-evolution-chip__graphic {
-          width: 0 !important;
-          height: 0 !important;
-        }
-      }
-  
       .upper-part {
         padding-block: 0.87rem;
         border-bottom: 2px solid #E5E4E7;

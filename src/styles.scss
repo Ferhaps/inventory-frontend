@@ -429,6 +429,20 @@ body {
   .action {
     color: #009DDC !important;
   }
+
+  .link {
+    text-decoration: underline;
+    cursor: pointer;
+    transition: all ease-out 0.2s;
+
+    &:hover {
+      color: #009DDC !important;
+    }
+
+    &:focus-visible {
+      outline: none;
+    }
+  }
 }
 
 app-users,
