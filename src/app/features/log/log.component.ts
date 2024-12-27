@@ -183,6 +183,7 @@ export class LogComponent implements OnInit {
     switch (this.selectedDateFilter) {
       case 'Today':
         this.range.start = new Date();
+        this.range.start.setHours(0, 0, 0, 0);
         this.range.end = new Date();
         break;
       case '1 week':
