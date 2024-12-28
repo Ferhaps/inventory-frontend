@@ -37,7 +37,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class ProductsComponent implements OnInit {
   protected categories: Category[] = [];
-  protected currentCategoryId: number = 0;
+  protected currentCategoryId: string = '';
   protected tableDataSource: TableDataSource<Product>[] = [];
   protected displayedColumns: string[] = ['name', 'quantity'];
   private allProducts: Product[] = [];

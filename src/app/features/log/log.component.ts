@@ -13,10 +13,12 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { LogTableComponent } from './log-table/log-table.component';
 import { LogService } from './data-access/log.service';
-import { Log, LogBody, User } from '../../shared/types';
+import { Category, Log, LogBody, Product, User } from '../../shared/types';
 import { LoaderService, SnakeCaseParserPipe } from '../../../../projects/ui-lib/src/public-api';
 import { CustomDateAdapter } from '../../shared/custom-date-adapter';
 import { UserService } from '../users/data-access/user.service';
+import { ProductService } from '../products/data-access/product.service';
+import { CategoryService } from '../categories/data-access/category.service';
 
 type QuickDateFilter = 'Today' | '1 week' | '1 month' | 'This week' | 'This month' | 'This year';
 
@@ -70,11 +72,25 @@ export class LogComponent implements OnInit {
   protected allUsers: User[] = [];
   protected filteredUsers: User[] = [];
 
+  protected selectedProductId: string | undefined;
+  private lastSelectedProductId: string | undefined;
+  protected searchProduct: string | undefined;
+  protected allProducts: Product[] = [];
+  protected filteredProducts: Product[] = [];
+
+  protected selectedCategoryId: string | undefined;
+  private lastSelectedCategorytId: string | undefined;
+  protected searchCategory: string | undefined;
+  protected allCategories: Category[] = [];
+  protected filteredCategories: Category[] = [];
+
   protected isFetching: boolean = false;
   protected stopScrolling: boolean = false;
   private itemsPerPage: number = 50;
 
   private snakeCasePipe = inject(SnakeCaseParserPipe);
+  private categoryService = inject(CategoryService);
+  private productService = inject(ProductService);
   private loaderService = inject(LoaderService);
   private userService = inject(UserService);
   private logService = inject(LogService);
@@ -83,8 +99,8 @@ export class LogComponent implements OnInit {
     this.getLogs(true);
     this.getEvents();
     this.getUsers();
-    // this.getProducts();
-    // this.getCategories();
+    this.getProducts();
+    this.getCategories();
   }
 
   protected getLogs(init: boolean = false): void {
@@ -102,6 +118,14 @@ export class LogComponent implements OnInit {
 
     if (this.selectedUserId) {
       body.user = this.selectedUserId;
+    }
+
+    if (this.selectedProductId) {
+      body.product = this.selectedProductId;
+    }
+
+    if (this.selectedCategoryId) {
+      body.category = this.selectedCategoryId;
     }
 
     if (this.range.start && this.range.end) {
@@ -134,6 +158,33 @@ export class LogComponent implements OnInit {
     });
   }
 
+  private getUsers(): void {
+    this.userService.getUsers().subscribe((users: User[]) => {
+      if (users) {
+        this.allUsers = users;
+        this.filteredUsers = users;
+      }
+    });
+  }
+
+  private getProducts(): void {
+    this.productService.getProduts().subscribe((products: Product[]) => {
+      if (products) {
+        this.allProducts = products;
+        this.filteredProducts = products;
+      }
+    });
+  }
+
+  private getCategories(): void {
+    this.categoryService.getCategories().subscribe((categories: Category[]) => {
+      if (categories) {
+        this.allCategories = categories;
+        this.filteredCategories = categories;
+      }
+    });
+  }
+
   protected onEventOptionClick(auto: MatAutocomplete): void {
     if (this.lastSelectedEvent && (this.selectedEvent === this.lastSelectedEvent)) {
       this.selectedEvent = '';
@@ -157,7 +208,7 @@ export class LogComponent implements OnInit {
       this.selectedUserId = '';
       this.lastSelectedUserId = '';
       this.searchUser = '';
-      this.filteredLogEvents = this.allLogEvents;
+      this.filteredUsers = this.allUsers;
       auto.options.forEach((o : MatOption) => o.deselect());
       this.resetPaging();
       this.getLogs(true);
@@ -169,13 +220,38 @@ export class LogComponent implements OnInit {
     this.getLogs(true);
   }
 
-  protected getUsers(): void {
-    this.userService.getUsers().subscribe((users: User[]) => {
-      if (users) {
-        this.allUsers = users;
-        this.filteredUsers = users;
-      }
-    });
+  protected onProductClick(auto: MatAutocomplete): void {
+    if (this.lastSelectedProductId && (this.selectedProductId === this.lastSelectedProductId)) {
+      this.selectedProductId = '';
+      this.lastSelectedProductId = '';
+      this.searchProduct = '';
+      this.filteredProducts = this.allProducts;
+      auto.options.forEach((o : MatOption) => o.deselect());
+      this.resetPaging();
+      this.getLogs(true);
+      return;
+    }
+
+    this.lastSelectedProductId = this.selectedProductId;
+    this.resetPaging();
+    this.getLogs(true);
+  }
+
+  protected onCategoryClick(auto: MatAutocomplete): void {
+    if (this.lastSelectedCategorytId && (this.selectedCategoryId === this.lastSelectedCategorytId)) {
+      this.selectedCategoryId = '';
+      this.lastSelectedCategorytId = '';
+      this.searchCategory = '';
+      this.filteredCategories = this.allCategories;
+      auto.options.forEach((o : MatOption) => o.deselect());
+      this.resetPaging();
+      this.getLogs(true);
+      return;
+    }
+
+    this.lastSelectedCategorytId = this.selectedCategoryId;
+    this.resetPaging();
+    this.getLogs(true);
   }
 
   protected onDateFilterChange(): void {
@@ -234,7 +310,7 @@ export class LogComponent implements OnInit {
     }
   }
 
-  protected filterAutocomplete(type: 'events' | 'users', value: string | undefined): any {
+  protected filterAutocomplete(type: 'events' | 'users' | 'products' | 'categories', value: string | undefined): any {
     if (value) {
       const filterValue = value.toLowerCase();
 
@@ -244,6 +320,14 @@ export class LogComponent implements OnInit {
 
       if (type === 'users') {
         return this.allUsers.filter(user => user.email.toLowerCase().includes(filterValue));
+      }
+
+      if (type === 'products') {
+        return this.allProducts.filter(product => product.name.toLowerCase().includes(filterValue));
+      }
+
+      if (type === 'categories') {
+        return this.allCategories.filter(category => category.name.toLowerCase().includes(filterValue));
       }
     }
   }

@@ -14,14 +14,14 @@ export type LoggedUserInfo = {
 export type PopupState = 'default' | 'loading';
 
 export type Product = {
-  id: number;
+  id: string;
   name: string;
   quantity: number;
-  categoryId: number;
+  categoryId: string;
 };
 
 export type Category = {
-  id: number;
+  id: string;
   name: string;
 };
 

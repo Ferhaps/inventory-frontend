@@ -75,6 +75,44 @@
           </mat-autocomplete>
         </mat-form-field>
       </div>
+
+      <div class="mt1">
+        <div class="mb05">
+          <p>Products</p>
+        </div>
+        <mat-form-field class="w-100">
+          <input type="text" placeholder="Search products" name="products"
+            [matAutocomplete]="productsAuto" matInput [(ngModel)]="searchProduct" #searchProductField="ngModel"
+            (input)="filterAutocomplete('products', searchProduct)" />
+          <mat-autocomplete #productsAuto="matAutocomplete">
+            @for (product of filteredProducts; track $index) {
+              <mat-option [value]="product.id"
+                (click)="this.selectedProductId = product.id; searchProduct = product.name; onProductClick(productsAuto);">
+                {{product.name}}
+              </mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
+
+      <div class="mt1">
+        <div class="mb05">
+          <p>Categories</p>
+        </div>
+        <mat-form-field class="w-100">
+          <input type="text" placeholder="Search categories" name="categories"
+            [matAutocomplete]="categoriesAuto" matInput [(ngModel)]="searchCategory" #searchCategoryField="ngModel"
+            (input)="filterAutocomplete('categories', searchCategory)" />
+          <mat-autocomplete #categoriesAuto="matAutocomplete">
+            @for (category of filteredCategories; track $index) {
+              <mat-option [value]="category.id"
+                (click)="this.selectedCategoryId = category.id; searchCategory = category.name; onCategoryClick(usersAuto);">
+                {{category.name}}
+              </mat-option>
+            }
+          </mat-autocomplete>
+        </mat-form-field>
+      </div>
     </div>
     <div class="log-table">
       <app-log-table [headings]="['Date', 'Event', 'Data']" [data]="logs" (scrolled)="onScroll()"

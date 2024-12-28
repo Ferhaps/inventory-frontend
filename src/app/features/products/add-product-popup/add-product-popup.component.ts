@@ -12,7 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 type AddProductModel = {
   name: string;
-  categoryId: number | undefined;
+  categoryId: string | undefined;
 };
 
 @Component({
@@ -49,7 +49,7 @@ export class AddProductPopupComponent {
   protected onSubmit(form: NgForm): void {
     if (form.valid) {
       this.state = 'loading';
-      this.productService.addProduct(this.model.name, this.model.categoryId as number).subscribe({
+      this.productService.addProduct(this.model.name, this.model.categoryId as string).subscribe({
         next: (product: Product) => {
           this.ref.close(product);
         },
