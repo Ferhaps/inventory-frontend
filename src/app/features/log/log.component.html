@@ -3,7 +3,7 @@
     <div class="main-filters">
       <div class="flexer upper-part">
         <div class="fw700 fs20">Filters</div>
-        @if (selectedEvent || selectedUserId || range.start || range.end || selectedDateFilter) {
+        @if (selectedEvent || selectedUserId || selectedProductId || selectedCategoryId || range.start || range.end || selectedDateFilter) {
           <div class="action right pointer flexer" (click)="clearFilters(eventsAuto)">
             <strong>Clear</strong>
           </div>

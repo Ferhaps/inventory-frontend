@@ -350,6 +350,14 @@ export class LogComponent implements OnInit {
     this.lastSelectedUserId = undefined;
     this.selectedUserId = undefined;
     this.searchUser = undefined;
+
+    this.lastSelectedProductId = undefined;
+    this.selectedProductId = undefined;
+    this.searchProduct = undefined;
+
+    this.lastSelectedCategorytId = undefined;
+    this.selectedCategoryId = undefined
+    this.searchCategory = undefined;
     this.getLogs(true);
   }
 
