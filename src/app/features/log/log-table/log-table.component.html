@@ -19,13 +19,13 @@
         <tbody>
           @for (obj of data(); let i = $index; track i;) {
             <tr>
-              <td class="log-cell">
+              <td>
                 {{obj.timestamp | date: 'dd.MM.yyyy HH:mm:ss'}}
               </td>
-              <td class="log-cell">
+              <td>
                 {{obj.event | snakeCaseParser}}
               </td>
-              <td class="description-cell">
+              <td>
                 <div class="flexer">
                   @if (obj.user) {
                     <div class="mr02">User:</div>
@@ -52,6 +52,7 @@
                   }
                 </div>
               </td>
+              <td>{{ obj.details | blankFiller }}</td>
             </tr>
           }
         </tbody>

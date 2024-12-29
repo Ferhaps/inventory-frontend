@@ -115,7 +115,7 @@
       </div>
     </div>
     <div class="log-table">
-      <app-log-table [headings]="['Date', 'Event', 'Data']" [data]="logs" (scrolled)="onScroll()"
+      <app-log-table [headings]="['Date', 'Event', 'Data', 'Details']" [data]="logs" (scrolled)="onScroll()"
         (action)="onAction($event)" #logTable>
         @if (isFetching) {
           <div class="centerer spinner">

@@ -45,6 +45,7 @@ export type Log = {
     id: string;
     name: string;
   };
+  details?: string;
 };
 
 export type LogBody = {
