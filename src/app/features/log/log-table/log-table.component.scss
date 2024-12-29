@@ -4,6 +4,7 @@
 
   table {
     th {
+      text-align: left;
       border-bottom: 2px solid #cccccc !important;
       position: sticky;
       top: 0;
@@ -21,19 +22,7 @@
       border-top: none !important;
     }
 
-    .log-cell {
-      width: 110px;
-    }
-
     tbody {
-      .description-cell {
-        width: 650px !important;
-
-        .link {
-          width: max-content !important;
-        }
-      }
-
       tr {
         border-top: 2px solid #E5E4E7;
       }
