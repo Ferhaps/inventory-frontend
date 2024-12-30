@@ -10,7 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
-import { NgClass } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AddProductPopupComponent } from './add-product-popup/add-product-popup.component';
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
@@ -30,7 +30,8 @@ import { AuthService } from '../../services/auth.service';
     MatInputModule,
     MatButtonModule,
     MatDialogModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    DatePipe
   ],
   templateUrl: './products.component.html',
   styleUrl: './products.component.scss'
@@ -39,7 +40,7 @@ export class ProductsComponent implements OnInit {
   protected categories: Category[] = [];
   protected currentCategoryId: string = '';
   protected tableDataSource: TableDataSource<Product>[] = [];
-  protected displayedColumns: string[] = ['name', 'quantity'];
+  protected displayedColumns: string[] = ['name', 'quantity', 'dateCreated', 'dateUpdated'];
   private allProducts: Product[] = [];
   private productActions: string[] = [];
 

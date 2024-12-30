@@ -18,6 +18,8 @@ export type Product = {
   name: string;
   quantity: number;
   categoryId: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type Category = {
