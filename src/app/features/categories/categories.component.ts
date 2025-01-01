@@ -1,4 +1,4 @@
-import { NgClass } from '@angular/common';
+import { DatePipe, NgClass } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -21,14 +21,15 @@ import { AuthService } from '../../services/auth.service';
     MatIconModule,
     MatTableModule,
     MatDialogModule,
-    MatButtonModule
+    MatButtonModule,
+    DatePipe
   ],
   templateUrl: './categories.component.html',
   styleUrl: './categories.component.scss'
 })
 export class CategoriesComponent implements OnInit {
   protected categories: TableDataSource<Category>[] = [];
-  protected displayedColumns: string[] = ['name'];
+  protected displayedColumns: string[] = ['name', 'dateCreated', 'dateUpdated'];
   
   private categoryService = inject(CategoryService);
   private loadingService = inject(LoaderService);
