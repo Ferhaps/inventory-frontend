@@ -12,19 +12,18 @@ import { PasswordValidatorDirective } from '../../../projects/ui-lib/src/lib/dir
 import { LoggedUserInfo } from '../shared/types';
 
 @Component({
-  selector: 'app-login',
-  standalone: true,
-  imports: [
-    FormsModule,
-    MatIconModule,
-    MatInputModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatProgressSpinnerModule,
-    PasswordValidatorDirective
-  ],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+    selector: 'app-login',
+    imports: [
+        FormsModule,
+        MatIconModule,
+        MatInputModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatProgressSpinnerModule,
+        PasswordValidatorDirective
+    ],
+    templateUrl: './login.component.html',
+    styleUrl: './login.component.scss'
 })
 export class LoginComponent {
   protected loginModel: { email: string, password: string } = { email: '', password: '' };

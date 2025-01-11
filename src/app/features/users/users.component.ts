@@ -9,14 +9,13 @@ import { LoaderService } from '../../../../projects/ui-lib/src/public-api';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-users',
-  standalone: true,
-  imports: [
-    MatTableModule,
-    MatDialogModule,
-  ],
-  templateUrl: './users.component.html',
-  styleUrl: './users.component.scss'
+    selector: 'app-users',
+    imports: [
+        MatTableModule,
+        MatDialogModule,
+    ],
+    templateUrl: './users.component.html',
+    styleUrl: './users.component.scss'
 })
 export class UsersComponent {
   protected users: TableDataSource<User>[] = [];

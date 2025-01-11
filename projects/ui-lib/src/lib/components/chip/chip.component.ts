@@ -2,13 +2,12 @@ import { NgClass } from '@angular/common';
 import { Component, input, output } from '@angular/core';
 
 @Component({
-  selector: 'lib-chip',
-  standalone: true,
-  imports: [
-    NgClass
-  ],
-  templateUrl: './chip.component.html',
-  styleUrl: './chip.component.scss'
+    selector: 'lib-chip',
+    imports: [
+        NgClass
+    ],
+    templateUrl: './chip.component.html',
+    styleUrl: './chip.component.scss'
 })
 export class ChipComponent {
   public value = input.required<any>();

@@ -5,14 +5,13 @@ import { MatIconModule } from '@angular/material/icon';
 export type SortState = 'none' | 'asc' | 'desc';
 
 @Component({
-  selector: 'lib-table-sort-header',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatIconModule,
-  ],
-  templateUrl: './table-sort-header.component.html',
-  styleUrls: ['./table-sort-header.component.scss']
+    selector: 'lib-table-sort-header',
+    imports: [
+        CommonModule,
+        MatIconModule,
+    ],
+    templateUrl: './table-sort-header.component.html',
+    styleUrls: ['./table-sort-header.component.scss']
 })
 export class TableSortHeaderComponent {
   public selected = input.required<boolean>();

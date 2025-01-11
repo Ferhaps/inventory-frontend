@@ -37,20 +37,19 @@ export type ClassRule = {
 };
 
 @Component({
-  selector: 'lib-table',
-  templateUrl: 'table.component.html',
-  styleUrls: ['table.component.scss'],
-  animations: [fader],
-  standalone: true,
-  imports: [
-    NgClass,
-    WhiteSpaceFillerPipe,
-    MatMenuModule,
-    MatIconModule,
-    MatButtonModule,
-    TableSortHeaderComponent,
-    DragDropModule
-  ],
+    selector: 'lib-table',
+    templateUrl: 'table.component.html',
+    styleUrls: ['table.component.scss'],
+    animations: [fader],
+    imports: [
+        NgClass,
+        WhiteSpaceFillerPipe,
+        MatMenuModule,
+        MatIconModule,
+        MatButtonModule,
+        TableSortHeaderComponent,
+        DragDropModule
+    ]
 })
 export class TableComponent {
   public config = input.required<Config>();

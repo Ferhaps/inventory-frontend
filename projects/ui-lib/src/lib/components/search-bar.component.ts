@@ -4,15 +4,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
-  selector: 'lib-search-bar',
-  template: `
+    selector: 'lib-search-bar',
+    template: `
     <form class="search-bar" [formGroup]="searchForm">
       <mat-icon>search</mat-icon>
       <input class="search-input" type="search" name="field"
         [placeholder]="'Search ' + for()" autocomplete="off" formControlName="search" />
     </form>
   `,
-  styles: [`
+    styles: [`
     .search-bar {
       width: 270px;
       border: 1px solid #A4A4A4;
@@ -43,11 +43,10 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
       }
     }
   `],
-  standalone: true,
-  imports: [
-    MatIconModule,
-    ReactiveFormsModule
-  ]
+    imports: [
+        MatIconModule,
+        ReactiveFormsModule
+    ]
 })
 export class SearchBarComponent {
   public for = input.required<string>();

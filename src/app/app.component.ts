@@ -3,15 +3,14 @@ import { NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { ErrorHandlerComponent, GlobalLoaderComponent } from '../../projects/ui-lib/src/public-api';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [
-    RouterOutlet,
-    ErrorHandlerComponent,
-    GlobalLoaderComponent
-  ],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+    selector: 'app-root',
+    imports: [
+        RouterOutlet,
+        ErrorHandlerComponent,
+        GlobalLoaderComponent
+    ],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
 export class AppComponent {
   private router = inject(Router);

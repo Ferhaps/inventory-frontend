@@ -5,13 +5,12 @@ import { SnakeCaseParserPipe } from '../pipes/snake-case-parser.pipe';
 import { SystemError } from '../utils/types';
 
 @Component({
-  selector: 'lib-error-dispaly',
-  standalone: true,
-  imports: [
-    SnakeCaseParserPipe
-],
-  template: `<strong class="err-container">{{ displayError | snakeCaseParser }}</strong>`,
-  styles: [`
+    selector: 'lib-error-dispaly',
+    imports: [
+        SnakeCaseParserPipe
+    ],
+    template: `<strong class="err-container">{{ displayError | snakeCaseParser }}</strong>`,
+    styles: [`
     .err-container {
       display: block;
       max-width: 300px;

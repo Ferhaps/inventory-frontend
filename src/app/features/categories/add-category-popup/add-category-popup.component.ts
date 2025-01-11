@@ -10,18 +10,17 @@ import { CategoryService } from '../data-access/category.service';
 import { Category, PopupState } from '../../../shared/types';
 
 @Component({
-  selector: 'app-add-category-popup',
-  standalone: true,
-  imports: [
-    FormsModule,
-    DefaultDialogComponent,
-    MatButtonModule,
-    MatFormField,
-    MatProgressSpinnerModule,
-    MatInputModule
-  ],
-  templateUrl: './add-category-popup.component.html',
-  styleUrl: './add-category-popup.component.scss'
+    selector: 'app-add-category-popup',
+    imports: [
+        FormsModule,
+        DefaultDialogComponent,
+        MatButtonModule,
+        MatFormField,
+        MatProgressSpinnerModule,
+        MatInputModule
+    ],
+    templateUrl: './add-category-popup.component.html',
+    styleUrl: './add-category-popup.component.scss'
 })
 export class AddCategoryPopupComponent {
   protected name: string = '';

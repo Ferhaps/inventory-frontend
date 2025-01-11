@@ -8,13 +8,12 @@ import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import { ErrorService } from '../../services/error.service';
 
 @Component({
-  selector: 'lib-error-handler',
-  templateUrl: 'error-handler.component.html',
-  styleUrls: ['error-handler.component.scss'],
-  standalone: true,
-  imports: [
-    MatDialogModule
-  ]
+    selector: 'lib-error-handler',
+    templateUrl: 'error-handler.component.html',
+    styleUrls: ['error-handler.component.scss'],
+    imports: [
+        MatDialogModule
+    ]
 })
 export class ErrorHandlerComponent implements OnDestroy {
   private errSubscriptions = new Subscription();

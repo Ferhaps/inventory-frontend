@@ -1,4 +1,3 @@
-import { NgOptimizedImage } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { AuthService } from '../../services/auth.service';
@@ -10,13 +9,11 @@ import { MatDividerModule } from '@angular/material/divider';
   selector: 'app-header',
   templateUrl: 'header.component.html',
   styleUrls: ['header.component.scss'],
-  standalone: true,
   imports: [
-    NgOptimizedImage,
-    MatMenuModule,
-    CustomMatIconModule,
-    MatButtonModule,
-    MatDividerModule
+      MatMenuModule,
+      CustomMatIconModule,
+      MatButtonModule,
+      MatDividerModule
   ]
 })
 export class HeaderComponent {

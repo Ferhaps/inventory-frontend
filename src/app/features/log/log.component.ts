@@ -23,30 +23,29 @@ import { CategoryService } from '../categories/data-access/category.service';
 type QuickDateFilter = 'Today' | '1 week' | '1 month' | 'This week' | 'This month' | 'This year';
 
 @Component({
-  selector: 'app-log',
-  standalone: true,
-  imports: [
-    LogTableComponent,
-    MatProgressSpinnerModule,
-    MatSelectModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatAutocompleteModule,
-    MatInputModule,
-    SnakeCaseParserPipe,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatChipsModule,
-    MatMenuModule,
-    MatButtonModule,
-  ],
-  providers: [
-    SnakeCaseParserPipe,
-    { provide: DateAdapter, useClass: CustomDateAdapter }
-  ],
-  templateUrl: './log.component.html',
-  styleUrls: ['./log.component.scss']
+    selector: 'app-log',
+    imports: [
+        LogTableComponent,
+        MatProgressSpinnerModule,
+        MatSelectModule,
+        FormsModule,
+        MatFormFieldModule,
+        MatIconModule,
+        MatAutocompleteModule,
+        MatInputModule,
+        SnakeCaseParserPipe,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatChipsModule,
+        MatMenuModule,
+        MatButtonModule,
+    ],
+    providers: [
+        SnakeCaseParserPipe,
+        { provide: DateAdapter, useClass: CustomDateAdapter }
+    ],
+    templateUrl: './log.component.html',
+    styleUrls: ['./log.component.scss']
 })
 export class LogComponent implements OnInit {
   protected logTable = viewChild.required<LogTableComponent>('logTable');

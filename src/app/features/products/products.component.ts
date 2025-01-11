@@ -18,23 +18,22 @@ import { LoaderService } from '../../../../projects/ui-lib/src/public-api';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
-  selector: 'app-products',
-  standalone: true,
-  imports: [
-    NgClass,
-    FormsModule,
-    MatMenuModule,
-    MatIconModule,
-    MatChipsModule,
-    MatTableModule,
-    MatInputModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    DatePipe
-  ],
-  templateUrl: './products.component.html',
-  styleUrl: './products.component.scss'
+    selector: 'app-products',
+    imports: [
+        NgClass,
+        FormsModule,
+        MatMenuModule,
+        MatIconModule,
+        MatChipsModule,
+        MatTableModule,
+        MatInputModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatFormFieldModule,
+        DatePipe
+    ],
+    templateUrl: './products.component.html',
+    styleUrl: './products.component.scss'
 })
 export class ProductsComponent implements OnInit {
   protected categories: Category[] = [];
