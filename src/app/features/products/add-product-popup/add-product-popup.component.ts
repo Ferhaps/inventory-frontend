@@ -16,18 +16,18 @@ type AddProductModel = {
 };
 
 @Component({
-    selector: 'app-add-product-popup',
-    imports: [
-        FormsModule,
-        DefaultDialogComponent,
-        MatFormFieldModule,
-        MatInputModule,
-        MatSelectModule,
-        MatButtonModule,
-        MatProgressSpinnerModule
-    ],
-    templateUrl: './add-product-popup.component.html',
-    styleUrl: './add-product-popup.component.scss'
+  selector: 'app-add-product-popup',
+  imports: [
+    FormsModule,
+    DefaultDialogComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatProgressSpinnerModule
+  ],
+  templateUrl: './add-product-popup.component.html',
+  styleUrl: './add-product-popup.component.scss'
 })
 export class AddProductPopupComponent {
   protected model: AddProductModel = {

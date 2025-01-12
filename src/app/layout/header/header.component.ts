@@ -10,10 +10,10 @@ import { MatDividerModule } from '@angular/material/divider';
   templateUrl: 'header.component.html',
   styleUrls: ['header.component.scss'],
   imports: [
-      MatMenuModule,
-      CustomMatIconModule,
-      MatButtonModule,
-      MatDividerModule
+    MatMenuModule,
+    CustomMatIconModule,
+    MatButtonModule,
+    MatDividerModule
   ]
 })
 export class HeaderComponent {

@@ -7,17 +7,17 @@ import { SnakeCaseParserPipe, WhiteSpaceFillerPipe } from '../../../../../projec
 import { Log } from '../../../shared/types';
 
 @Component({
-    selector: 'app-log-table',
-    templateUrl: 'log-table.component.html',
-    styleUrls: ['log-table.component.scss'],
-    imports: [
-        DatePipe,
-        NgClass,
-        WhiteSpaceFillerPipe,
-        SnakeCaseParserPipe,
-        MatTooltipModule,
-        MatProgressSpinnerModule
-    ]
+  selector: 'app-log-table',
+  templateUrl: 'log-table.component.html',
+  styleUrls: ['log-table.component.scss'],
+  imports: [
+    DatePipe,
+    NgClass,
+    WhiteSpaceFillerPipe,
+    SnakeCaseParserPipe,
+    MatTooltipModule,
+    MatProgressSpinnerModule
+  ]
 })
 export class LogTableComponent {
   public data = input.required<Log[]>();

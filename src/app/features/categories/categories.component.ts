@@ -13,18 +13,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
-    selector: 'app-categories',
-    imports: [
-        NgClass,
-        MatMenuModule,
-        MatIconModule,
-        MatTableModule,
-        MatDialogModule,
-        MatButtonModule,
-        DatePipe
-    ],
-    templateUrl: './categories.component.html',
-    styleUrl: './categories.component.scss'
+  selector: 'app-categories',
+  imports: [
+    NgClass,
+    MatMenuModule,
+    MatIconModule,
+    MatTableModule,
+    MatDialogModule,
+    MatButtonModule,
+    DatePipe
+  ],
+  templateUrl: './categories.component.html',
+  styleUrl: './categories.component.scss'
 })
 export class CategoriesComponent implements OnInit {
   protected categories: TableDataSource<Category>[] = [];

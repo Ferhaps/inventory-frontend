@@ -4,14 +4,15 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 
 @Component({
-    selector: 'lib-default-dialog',
-    imports: [
-        CommonModule,
-        MatIconModule,
-        MatDialogModule
-    ],
-    templateUrl: './default-dialog.component.html',
-    styleUrls: ['./default-dialog.component.scss']
+  selector: 'lib-default-dialog',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatIconModule,
+    MatDialogModule
+  ],
+  templateUrl: './default-dialog.component.html',
+  styleUrls: ['./default-dialog.component.scss']
 })
 export class DefaultDialogComponent {
   @Input() temRef!: TemplateRef<any>;

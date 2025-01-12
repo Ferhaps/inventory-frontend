@@ -1,4 +1,3 @@
-import { NgClass } from '@angular/common';
 import { Component, ElementRef, input, output, viewChild } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,10 +22,10 @@ export type Config = {
   title: string;
   dataProps: string[];
   tableHeadings: string[];
-  options: string[];
-  withAdd: boolean;
-  selectableRows: boolean;
-  sortable: boolean;
+  options?: string[];
+  withAdd?: boolean;
+  selectableRows?: boolean;
+  sortable?: boolean;
   draggable?: boolean;
   classRules?: ClassRule[];
 };
@@ -37,19 +36,19 @@ export type ClassRule = {
 };
 
 @Component({
-    selector: 'lib-table',
-    templateUrl: 'table.component.html',
-    styleUrls: ['table.component.scss'],
-    animations: [fader],
-    imports: [
-        NgClass,
-        WhiteSpaceFillerPipe,
-        MatMenuModule,
-        MatIconModule,
-        MatButtonModule,
-        TableSortHeaderComponent,
-        DragDropModule
-    ]
+  selector: 'lib-table',
+  templateUrl: 'table.component.html',
+  styleUrls: ['table.component.scss'],
+  animations: [fader],
+  standalone: true,
+  imports: [
+    WhiteSpaceFillerPipe,
+    MatMenuModule,
+    MatIconModule,
+    MatButtonModule,
+    TableSortHeaderComponent,
+    DragDropModule
+  ],
 })
 export class TableComponent {
   public config = input.required<Config>();

@@ -19,20 +19,20 @@ export type RegisterUserModel = {
 };
 
 @Component({
-    selector: 'app-register-user-popup',
-    imports: [
-        DefaultDialogComponent,
-        FormsModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatProgressSpinnerModule,
-        MatInputModule,
-        FieldsMatchValidatorDirective,
-        PasswordValidatorDirective,
-        MatButtonModule
-    ],
-    templateUrl: './register-user-popup.component.html',
-    styleUrl: './register-user-popup.component.scss'
+  selector: 'app-register-user-popup',
+  imports: [
+    DefaultDialogComponent,
+    FormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatProgressSpinnerModule,
+    MatInputModule,
+    FieldsMatchValidatorDirective,
+    PasswordValidatorDirective,
+    MatButtonModule
+  ],
+  templateUrl: './register-user-popup.component.html',
+  styleUrl: './register-user-popup.component.scss'
 })
 export class RegisterUserPopupComponent {
   protected model: RegisterUserModel = {
