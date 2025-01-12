@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { Category, LoggedUserInfo, Product, TableDataSource } from '../../shared/types';
 import { ProductService } from './data-access/product.service';
 import { MatChipListboxChange, MatChipsModule } from '@angular/material/chips';
@@ -37,7 +37,7 @@ import { AuthService } from '../../services/auth.service';
 export class ProductsComponent implements OnInit {
   protected categories: Category[] = [];
   protected currentCategoryId: string = '';
-  protected tableDataSource: TableDataSource<Product>[] = [];
+  protected tableDataSource = signal<TableDataSource<Product>[]>([]);
   protected displayedColumns: string[] = ['name', 'quantity', 'dateCreated', 'dateUpdated'];
   private allProducts: Product[] = [];
   private productActions: string[] = [];
@@ -96,7 +96,7 @@ export class ProductsComponent implements OnInit {
 
   private setCurrentProducts(): void {
     const products = this.allProducts.filter((product) => product.categoryId === this.currentCategoryId);
-    this.tableDataSource = products.map((product) => ({ actions: this.productActions, ...product }));
+    this.tableDataSource.set(products.map((product) => ({ actions: this.productActions, ...product })));
   }
 
   protected updateQuantity(product: Product): void {

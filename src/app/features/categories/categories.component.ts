@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
@@ -26,7 +26,7 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './categories.component.scss'
 })
 export class CategoriesComponent implements OnInit {
-  protected categories: TableDataSource<Category>[] = [];
+  protected categories = signal<TableDataSource<Category>[]>([]);
   protected displayedColumns: string[] = ['name', 'dateCreated', 'dateUpdated'];
   
   private categoryService = inject(CategoryService);
@@ -49,7 +49,7 @@ export class CategoriesComponent implements OnInit {
     this.loadingService.setLoading(true);
     this.categoryService.getCategories().subscribe({
       next: (categories: Category[]) => {
-        this.categories = categories.map((c) => ({ ...c, actions: ['Delete'] }));
+        this.categories.set(categories.map((c) => ({ ...c, actions: ['Delete'] })));
         this.loadingService.setLoading(false);
         console.log(categories);
       },
@@ -65,7 +65,8 @@ export class CategoriesComponent implements OnInit {
 
     popup.afterClosed().subscribe((category: Category | undefined) => {
       if (category) {
-        this.categories = [({ ...category, actions: ['Delete'] }), ...this.categories];
+        const newCategoryRow = { ...category, actions: ['Delete'] };
+        this.categories.set([...this.categories(), newCategoryRow]);
       }
     });
   }
@@ -74,7 +75,7 @@ export class CategoriesComponent implements OnInit {
     if (action === 'Delete') {
       this.categoryService.deletetCategory(category.id).subscribe({
         next: () => {
-          this.categories = this.categories.filter((c) => c.id !== category.id);
+          this.categories.set(this.categories().filter((c) => c.id !== category.id));
       }});
     }
   }
