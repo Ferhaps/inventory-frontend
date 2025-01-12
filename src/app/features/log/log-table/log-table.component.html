@@ -29,7 +29,8 @@
                 <div class="flexer">
                   @if (obj.user) {
                     <div class="mr02">User:</div>
-                    <div class="mr05" [ngClass]="{'link': !obj.event.includes('DELETE')}"
+                    <div class="mr05"
+                      [class.link]="!obj.event.includes('DELETE')"
                       (click)="navigate('users', obj.user.id)">
                       {{obj.user.email | blankFiller}}
                     </div>
@@ -37,7 +38,7 @@
 
                   @if (obj.product) {
                     <div class="mr02">Product:</div>
-                    <div class="mr05" [ngClass]="{'link': !obj.event.includes('DELETE')}"
+                    <div class="mr05" [class.link]="!obj.event.includes('DELETE')"
                       (click)="navigate('products', obj.product.id)">
                       {{obj.product.name | blankFiller}}
                     </div>
@@ -45,7 +46,7 @@
 
                   @if (obj.category) {
                     <div class="mr02">Category:</div>
-                    <div class="mr05" [ngClass]="{'link': !obj.event.includes('DELETE')}"
+                    <div class="mr05" [class.link]="!obj.event.includes('DELETE')"
                       (click)="navigate('categories', obj.category.id)">
                       {{obj.category.name | blankFiller}}
                     </div>

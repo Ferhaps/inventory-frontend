@@ -10,7 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
-import { DatePipe, NgClass } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AddProductPopupComponent } from './add-product-popup/add-product-popup.component';
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
@@ -20,7 +20,6 @@ import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-products',
   imports: [
-    NgClass,
     FormsModule,
     MatMenuModule,
     MatIconModule,

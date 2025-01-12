@@ -1,4 +1,4 @@
-import { DatePipe, NgClass } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, effect, ElementRef, inject, input, output, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -12,7 +12,6 @@ import { Log } from '../../../shared/types';
   styleUrls: ['log-table.component.scss'],
   imports: [
     DatePipe,
-    NgClass,
     WhiteSpaceFillerPipe,
     SnakeCaseParserPipe,
     MatTooltipModule,

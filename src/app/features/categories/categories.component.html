@@ -30,7 +30,7 @@
           <mat-menu #optionsMenu="matMenu">
             @for (action of category.actions; track $index) {
               <div mat-menu-item (click)="selectOption(category, action)" class="fw500"
-                [ngClass]="{ 'red': action == 'Delete' }">
+                [class.red]="action == 'Delete'">
                 {{action}}
               </div>
             }
