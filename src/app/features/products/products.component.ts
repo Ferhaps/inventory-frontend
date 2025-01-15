@@ -16,6 +16,7 @@ import { AddProductPopupComponent } from './add-product-popup/add-product-popup.
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import { LoaderService } from '../../../../projects/ui-lib/src/public-api';
 import { AuthService } from '../../services/auth.service';
+import { DefaultDeletePopupComponent } from '../../shared/default-delete-popup/default-delete-popup.component';
 
 @Component({
   selector: 'app-products',
@@ -118,12 +119,26 @@ export class ProductsComponent implements OnInit {
     });
   }
 
+  private openDeleteProductPopup(product: Product): void {
+    const ref = this.dialog.open(DefaultDeletePopupComponent, {
+      width: '350px',
+      data: `product: ${product.name}`,
+      scrollStrategy: new NoopScrollStrategy()
+    });
+    
+    ref.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.productService.deleteProduct(product.id).subscribe(() => {
+          this.allProducts = this.allProducts.filter((p) => p.id !== product.id);
+          this.setCurrentProducts();
+        });
+      }
+    });
+  }
+
   protected selectOption(product: Product, action: string): void {
     if (action === 'Delete') {
-      this.productService.deleteProduct(product.id).subscribe(() => {
-        this.allProducts = this.allProducts.filter((p) => p.id !== product.id);
-        this.setCurrentProducts();
-      });
+      this.openDeleteProductPopup(product);
     }
   }
 }
