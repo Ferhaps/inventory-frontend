@@ -1,5 +1,9 @@
 @import './blue-theme.scss';
 
+:root {
+  --header-height: 67px;
+}
+
 html, body { 
   width: 100%;
   height: 100%;

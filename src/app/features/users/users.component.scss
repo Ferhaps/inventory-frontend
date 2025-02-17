@@ -8,7 +8,7 @@
   }
 
   .table-wrapper {
-    max-height: calc(100% - 40px);
+    max-height: calc(100vh - (var(--header-height) + 40px + 3rem));
 
     table {
       th {
