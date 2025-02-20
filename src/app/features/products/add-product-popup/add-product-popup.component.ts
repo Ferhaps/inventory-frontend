@@ -1,5 +1,4 @@
 import { Component, Inject, inject } from '@angular/core';
-import { DefaultDialogComponent } from '../../../../../projects/ui-lib/src/public-api';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Category, PopupState, Product } from '../../../shared/types';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -9,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
+import { DefaultDialogComponent } from '@ferhaps/easy-ui-lib';
 
 type AddProductModel = {
   name: string;

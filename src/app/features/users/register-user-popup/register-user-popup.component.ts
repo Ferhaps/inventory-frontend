@@ -1,5 +1,4 @@
 import { Component, inject } from '@angular/core';
-import { DefaultDialogComponent, FieldsMatchValidatorDirective } from '../../../../../projects/ui-lib/src/public-api';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -8,8 +7,8 @@ import { PopupState, User } from '../../../shared/types';
 import { MatDialogRef } from '@angular/material/dialog';
 import { AuthService } from '../../../services/auth.service';
 import { MatInputModule } from '@angular/material/input';
-import { PasswordValidatorDirective } from '../../../../../projects/ui-lib/src/lib/directives/password-validator.directive';
 import { MatButtonModule } from '@angular/material/button';
+import { DefaultDialogComponent, FieldsMatchValidatorDirective } from '@ferhaps/easy-ui-lib';
 
 export type RegisterUserModel = {
   email: string;
@@ -28,7 +27,6 @@ export type RegisterUserModel = {
     MatProgressSpinnerModule,
     MatInputModule,
     FieldsMatchValidatorDirective,
-    PasswordValidatorDirective,
     MatButtonModule
   ],
   templateUrl: './register-user-popup.component.html',

@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { NavigationStart, Router, RouterOutlet } from '@angular/router';
-import { ErrorHandlerComponent, GlobalLoaderComponent } from '../../projects/ui-lib/src/public-api';
+import { ErrorHandlerComponent, GlobalLoaderComponent } from '@ferhaps/easy-ui-lib';
 
 @Component({
   selector: 'app-root',

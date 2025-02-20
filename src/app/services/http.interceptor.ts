@@ -4,8 +4,8 @@ import { catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import { inject } from '@angular/core';
 import { throwError } from 'rxjs';
-import { ErrorService } from '../../../projects/ui-lib/src/public-api';
 import { LoggedUserInfo } from '../shared/types';
+import { ErrorService } from '@ferhaps/easy-ui-lib';
 
 const URLS_WITHOUT_TOKEN = [
   '/auth/login'

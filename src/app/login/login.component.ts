@@ -8,8 +8,8 @@ import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 import { TOKEN_KEY } from '../shared/utils';
 import { MatIconModule } from '@angular/material/icon';
-import { PasswordValidatorDirective } from '../../../projects/ui-lib/src/lib/directives/password-validator.directive';
 import { LoggedUserInfo } from '../shared/types';
+import { PasswordValidatorDirective } from '@ferhaps/easy-ui-lib';
 
 @Component({
   selector: 'app-login',

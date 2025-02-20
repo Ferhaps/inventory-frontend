@@ -1,7 +1,7 @@
 import { Component, Inject, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-import { DefaultDialogComponent } from '../../../../projects/ui-lib/src/public-api';
+import { DefaultDialogComponent } from '@ferhaps/easy-ui-lib';
 
 
 @Component({

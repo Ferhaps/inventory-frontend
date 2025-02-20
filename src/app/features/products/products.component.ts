@@ -14,9 +14,9 @@ import { DatePipe } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { AddProductPopupComponent } from './add-product-popup/add-product-popup.component';
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
-import { LoaderService } from '../../../../projects/ui-lib/src/public-api';
 import { AuthService } from '../../services/auth.service';
 import { DefaultDeletePopupComponent } from '../../shared/default-delete-popup/default-delete-popup.component';
+import { LoaderService } from '@ferhaps/easy-ui-lib';
 
 @Component({
   selector: 'app-products',

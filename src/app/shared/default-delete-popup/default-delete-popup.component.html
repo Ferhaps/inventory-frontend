@@ -1,4 +1,4 @@
-<lib-default-dialog title="Delete">
+<lib-default-dialog [dialogTitle]="'Delete'">
   <div class="dialog-content pr1 pl1">
     <div class="center fs18">Are you sure you want to delete <strong>{{ data }}</strong>?</div>
     <div class="centerer mt1"><button mat-raised-button class="main-btn" (click)="deleteAndClose()">Delete</button></div>

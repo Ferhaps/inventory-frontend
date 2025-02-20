@@ -3,8 +3,8 @@ import { Component, effect, ElementRef, inject, input, output, viewChild } from 
 import { Router } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { SnakeCaseParserPipe, WhiteSpaceFillerPipe } from '../../../../../projects/ui-lib/src/public-api';
 import { Log } from '../../../shared/types';
+import { SnakeCaseParserPipe, WhiteSpaceFillerPipe } from '@ferhaps/easy-ui-lib';
 
 @Component({
   selector: 'app-log-table',

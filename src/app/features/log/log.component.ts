@@ -14,11 +14,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { LogTableComponent } from './log-table/log-table.component';
 import { LogService } from './data-access/log.service';
 import { Category, Log, LogBody, Product, User } from '../../shared/types';
-import { LoaderService, SnakeCaseParserPipe } from '../../../../projects/ui-lib/src/public-api';
 import { CustomDateAdapter } from '../../shared/custom-date-adapter';
 import { UserService } from '../users/data-access/user.service';
 import { ProductService } from '../products/data-access/product.service';
 import { CategoryService } from '../categories/data-access/category.service';
+import { LoaderService, SnakeCaseParserPipe } from '@ferhaps/easy-ui-lib';
 
 type QuickDateFilter = 'Today' | '1 week' | '1 month' | 'This week' | 'This month' | 'This year';
 
@@ -33,9 +33,9 @@ type QuickDateFilter = 'Today' | '1 week' | '1 month' | 'This week' | 'This mont
     MatIconModule,
     MatAutocompleteModule,
     MatInputModule,
-    SnakeCaseParserPipe,
     MatDatepickerModule,
     MatNativeDateModule,
+    SnakeCaseParserPipe,
     MatChipsModule,
     MatMenuModule,
     MatButtonModule,
