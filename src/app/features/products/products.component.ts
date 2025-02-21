@@ -123,6 +123,7 @@ export class ProductsComponent implements OnInit {
     const ref = this.dialog.open(DefaultDeletePopupComponent, {
       width: '350px',
       data: `product: ${product.name}`,
+      autoFocus: false,
       scrollStrategy: new NoopScrollStrategy()
     });
     

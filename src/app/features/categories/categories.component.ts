@@ -76,6 +76,7 @@ export class CategoriesComponent implements OnInit {
       const ref = this.dialog.open(DefaultDeletePopupComponent, {
         width: '350px',
         data: `category: ${category.name}`,
+        autoFocus: false,
         scrollStrategy: new NoopScrollStrategy()
       });
       
