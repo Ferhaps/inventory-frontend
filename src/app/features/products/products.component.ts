@@ -97,11 +97,24 @@ export class ProductsComponent implements OnInit {
 
   private setCurrentProducts(): void {
     const products = this.allProducts.filter((product) => product.categoryId === this.currentCategoryId);
-    this.tableDataSource.set(products.map((product) => ({ actions: this.productActions, ...product })));
+    this.tableDataSource.set(products.map((product) => (
+      { 
+        actions: this.productActions,
+        ...product,
+        newQuantity: product.quantity
+      }
+    )));
   }
 
-  protected updateQuantity(product: Product): void {
-    this.productService.updateProductQuantity(product.id, product.quantity).subscribe();
+  protected updateQuantity(productObj: Product): void {
+    this.productService.updateProductQuantity(productObj.id, productObj.newQuantity).subscribe({
+      next: () => {
+        const product: Product = this.allProducts.find((p) => p.id === productObj.id)!;
+        product.quantity = productObj.newQuantity;
+        this.setCurrentProducts();
+      },
+      error: () => this.setCurrentProducts()
+    });
   }
 
   protected openAddProductPopup(): void {

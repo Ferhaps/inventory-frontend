@@ -17,6 +17,7 @@ export type Product = {
   id: string;
   name: string;
   quantity: number;
+  newQuantity: number;
   categoryId: string;
   createdAt: string;
   updatedAt: string;
