@@ -21,11 +21,23 @@
       <ng-container matColumnDef="quantity" sticky>
         <th mat-header-cell *matHeaderCellDef>Quantity</th>
         <td mat-cell *matCellDef="let product">
-          <mat-form-field>
-            <input matInput type="number" [(ngModel)]="product.quantity"
-              #quantityInput="ngModel" name="quantityField"
-              (change)="updateQuantity(product)">
-          </mat-form-field>
+          <div class="flexer gap1">
+            <mat-form-field>
+              <input matInput type="number" [(ngModel)]="product.newQuantity"
+                #quantityInput="ngModel" name="quantityField">
+            </mat-form-field>
+            @if (product.newQuantity !== product.quantity) {
+              <div class="flexer gap05 product-actions">
+                <button mat-icon-button class="green" (click)="updateQuantity(product)">
+                  <mat-icon>check_circle</mat-icon>
+                </button>
+  
+                <button mat-icon-button class="red" (click)="product.newQuantity = product.quantity">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </div>
+            }
+          </div>
         </td>
       </ng-container>
 
