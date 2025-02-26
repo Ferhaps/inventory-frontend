@@ -7,12 +7,19 @@ import { RegisterUserPopupComponent } from './register-user-popup/register-user-
 import { LoggedUserInfo, TableDataSource, User } from '../../shared/types';
 import { AuthService } from '../../services/auth.service';
 import { LoaderService } from '@ferhaps/easy-ui-lib';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { DefaultDeletePopupComponent } from '../../shared/default-delete-popup/default-delete-popup.component';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-users',
   imports: [
     MatTableModule,
     MatDialogModule,
+    MatIconModule,
+    MatMenuModule,
+    MatButtonModule
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
@@ -29,6 +36,9 @@ export class UsersComponent {
 
   constructor() {
     this.loggedUser = this.authService.getLoggedUserInfo();
+    if (this.loggedUser?.user?.role === 'ADMIN') {
+      this.displayedColumns.push('actions');
+    }
   }
 
   public ngOnInit(): void {
@@ -39,7 +49,12 @@ export class UsersComponent {
     this.loadingService.setLoading(true);
     this.userService.getUsers().subscribe({
       next: (users: User[]) => {
-        this.users.set(users.map((u) => ({ ...u, actions: [] })));
+        this.users.set(
+          users.map((u) => ({
+            ...u,
+            actions: this.loggedUser.user.role === 'ADMIN' && u.id !== this.loggedUser.user.id ? ['Delete'] : []
+          }))
+        );
         this.loadingService.setLoading(false);
         console.log(users);
       },
@@ -55,9 +70,37 @@ export class UsersComponent {
 
     popup.afterClosed().subscribe((user: User | undefined) => {
       if (user) {
-        const newUser = { ...user, actions: [] };
+        const newUser = {
+          ...user,
+          actions: this.loggedUser.user.role === 'ADMIN' ? ['Delete'] : []
+        };
         this.users.set([...this.users(), newUser]);
       }
     });
+  }
+
+   private openUserCategoryPopup(user: User): void {
+      const ref = this.dialog.open(DefaultDeletePopupComponent, {
+        width: '350px',
+        data: `user: ${user.email}`,
+        autoFocus: false,
+        restoreFocus: false,
+        scrollStrategy: new NoopScrollStrategy()
+      });
+      
+      ref.afterClosed().subscribe((result: boolean) => {
+        if (result) {
+          this.userService.deletetUser(user.id).subscribe({
+            next: () => {
+              this.users.set(this.users().filter((c) => c.id !== user.id));
+          }});
+        }
+      });
+    }
+
+  protected selectOption(user: User, action: string): void {
+    if (action === 'Delete') {
+      this.openUserCategoryPopup(user);
+    }
   }
 }
