@@ -142,9 +142,11 @@ export class ProductsComponent implements OnInit {
     
     ref.afterClosed().subscribe((result: boolean) => {
       if (result) {
-        this.productService.deleteProduct(product.id).subscribe(() => {
-          this.allProducts = this.allProducts.filter((p) => p.id !== product.id);
-          this.setCurrentProducts();
+        this.productService.deleteProduct(product.id).subscribe({
+          next: () => {
+            this.allProducts = this.allProducts.filter((p) => p.id !== product.id);
+            this.setCurrentProducts();
+          }
         });
       }
     });

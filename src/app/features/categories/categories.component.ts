@@ -73,22 +73,23 @@ export class CategoriesComponent implements OnInit {
   }
 
   private openDeleteCategoryPopup(category: Category): void {
-      const ref = this.dialog.open(DefaultDeletePopupComponent, {
-        width: '350px',
-        data: `category: ${category.name}`,
-        autoFocus: false,
-        scrollStrategy: new NoopScrollStrategy()
-      });
-      
-      ref.afterClosed().subscribe((result: boolean) => {
-        if (result) {
-          this.categoryService.deletetCategory(category.id).subscribe({
-            next: () => {
-              this.categories.set(this.categories().filter((c) => c.id !== category.id));
-          }});
-        }
-      });
-    }
+    const ref = this.dialog.open(DefaultDeletePopupComponent, {
+      width: '350px',
+      data: `category: ${category.name}`,
+      autoFocus: false,
+      scrollStrategy: new NoopScrollStrategy()
+    });
+    
+    ref.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.categoryService.deletetCategory(category.id).subscribe({
+          next: () => {
+            this.categories.set(this.categories().filter((c) => c.id !== category.id));
+          }
+        });
+      }
+    });
+  }
 
   protected selectOption(category: Category, action: string): void {
     if (action === 'Delete') {
