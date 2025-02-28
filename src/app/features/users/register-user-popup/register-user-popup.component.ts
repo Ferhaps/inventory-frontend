@@ -8,7 +8,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { AuthService } from '../../../services/auth.service';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { DefaultDialogComponent, FieldsMatchValidatorDirective } from '@ferhaps/easy-ui-lib';
+import { DefaultDialogComponent, FieldsMatchValidatorDirective, PasswordValidatorDirective } from '@ferhaps/easy-ui-lib';
 
 export type RegisterUserModel = {
   email: string;
@@ -26,6 +26,7 @@ export type RegisterUserModel = {
     MatSelectModule,
     MatProgressSpinnerModule,
     MatInputModule,
+    PasswordValidatorDirective,
     FieldsMatchValidatorDirective,
     MatButtonModule
   ],

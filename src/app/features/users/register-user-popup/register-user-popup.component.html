@@ -1,11 +1,11 @@
 <lib-default-dialog [dialogTitle]="'Add user'">
-  <form novalidate autocomplete="off" class="dialog-content flex-col align-items-center gap1 w-75" #f="ngForm" (ngSubmit)="onSubmit(f)">
+  <form novalidate autocomplete="off" class="dialog-content flex-col align-items-center gap2 w-75" #f="ngForm" (ngSubmit)="onSubmit(f)">
     <mat-form-field class="w-100">
       <mat-label>Email</mat-label>
       <input matInput name="email" [(ngModel)]="model.email" 
         #emailField="ngModel" type="email" required email />
       @if (emailField.invalid) {
-        <mat-error>Invalid email</mat-error>
+        <mat-error class="fs12">Invalid email</mat-error>
       }
     </mat-form-field>
 
@@ -16,7 +16,7 @@
         <mat-option value="OPERATOR">OPERATOR</mat-option>
       </mat-select>
       @if (roleField.invalid) {
-        <mat-error>Role is required</mat-error>
+        <mat-error class="fs12">Role is required</mat-error>
       }
     </mat-form-field>
 
@@ -26,7 +26,7 @@
         [(ngModel)]="model.password" #passwordField="ngModel" name="password"
         type="password">
       @if (passwordField.invalid) {
-        <mat-error>Password must have at least one uppercase letter, one symbol, and one number</mat-error>
+        <mat-error class="fs12">Password must have at least one uppercase and lowercase letter, one symbol, one number and be at least 8 characters</mat-error>
       }
     </mat-form-field>
 
@@ -36,10 +36,10 @@
         [(ngModel)]="model.passwordRepeat" #repeatPassField="ngModel" name="passwordRepeat"
         type="password" />
         @if (repeatPassField.errors?.['required']) {
-          <mat-error>Repeat password is required</mat-error>
+          <mat-error class="fs12">Repeat password is required</mat-error>
         }
         @if (repeatPassField.errors?.['mismatch']) {
-          <mat-error>Does not match password</mat-error>
+          <mat-error class="fs12">Does not match password</mat-error>
         }
     </mat-form-field>
 
