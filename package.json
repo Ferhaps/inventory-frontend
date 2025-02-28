@@ -20,7 +20,7 @@
     "@angular/platform-browser": "^19.0.6",
     "@angular/platform-browser-dynamic": "^19.0.6",
     "@angular/router": "^19.0.6",
-    "@ferhaps/easy-ui-lib": "^0.0.8",
+    "@ferhaps/easy-ui-lib": "^1.1.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
