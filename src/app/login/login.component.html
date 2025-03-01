@@ -22,7 +22,7 @@
         <mat-icon>{{ hidePass() ? 'visibility_off' : 'visibility' }}</mat-icon>
       </button>
       @if (passwordField.invalid) {
-        <mat-error>Password must have at least one uppercase letter, one symbol, and one number</mat-error>
+        <mat-error>Requires 1 uppercase, 1 lowercase letter, 1 symbol, 1 number, 8 characters</mat-error>
       }
     </mat-form-field>
 
