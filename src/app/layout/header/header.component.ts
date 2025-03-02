@@ -4,6 +4,7 @@ import { AuthService } from '../../services/auth.service';
 import { CustomMatIconModule } from '../../shared/custom-icons.module';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -13,7 +14,8 @@ import { MatDividerModule } from '@angular/material/divider';
     MatMenuModule,
     CustomMatIconModule,
     MatButtonModule,
-    MatDividerModule
+    MatDividerModule,
+    RouterModule
   ]
 })
 export class HeaderComponent {

@@ -1,11 +1,33 @@
 header {
-  background-color: #F1EFF3;
-  text-align: center;
-  height: 65px;
-  position: relative;
-  border-bottom: 2px solid #E5E4E7;
+  display: flex;
+  align-items: center;
+  background-color: var(--primary-color);
+  min-height: var(--header-height);
+  color: #FFF;
+  gap: 2rem;
 
   .mat-divider {
     height: 30px;
+  }
+
+  nav {
+    width: calc(100% - 19rem + 80px);
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      cursor: pointer;
+      padding: 0.25rem .6rem;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      color: #FFF;
+
+      &.active, &:hover {
+        background-color: #fff;
+        color: #000;
+      }
+    }
   }
 }
