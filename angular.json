@@ -55,7 +55,7 @@
             ],
             "styles": [
               "src/styles.scss",
-              "src/blue-theme.scss"
+              "src/theme.scss"
             ],
             "scripts": []
           },
@@ -121,7 +121,7 @@
             ],
             "styles": [
               "src/styles.scss",
-              "src/blue-theme.scss"
+              "src/theme.scss"
             ],
             "scripts": []
           }
