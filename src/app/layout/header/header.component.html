@@ -32,7 +32,12 @@
     </a>
   </nav>
 
-  <div class="right flexer">
+  <div class="right right-part">
+    <mat-slide-toggle
+      [checked]="themeService.isDarkMode$ | async"
+      (change)="themeService.toggleTheme()">
+      Dark Mode
+    </mat-slide-toggle>
     <mat-divider vertical="true" />
     <div class="flexer ml1 mr1 pointer" [matMenuTriggerFor]="menu">
       <button mat-icon-button>

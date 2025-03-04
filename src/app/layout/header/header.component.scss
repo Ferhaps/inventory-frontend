@@ -6,10 +6,6 @@ header {
   color: #FFF;
   gap: 2rem;
 
-  .mat-divider {
-    height: 30px;
-  }
-
   nav {
     width: calc(100% - 19rem + 80px);
 
@@ -27,6 +23,22 @@ header {
       &.active, &:hover {
         background-color: #fff;
         color: #000;
+      }
+    }
+  }
+
+  .right-part {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .mat-divider {
+      height: 30px;
+    }
+
+    ::ng-deep {
+      #mat-mdc-slide-toggle-0-label {
+        width: max-content !important;
       }
     }
   }
