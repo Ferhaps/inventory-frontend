@@ -13,12 +13,10 @@ export class ThemeService {
     if (savedTheme) {
       this.setDarkMode(savedTheme === 'dark');
     } else {
-      //Check system preference
       const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       this.setDarkMode(prefersDark);
     }
 
-    //Listen for system theme changes
     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
       console.log(e.matches, 2);
       if (!localStorage.getItem('preferred-theme')) {
