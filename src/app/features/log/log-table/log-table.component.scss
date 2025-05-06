@@ -5,11 +5,11 @@
   table {
     th {
       text-align: left;
-      border-bottom: 2px solid #cccccc !important;
+      border-bottom: 2px solid #cccccc;
       position: sticky;
       top: 0;
       z-index: 2;
-      background-color: #eaf6fc !important;
+      background-color: #eaf6fc;
     }
 
     td, th {
@@ -29,7 +29,6 @@
 
       td {
         text-align: left;
-        color: black;
         border: none;
       }
     }
@@ -38,5 +37,11 @@
   .no-data {
     height: 200px;
     font-size: 20px;
+  }
+}
+
+:host-context(.dark-theme) {
+  th {
+    background-color: var(--background-color) !important;
   }
 }

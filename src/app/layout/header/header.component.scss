@@ -5,6 +5,7 @@ header {
   min-height: var(--header-height);
   color: #FFF;
   gap: 2rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 
   nav {
     width: calc(100% - 19rem + 80px);
@@ -41,5 +42,12 @@ header {
         width: max-content !important;
       }
     }
+  }
+}
+
+:host-context(.dark-theme) {
+  header {
+    background-color: var(--dark-primary-color) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
   }
 }

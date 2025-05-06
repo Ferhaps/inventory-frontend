@@ -10,7 +10,7 @@
       height: 100%;
   
       .upper-part {
-        padding-block: 0.87rem;
+        padding-block: 8.5px;
         border-bottom: 2px solid #E5E4E7;
       }
   
@@ -24,5 +24,11 @@
   .log-table {
     width: 100%;
     background-color: #EAF6FC;
+  }
+}
+
+:host-context(.dark-theme) {
+  .log-table {
+    background-color: var(--background-color) !important;
   }
 }
