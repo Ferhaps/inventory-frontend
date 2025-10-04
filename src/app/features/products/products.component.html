@@ -26,6 +26,7 @@
               <input matInput type="number" [(ngModel)]="product.newQuantity"
                 #quantityInput="ngModel" name="quantityField">
             </mat-form-field>
+
             @if (product.newQuantity !== product.quantity) {
               <div class="flexer gap05 product-actions">
                 <button mat-icon-button class="green" (click)="updateQuantity(product)">
@@ -57,6 +58,7 @@
           <button mat-icon-button class="pointer dots right" [matMenuTriggerFor]="optionsMenu">
             <mat-icon>more_vert</mat-icon>
           </button>
+          
           <mat-menu #optionsMenu="matMenu">
             @for (action of product.actions; track $index) {
               <div mat-menu-item (click)="selectOption(product, action)" class="fw500"
