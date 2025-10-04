@@ -94,11 +94,11 @@ $dark-theme: mat.m2-define-dark-theme((
 
 // Dark theme variables
 .dark-theme {
-  --background-color: #1a1a1a;
-  --text-color: #f2f2f2;
-  --border-color: #404040;
-  --surface-color: #1e1e1e;
-  --hover-color: #2d2d2d;
+  --background-color: #1a1a1a !important;
+  --text-color: #f2f2f2 !important;
+  --border-color: #404040 !important;
+  --surface-color: #1e1e1e !important;
+  --hover-color: #2d2d2d !important;
 }
 
 @include mat.all-component-themes($light-theme);

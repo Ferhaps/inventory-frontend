@@ -26,7 +26,7 @@ import { ThemeService } from '../../services/theme.service';
 export class HeaderComponent {
   private authService = inject(AuthService);
 
-  public themeService = inject(ThemeService);
+  protected themeService = inject(ThemeService);
 
   protected onOptionSelected(option: string): void {
     switch (option) {
