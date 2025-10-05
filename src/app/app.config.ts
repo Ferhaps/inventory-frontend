@@ -9,6 +9,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection(),
     provideRouter(routes, withComponentInputBinding(), withHashLocation()),
-    provideHttpClient(withFetch(), withInterceptors([globalError, authInterceptor])),
+    provideHttpClient(withInterceptors([globalError, authInterceptor]), withFetch()),
   ]
 };

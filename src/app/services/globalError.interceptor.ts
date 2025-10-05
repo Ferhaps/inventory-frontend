@@ -6,8 +6,8 @@ import { throwError } from 'rxjs';
 import { ErrorService } from '@ferhaps/easy-ui-lib';
 
 export const globalError: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
   const errorService = inject(ErrorService);
+  const authService = inject(AuthService);
 
   return next(req)
     .pipe(

@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './auth.guard';
+import { provideHttpClient, withFetch, withInterceptors, withRequestsMadeViaParent } from '@angular/common/http';
+import { authInterceptor } from '../services/auth.interceptor';
 
 export const routes: Routes = [
   {
@@ -11,6 +13,13 @@ export const routes: Routes = [
     path: '',
     loadComponent: () => import('../layout/layout.component').then((c) => c.LayoutComponent),
     canActivate: [authGuard],
+    // providers: [
+    //   provideHttpClient(
+    //     withFetch(),
+    //     withInterceptors([authInterceptor]),
+    //     withRequestsMadeViaParent(),
+    //   )
+    // ],
     children: [
       {
         path: 'products',
