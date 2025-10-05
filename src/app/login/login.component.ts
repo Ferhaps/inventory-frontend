@@ -34,7 +34,7 @@ export class LoginComponent {
   private router = inject(Router);
   
   constructor () {
-    const userInfo: LoggedUserInfo = JSON.parse(localStorage.getItem(TOKEN_KEY)!);
+    const userInfo: LoggedUserInfo = this.authService.getLoggedUserInfo();
     if (userInfo?.token) {
       this.router.navigateByUrl('products');
     }
