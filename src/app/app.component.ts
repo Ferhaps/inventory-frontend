@@ -14,8 +14,8 @@ import { ThemeService } from './services/theme.service';
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
-  private router = inject(Router);
   private themeService = inject(ThemeService);
+  private router = inject(Router);
 
   constructor() {
     this.setAutoLoginRedirect();
