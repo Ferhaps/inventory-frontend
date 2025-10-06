@@ -31,16 +31,10 @@ header {
   .right-part {
     display: flex;
     align-items: center;
-    gap: 1rem;
 
     .mat-divider {
       height: 30px;
-    }
-
-    ::ng-deep {
-      #mat-mdc-slide-toggle-0-label {
-        width: max-content !important;
-      }
+      margin-left: 1.5rem;
     }
   }
 }

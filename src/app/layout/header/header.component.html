@@ -33,13 +33,12 @@
   </nav>
 
   <div class="right right-part">
-    <div>
-      <mat-slide-toggle
-        [checked]="themeService.isDarkMode$ | async"
-        (change)="themeService.toggleTheme()">
-        Dark Mode
-      </mat-slide-toggle>
-    </div>
+    <mat-slide-toggle
+      style="min-width: 120px;"
+      [checked]="themeService.isDarkMode$ | async"
+      (change)="themeService.toggleTheme()">
+      Dark Mode
+    </mat-slide-toggle>
 
     <mat-divider vertical="true" />
     
