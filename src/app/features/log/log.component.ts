@@ -167,7 +167,7 @@ export class LogComponent implements OnInit {
   }
 
   private getProducts(): void {
-    this.productService.getProduts().subscribe((products: Product[]) => {
+    this.productService.getProducts().subscribe((products: Product[]) => {
       if (products) {
         this.allProducts = products;
         this.filteredProducts = products;

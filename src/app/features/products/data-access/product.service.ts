@@ -13,7 +13,7 @@ export class ProductService {
 
   private http = inject(HttpClient);
 
-  public getProduts(): Observable<Product[]> {
+  public getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(this.productsUrl, JSON_HTTP_OPTIONS);
   }
 
