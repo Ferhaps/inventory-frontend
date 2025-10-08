@@ -95,7 +95,7 @@ export class ProductsComponent implements OnInit {
     this.setCurrentProducts();
   }
 
-  private setCurrentProducts(): void {
+  public setCurrentProducts(): void {
     const products = this.allProducts.filter((product) => product.categoryId === this.currentCategoryId);
     this.tableDataSource.set(products.map((product) => (
       { 
