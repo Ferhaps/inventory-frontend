@@ -36,11 +36,11 @@ import { LoaderService } from '@ferhaps/easy-ui-lib';
   styleUrl: './products.component.scss'
 })
 export class ProductsComponent implements OnInit {
-  public categories: Category[] = [];
-  public currentCategoryId: string = '';
-  public tableDataSource = signal<TableDataSource<Product>[]>([]);
-  public displayedColumns: string[] = ['name', 'quantity', 'dateCreated', 'dateUpdated'];
-  public allProducts: Product[] = [];
+  protected categories: Category[] = [];
+  protected currentCategoryId: string = '';
+  protected tableDataSource = signal<TableDataSource<Product>[]>([]);
+  protected displayedColumns: string[] = ['name', 'quantity', 'dateCreated', 'dateUpdated'];
+  private allProducts: Product[] = [];
   private productActions: string[] = [];
 
   private categoryService = inject(CategoryService);
@@ -90,12 +90,12 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  public showProductsOfCategory(event: MatChipListboxChange): void {
+  protected showProductsOfCategory(event: MatChipListboxChange): void {
     this.currentCategoryId = event.value;
     this.setCurrentProducts();
   }
 
-  public setCurrentProducts(): void {
+  private setCurrentProducts(): void {
     const products = this.allProducts.filter((product) => product.categoryId === this.currentCategoryId);
     this.tableDataSource.set(products.map((product) => (
       { 
@@ -106,7 +106,7 @@ export class ProductsComponent implements OnInit {
     )));
   }
 
-  public updateQuantity(productObj: Product): void {
+  protected updateQuantity(productObj: Product): void {
     this.productService.updateProductQuantity(productObj.id, productObj.newQuantity).subscribe({
       next: () => {
         const product: Product = this.allProducts.find((p) => p.id === productObj.id)!;
@@ -117,7 +117,7 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  public openAddProductPopup(): void {
+  protected openAddProductPopup(): void {
     const popup = this.dialog.open(AddProductPopupComponent, {
       width: '350px',
       data: this.categories,
@@ -152,7 +152,7 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  public selectOption(product: Product, action: string): void {
+  protected selectOption(product: Product, action: string): void {
     if (action === 'Delete') {
       this.openDeleteProductPopup(product);
     }

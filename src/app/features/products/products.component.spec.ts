@@ -118,7 +118,7 @@ describe('ProductsComponent', () => {
       fixture = TestBed.createComponent(ProductsComponent);
       component = fixture.componentInstance;
       
-      expect(component.displayedColumns).toContain('actions');
+      expect(component['displayedColumns']).toContain('actions');
     });
 
     it('should not add actions column for non-ADMIN users', () => {
@@ -129,7 +129,7 @@ describe('ProductsComponent', () => {
       fixture = TestBed.createComponent(ProductsComponent);
       component = fixture.componentInstance;
 
-      expect(component.displayedColumns).not.toContain('actions');
+      expect(component['displayedColumns']).not.toContain('actions');
     });
 
     it('should load categories and products on init', () => {
@@ -143,7 +143,7 @@ describe('ProductsComponent', () => {
       
       expect(categoryService.getCategories).toHaveBeenCalled();
       expect(productService.getProducts).toHaveBeenCalled();
-      expect(component.categories).toEqual(mockCategories);
+      expect(component['categories']).toEqual(mockCategories);
       expect(component['allProducts']).toEqual(mockProducts);
     });
 
@@ -185,28 +185,28 @@ describe('ProductsComponent', () => {
     });
 
     it('should filter products by selected category', () => {
-      component.showProductsOfCategory({ value: 'cat1' } as MatChipListboxChange);
+      component['showProductsOfCategory']({ value: 'cat1' } as MatChipListboxChange);
 
-      const displayedProducts = component.tableDataSource();
+      const displayedProducts = component['tableDataSource']();
       expect(displayedProducts.length).toBe(2);
       expect(displayedProducts.every(p => p.categoryId === 'cat1')).toBe(true);
     });
 
     it('should update displayed products when category changes', () => {
       const event = { value: 'cat2' } as MatChipListboxChange;
-      
-      component.showProductsOfCategory(event);
-      
-      expect(component.currentCategoryId).toBe('cat2');
-      const displayedProducts = component.tableDataSource();
+
+      component['showProductsOfCategory'](event);
+
+      expect(component['currentCategoryId']).toBe('cat2');
+      const displayedProducts = component['tableDataSource']();
       expect(displayedProducts.length).toBe(1);
       expect(displayedProducts[0].categoryId).toBe('cat2');
     });
 
     it('should initialize newQuantity field for products', () => {
       component['setCurrentProducts']();
-      
-      const displayedProducts = component.tableDataSource();
+
+      const displayedProducts = component['tableDataSource']();
       displayedProducts.forEach(product => {
         expect(product.newQuantity).toBe(product.quantity);
       });
@@ -227,9 +227,9 @@ describe('ProductsComponent', () => {
     it('should update product quantity successfully', () => {
       productService.updateProductQuantity.and.returnValue(of({}));
       const product = { ...mockProducts[0], newQuantity: 25 };
-      
-      component.updateQuantity(product);
-      
+
+      component['updateQuantity'](product);
+
       expect(productService.updateProductQuantity).toHaveBeenCalledWith('prod1', 25);
       expect(component['allProducts'][0].quantity).toBe(25);
     });
@@ -238,11 +238,11 @@ describe('ProductsComponent', () => {
       productService.updateProductQuantity.and.returnValue(throwError(() => new Error('Update failed')));
       const product = { ...mockProducts[0], newQuantity: 25 };
       const originalQuantity = mockProducts[0].quantity;
-      
-      component.updateQuantity(product);
-      
+
+      component['updateQuantity'](product);
+
       expect(productService.updateProductQuantity).toHaveBeenCalled();
-      expect(component.tableDataSource()[0].newQuantity).toBe(originalQuantity);
+      expect(component['tableDataSource']()[0].newQuantity).toBe(originalQuantity);
     });
   });
 
@@ -271,26 +271,26 @@ describe('ProductsComponent', () => {
       productService.addProduct.and.returnValue(of(newProduct));
       (dialog.open as jasmine.Spy).and.returnValue({ afterClosed: () => of(newProduct) } as any);
 
-      const initialLength = component.allProducts.length;
+      const initialLength = component['allProducts'].length;
 
-      component.openAddProductPopup();
+      component['openAddProductPopup']();
 
       (dialog.open as jasmine.Spy).calls.mostRecent().returnValue.afterClosed().subscribe(() => {
-        expect(component.allProducts.length).toBe(initialLength + 1);
-        expect(component.allProducts).toContain(newProduct);
+        expect(component['allProducts'].length).toBe(initialLength + 1);
+        expect(component['allProducts']).toContain(newProduct);
         done();
       });
     });
 
     it('should not add product when dialog is cancelled', (done) => {
-      const initialLength = component.allProducts.length;
+      const initialLength = component['allProducts'].length;
       (dialog.open as jasmine.Spy).and.returnValue({ afterClosed: () => of(undefined) } as any);
 
-      component.openAddProductPopup();
+      component['openAddProductPopup']();
 
       (dialog.open as jasmine.Spy).calls.mostRecent().returnValue.afterClosed().subscribe(() => {
         expect(productService.addProduct).not.toHaveBeenCalled();
-        expect(component.allProducts.length).toBe(initialLength);
+        expect(component['allProducts'].length).toBe(initialLength);
         done();
       });
     });
@@ -310,7 +310,7 @@ describe('ProductsComponent', () => {
     it('should open delete confirmation dialog', (done) => {
       (dialog.open as jasmine.Spy).and.returnValue({ afterClosed: () => of(false) } as any);
 
-      component.selectOption(mockProducts[0], 'Delete');
+      component['selectOption'](mockProducts[0], 'Delete');
 
       expect(dialog.open).toHaveBeenCalled();
 
@@ -322,27 +322,27 @@ describe('ProductsComponent', () => {
     it('should delete product when confirmed', (done) => {
       productService.deleteProduct.and.returnValue(of({}));
       (dialog.open as jasmine.Spy).and.returnValue({ afterClosed: () => of(true) } as any);
-      const initialLength = component.allProducts.length;
+      const initialLength = component['allProducts'].length;
 
-      component.selectOption(mockProducts[0], 'Delete');
+      component['selectOption'](mockProducts[0], 'Delete');
 
       (dialog.open as jasmine.Spy).calls.mostRecent().returnValue.afterClosed().subscribe(() => {
         expect(productService.deleteProduct).toHaveBeenCalledWith('prod1');
-        expect(component.allProducts.length).toBe(initialLength - 1);
-        expect(component.allProducts.find(p => p.id === 'prod1')).toBeUndefined();
+        expect(component['allProducts'].length).toBe(initialLength - 1);
+        expect(component['allProducts'].find(p => p.id === 'prod1')).toBeUndefined();
         done();
       });
     });
 
     it('should not delete product when cancelled', (done) => {
       (dialog.open as jasmine.Spy).and.returnValue({ afterClosed: () => of(false) } as any);
-      const initialLength = component.allProducts.length;
+      const initialLength = component['allProducts'].length;
 
-      component.selectOption(mockProducts[0], 'Delete');
+      component['selectOption'](mockProducts[0], 'Delete');
 
       (dialog.open as jasmine.Spy).calls.mostRecent().returnValue.afterClosed().subscribe(() => {
         expect(productService.deleteProduct).not.toHaveBeenCalled();
-        expect(component.allProducts.length).toBe(initialLength);
+        expect(component['allProducts'].length).toBe(initialLength);
         done();
       });
     });
