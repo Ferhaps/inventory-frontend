@@ -96,12 +96,12 @@ describe('ProductsComponent', () => {
     categoryService = TestBed.inject(CategoryService) as jasmine.SpyObj<CategoryService>;
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
     loaderService = TestBed.inject(LoaderService) as jasmine.SpyObj<LoaderService>;
+    authService.getLoggedUserInfo.and.returnValue(mockRegularUser);
     dialog = TestBed.inject(MatDialog);
   });
 
   describe('Component Initialization', () => {
     it('should create the component', () => {
-      authService.getLoggedUserInfo.and.returnValue(mockRegularUser);
       categoryService.getCategories.and.returnValue(of([]));
       
       fixture = TestBed.createComponent(ProductsComponent);
@@ -122,7 +122,6 @@ describe('ProductsComponent', () => {
     });
 
     it('should not add actions column for non-ADMIN users', () => {
-      authService.getLoggedUserInfo.and.returnValue(mockRegularUser);
       categoryService.getCategories.and.returnValue(of(mockCategories));
       productService.getProducts.and.returnValue(of(mockProducts));
       
@@ -133,7 +132,6 @@ describe('ProductsComponent', () => {
     });
 
     it('should load categories and products on init', () => {
-      authService.getLoggedUserInfo.and.returnValue(mockRegularUser);
       categoryService.getCategories.and.returnValue(of(mockCategories));
       productService.getProducts.and.returnValue(of(mockProducts));
       
@@ -148,7 +146,6 @@ describe('ProductsComponent', () => {
     });
 
     it('should set loading state correctly', () => {
-      authService.getLoggedUserInfo.and.returnValue(mockRegularUser);
       categoryService.getCategories.and.returnValue(of(mockCategories));
       productService.getProducts.and.returnValue(of(mockProducts));
       
@@ -161,7 +158,6 @@ describe('ProductsComponent', () => {
     });
 
     it('should handle empty categories gracefully', () => {
-      authService.getLoggedUserInfo.and.returnValue(mockRegularUser);
       categoryService.getCategories.and.returnValue(of([]));
       
       fixture = TestBed.createComponent(ProductsComponent);
@@ -175,7 +171,6 @@ describe('ProductsComponent', () => {
 
   describe('Category Selection', () => {
     beforeEach(() => {
-      authService.getLoggedUserInfo.and.returnValue(mockRegularUser);
       categoryService.getCategories.and.returnValue(of(mockCategories));
       productService.getProducts.and.returnValue(of(mockProducts));
       
@@ -215,7 +210,6 @@ describe('ProductsComponent', () => {
 
   describe('Product Quantity Update', () => {
     beforeEach(() => {
-      authService.getLoggedUserInfo.and.returnValue(mockRegularUser);
       categoryService.getCategories.and.returnValue(of(mockCategories));
       productService.getProducts.and.returnValue(of(mockProducts));
       
@@ -248,7 +242,6 @@ describe('ProductsComponent', () => {
 
   describe('Add Product Dialog', () => {
     beforeEach(() => {
-      authService.getLoggedUserInfo.and.returnValue(mockRegularUser);
       categoryService.getCategories.and.returnValue(of(mockCategories));
       productService.getProducts.and.returnValue(of(mockProducts));
 
@@ -350,7 +343,6 @@ describe('ProductsComponent', () => {
 
   describe('Error Handling', () => {
     it('should handle category loading error', () => {
-      authService.getLoggedUserInfo.and.returnValue(mockRegularUser);
       categoryService.getCategories.and.returnValue(throwError(() => new Error('Load failed')));
       
       fixture = TestBed.createComponent(ProductsComponent);
@@ -361,7 +353,6 @@ describe('ProductsComponent', () => {
     });
 
     it('should handle product loading error', () => {
-      authService.getLoggedUserInfo.and.returnValue(mockRegularUser);
       categoryService.getCategories.and.returnValue(of(mockCategories));
       productService.getProducts.and.returnValue(throwError(() => new Error('Load failed')));
       
