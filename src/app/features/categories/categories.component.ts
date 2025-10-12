@@ -82,7 +82,7 @@ export class CategoriesComponent implements OnInit {
     
     ref.afterClosed().subscribe((result: boolean) => {
       if (result) {
-        this.categoryService.deletetCategory(category.id).subscribe({
+        this.categoryService.deleteCategory(category.id).subscribe({
           next: () => {
             this.categories.set(this.categories().filter((c) => c.id !== category.id));
           }

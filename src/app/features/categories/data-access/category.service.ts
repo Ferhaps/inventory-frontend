@@ -21,7 +21,7 @@ export class CategoryService {
     return this.http.post<Category>(this.categoryUrl + `?categoryName=${name}`, {}, JSON_HTTP_OPTIONS);
   }
 
-  public deletetCategory(id: string): Observable<any> {
+  public deleteCategory(id: string): Observable<any> {
     return this.http.delete(this.categoryUrl + `/${id}`, JSON_HTTP_OPTIONS);
   }
 }
