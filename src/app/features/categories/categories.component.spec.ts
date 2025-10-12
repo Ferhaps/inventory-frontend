@@ -4,7 +4,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { CategoryService } from "./data-access/category.service";
 import { AuthService } from "../../services/auth.service";
 import { LoaderService } from "@ferhaps/easy-ui-lib";
-import { Category, LoggedUserInfo } from "../../shared/types";
+import { Category, LoggedUserInfo, TableDataSource } from "../../shared/types";
 import { of } from "rxjs";
 
 describe('CategoriesComponent', () => {
@@ -33,8 +33,8 @@ describe('CategoriesComponent', () => {
   beforeEach(async () => {
     const categoryServiceSpy = jasmine.createSpyObj('CategoryService', [
       'getCategories',
-      'addCategories',
-      'deletetCategory'
+      'addCategory',
+      'deleteCategory'
     ]);
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['getLoggedUserInfo']);
     const loaderServiceSpy = jasmine.createSpyObj('LoaderService', ['setLoading']);
@@ -114,4 +114,58 @@ describe('CategoriesComponent', () => {
       expect(loaderService.setLoading).toHaveBeenCalledWith(false);
     });
   });
+
+  describe('Add Category', () => {
+    beforeEach(() => {
+      categoryService.getCategories.and.returnValue(of(mockCategories));
+      fixture = TestBed.createComponent(CategoriesComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+    });
+
+    it('should add new category to list when dialog returns category', (done) => {
+      const newCategory: TableDataSource<Category> = {
+        id: 'cat4',
+        name: 'New Category',
+        actions: ['Delete']
+      };
+
+      categoryService.addCategory.and.returnValue(of(newCategory));
+      (dialog.open as jasmine.Spy).and.returnValue({ afterClosed: () => of(newCategory) } as any);
+
+      const initialLength = component['categories']().length;
+
+      component['openAddCategoryPopup']();
+
+      (dialog.open as jasmine.Spy).calls.mostRecent().returnValue.afterClosed().subscribe({
+        next: () => {
+          expect(component['categories']().length).toBe(initialLength + 1);
+          expect(component['categories']()).toContain(newCategory);
+          done();
+        }
+      });
+    });
+
+    it('should not add category when dialog is cancelled', (done) => {
+      const initialLength = component['categories']().length;
+      (dialog.open as jasmine.Spy).and.returnValue({ afterClosed: () => of(undefined) } as any);
+
+      component['openAddCategoryPopup']();
+
+      (dialog.open as jasmine.Spy).calls.mostRecent().returnValue.afterClosed().subscribe(() => {
+        expect(categoryService.addCategory).not.toHaveBeenCalled();
+        expect(component['categories']().length).toBe(initialLength);
+        done();
+      });
+    });
+  });
+
+  // describe('Delete Category', () => {
+  //   beforeEach(() => {
+  //     categoryService.getCategories.and.returnValue(of(mockCategories));
+  //     fixture = TestBed.createComponent(CategoriesComponent);
+  //     component = fixture.componentInstance;
+  //     fixture.detectChanges();
+  //   });
+  // });
 });
