@@ -160,12 +160,51 @@ describe('CategoriesComponent', () => {
     });
   });
 
-  // describe('Delete Category', () => {
-  //   beforeEach(() => {
-  //     categoryService.getCategories.and.returnValue(of(mockCategories));
-  //     fixture = TestBed.createComponent(CategoriesComponent);
-  //     component = fixture.componentInstance;
-  //     fixture.detectChanges();
-  //   });
-  // });
+  describe('Delete Category', () => {
+    beforeEach(() => {
+      categoryService.getCategories.and.returnValue(of(mockCategories));
+      fixture = TestBed.createComponent(CategoriesComponent);
+      component = fixture.componentInstance;
+      fixture.detectChanges();
+    });
+
+    it('should open delete confirmation dialog', (done) => {
+      (dialog.open as jasmine.Spy).and.returnValue({ afterClosed: () => of(false) } as any);
+
+      component['selectOption'](mockCategories[0], 'Delete');
+      expect(dialog.open).toHaveBeenCalled();
+
+      (dialog.open as jasmine.Spy).calls.mostRecent().returnValue.afterClosed().subscribe(() => {
+        done();
+      });
+    });
+
+    it('should delete category when confirmed', (done) => {
+      categoryService.deleteCategory.and.returnValue(of({}));
+      (dialog.open as jasmine.Spy).and.returnValue({ afterClosed: () => of(true) } as any);
+      const initialLength = component['categories']().length;
+
+      component['selectOption'](mockCategories[0], 'Delete');
+
+      (dialog.open as jasmine.Spy).calls.mostRecent().returnValue.afterClosed().subscribe(() => {
+        expect(categoryService.deleteCategory).toHaveBeenCalledWith('cat1');
+        expect(component['categories']().length).toBe(initialLength - 1);
+        expect(component['categories']().find(c => c.id === 'cat1')).toBeUndefined();
+        done();
+      });
+    });
+
+    it('should not delete category when cancelled', (done) => {
+      (dialog.open as jasmine.Spy).and.returnValue({ afterClosed: () => of(false) } as any);
+      const initialLength = component['categories']().length;
+
+      component['selectOption'](mockCategories[0], 'Delete');
+
+      (dialog.open as jasmine.Spy).calls.mostRecent().returnValue.afterClosed().subscribe(() => {
+        expect(categoryService.deleteCategory).not.toHaveBeenCalled();
+        expect(component['categories']().length).toBe(initialLength);
+        done();
+      });
+    });
+  });
 });
