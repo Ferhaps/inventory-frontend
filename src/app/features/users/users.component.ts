@@ -90,7 +90,7 @@ export class UsersComponent {
       
       ref.afterClosed().subscribe((result: boolean) => {
         if (result) {
-          this.userService.deletetUser(user.id).subscribe({
+          this.userService.deleteUser(user.id).subscribe({
             next: () => {
               this.users.set(this.users().filter((c) => c.id !== user.id));
           }});
