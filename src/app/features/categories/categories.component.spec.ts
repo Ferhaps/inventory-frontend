@@ -15,7 +15,7 @@ describe('CategoriesComponent', () => {
   let loaderService: jasmine.SpyObj<LoaderService>;
   let dialog: MatDialog;
 
-  const mockCategories: (Category & { actions: string[] })[] = [
+  const mockCategories: TableDataSource<Category>[] = [
     { id: 'cat1', name: 'Category 1', actions: ['Delete'] },
     { id: 'cat2', name: 'Category 2', actions: ['Delete'] }
   ];
