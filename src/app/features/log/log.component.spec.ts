@@ -8,7 +8,7 @@ import { LogService } from "./data-access/log.service";
 import { UserService } from "../users/data-access/user.service";
 import { ProductService } from "../products/data-access/product.service";
 import { CategoryService } from "../categories/data-access/category.service";
-import { Log, LogBody, User, Product, Category } from "../../shared/types";
+import { Log, User, Product, Category } from "../../shared/types";
 import { FormsModule } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
@@ -76,7 +76,6 @@ describe('LogComponent', () => {
       imports: [
         LogComponent,
         FormsModule,
-        NoopAnimationsModule
       ],
       providers: [
         { provide: LogService, useValue: logServiceSpy },
