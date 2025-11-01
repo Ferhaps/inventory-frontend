@@ -33,7 +33,7 @@ export type TableDataSource<T> = {
 } & T;
 
 export type Log = {
-  id: number;
+  id: string;
   timestamp: string;
   event: string;
   user?: {
