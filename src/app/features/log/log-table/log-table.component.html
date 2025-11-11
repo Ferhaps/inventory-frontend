@@ -8,7 +8,7 @@
           <tr>
             @for (heading of headings(); track heading; let headIndex = $index) {
               <th class="log-heading">
-                {{heading}}
+                {{ heading }}
               </th>
             }
           </tr>
@@ -32,7 +32,7 @@
                     <div class="mr05"
                       [class.link]="!obj.event.includes('DELETE')"
                       (click)="navigate('users', obj.user.id)">
-                      {{obj.user.email | blankFiller}}
+                      {{ obj.user.email || '-' }}
                     </div>
                   }
 
@@ -40,7 +40,7 @@
                     <div class="mr02">Product:</div>
                     <div class="mr05" [class.link]="!obj.event.includes('DELETE')"
                       (click)="navigate('products', obj.product.id)">
-                      {{obj.product.name | blankFiller}}
+                      {{ obj.product.name || '-' }}
                     </div>
                   }
 
@@ -48,12 +48,12 @@
                     <div class="mr02">Category:</div>
                     <div class="mr05" [class.link]="!obj.event.includes('DELETE')"
                       (click)="navigate('categories', obj.category.id)">
-                      {{obj.category.name | blankFiller}}
+                      {{ obj.category.name || '-' }}
                     </div>
                   }
                 </div>
               </td>
-              <td>{{ obj.details | blankFiller }}</td>
+              <td>{{ obj.details || '-' }}</td>
             </tr>
           }
         </tbody>

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Log } from '../../../shared/types';
-import { SnakeCaseParserPipe, WhiteSpaceFillerPipe } from '@ferhaps/easy-ui-lib';
+import { SnakeCaseParserPipe } from '@ferhaps/easy-ui-lib';
 
 @Component({
   selector: 'app-log-table',
@@ -12,7 +12,6 @@ import { SnakeCaseParserPipe, WhiteSpaceFillerPipe } from '@ferhaps/easy-ui-lib'
   styleUrls: ['log-table.component.scss'],
   imports: [
     DatePipe,
-    WhiteSpaceFillerPipe,
     SnakeCaseParserPipe,
     MatTooltipModule,
     MatProgressSpinnerModule
