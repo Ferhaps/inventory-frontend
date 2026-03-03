@@ -1,5 +1,5 @@
 <div class="products mx-4 h-[90%]">
-  <div class="flex items-center title-row gap-4">
+  <div class="flex items-center my-4 gap-4">
     <h1 class="text-2xl font-bold">Products</h1>
     <div class="!text-[#009DDC] cursor-pointer font-medium" (click)="openAddProductPopup()">+ add</div>
     <mat-chip-listbox (change)="showProductsOfCategory($event)">
@@ -11,24 +11,24 @@
     </mat-chip-listbox>
   </div>
 
-  <div class="overflow-y-auto min-h-[370px] mat-elevation-z5" tabindex="0">
+  <div class="overflow-y-auto min-h-[370px] table-wrapper mat-elevation-z5" tabindex="0">
     <table mat-table [dataSource]="tableDataSource()">
       <ng-container matColumnDef="name" sticky>
-        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">Name</th>
         <td mat-cell *matCellDef="let product">{{product.name}}</td>
       </ng-container>
     
       <ng-container matColumnDef="quantity" sticky>
-        <th mat-header-cell *matHeaderCellDef>Quantity</th>
-        <td mat-cell *matCellDef="let product">
+        <th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">Quantity</th>
+        <td mat-cell *matCellDef="let product" class="pt-6">
           <div class="flex items-center gap-4">
-            <mat-form-field>
+            <mat-form-field class="mt-6">
               <input matInput type="number" [(ngModel)]="product.newQuantity"
                 #quantityInput="ngModel" name="quantityField">
             </mat-form-field>
 
             @if (product.newQuantity !== product.quantity) {
-              <div class="flex items-center gap-2 product-actions">
+              <div class="flex items-center gap-2 mb-5">
                 <button mat-icon-button class="!text-green-600" (click)="updateQuantity(product)">
                   <mat-icon>check_circle</mat-icon>
                 </button>
@@ -43,17 +43,17 @@
       </ng-container>
 
       <ng-container matColumnDef="dateCreated" sticky>
-        <th mat-header-cell *matHeaderCellDef>Date created</th>
+        <th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">Date created</th>
         <td mat-cell *matCellDef="let product">{{product.createdAt | date:'dd.MM.yyyy'}}</td>
       </ng-container>
 
       <ng-container matColumnDef="dateUpdated" sticky>
-        <th mat-header-cell *matHeaderCellDef>Date updated</th>
+        <th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">Date updated</th>
         <td mat-cell *matCellDef="let product">{{product.updatedAt | date:'dd.MM.yyyy'}}</td>
       </ng-container>
       
       <ng-container matColumnDef="actions" sticky>
-        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">Actions</th>
         <td mat-cell *matCellDef="let product">
           <button mat-icon-button class="cursor-pointer dots ml-auto" [matMenuTriggerFor]="optionsMenu">
             <mat-icon>more_vert</mat-icon>

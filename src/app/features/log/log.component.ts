@@ -24,6 +24,7 @@ type QuickDateFilter = 'Today' | '1 week' | '1 month' | 'This week' | 'This mont
 
 @Component({
   selector: 'app-log',
+  host: { class: 'w-full h-full' },
   imports: [
     LogTableComponent,
     MatProgressSpinnerModule,

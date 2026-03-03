@@ -20,6 +20,7 @@ import { LoaderService } from '@ferhaps/easy-ui-lib';
 
 @Component({
   selector: 'app-products',
+  host: { class: 'w-full h-full' },
   imports: [
     FormsModule,
     MatMenuModule,

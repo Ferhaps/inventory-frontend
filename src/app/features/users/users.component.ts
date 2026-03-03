@@ -14,6 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-users',
+  host: { class: 'w-full h-full' },
   imports: [
     MatTableModule,
     MatDialogModule,

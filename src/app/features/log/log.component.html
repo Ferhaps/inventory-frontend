@@ -1,7 +1,7 @@
 <div class="logs">
-  <div class="main-area ml-4">
-    <div class="main-filters">
-      <div class="flex items-center upper-part">
+  <div class="main-area ml-4 flex">
+    <div class="main-filters min-w-[380px] pr-4 overflow-y-auto h-full">
+      <div class="flex items-center upper-part py-[8.5px]">
         <div class="font-bold text-xl">Filters</div>
         @if (selectedEvent || selectedUserId || selectedProductId || selectedCategoryId || range.start || range.end || selectedDateFilter) {
           <div class="!text-[#009DDC] ml-auto cursor-pointer flex items-center" (click)="clearFilters(eventsAuto)">
@@ -11,8 +11,8 @@
       </div>
 
       <div class="mt-4">
-        <div class="flex items-center">
-          <p>Dates</p>
+        <div class="flex items-center mb-2">
+          <p class="!m-0 font-medium">Dates</p>
           <mat-chip-listbox class="ml-2" name="dates" [(ngModel)]="selectedDateFilter" #filterChips="ngModel"
             (ngModelChange)="onDateFilterChange()">
             @for (filter of quickDateFiltes; track $index) {
@@ -44,7 +44,7 @@
 
       <div class="mt-2">
         <div class="mb-2">
-          <p>Events</p>
+          <p class="!m-0 font-medium">Events</p>
         </div>
         <mat-form-field class="w-full">
           <input type="text" matInput placeholder="Select event" #eventsAutoComplete="ngModel"
@@ -61,7 +61,7 @@
 
       <div class="mt-2">
         <div class="mb-2">
-          <p>Users</p>
+          <p class="!m-0 font-medium">Users</p>
         </div>
         <mat-form-field class="w-full">
           <input type="text" placeholder="Search users" name="users"
@@ -80,7 +80,7 @@
 
       <div class="mt-2">
         <div class="mb-2">
-          <p>Products</p>
+          <p class="!m-0 font-medium">Products</p>
         </div>
         <mat-form-field class="w-full">
           <input type="text" placeholder="Search products" name="products"
@@ -99,7 +99,7 @@
 
       <div class="mt-2">
         <div class="mb-2">
-          <p>Categories</p>
+          <p class="!m-0 font-medium">Categories</p>
         </div>
         <mat-form-field class="w-full">
           <input type="text" placeholder="Search categories" name="categories"
@@ -116,8 +116,8 @@
         </mat-form-field>
       </div>
     </div>
-    
-    <div class="log-table">
+
+    <div class="log-table w-full">
       <app-log-table [headings]="['Date', 'Event', 'Data', 'Details']" [data]="logs" (scrolled)="onScroll()"
         (action)="onAction($event)" #logTable>
         @if (isFetching) {

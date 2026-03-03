@@ -1,29 +1,29 @@
 <div class="categories mx-4 h-[90%]">
-  <div class="flex items-center title-row gap-4">
+  <div class="flex items-center my-4 gap-4">
     <h1 class="text-2xl font-bold">Categories</h1>
     <div class="!text-[#009DDC] cursor-pointer font-medium" (click)="openAddCategoryPopup()">+ add</div>
   </div>
 
-  <div class="overflow-y-auto min-h-[370px] mat-elevation-z5" tabindex="0">
+  <div class="overflow-y-auto min-h-[370px] table-wrapper mat-elevation-z5" tabindex="0">
     <table mat-table [dataSource]="categories()">
       <ng-container matColumnDef="name" sticky>
-        <th mat-header-cell *matHeaderCellDef>Name</th>
-        <td mat-cell *matCellDef="let product">{{product.name}}</td>
+        <th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">Name</th>
+        <td mat-cell *matCellDef="let product" class="py-2">{{product.name}}</td>
       </ng-container>
 
       <ng-container matColumnDef="dateCreated" sticky>
-        <th mat-header-cell *matHeaderCellDef>Date created</th>
-        <td mat-cell *matCellDef="let product">{{product.createdAt | date:'dd.MM.yyyy'}}</td>
+        <th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">Date created</th>
+        <td mat-cell *matCellDef="let product" class="py-2">{{product.createdAt | date:'dd.MM.yyyy'}}</td>
       </ng-container>
 
       <ng-container matColumnDef="dateUpdated" sticky>
-        <th mat-header-cell *matHeaderCellDef>Date updated</th>
-        <td mat-cell *matCellDef="let product">{{product.updatedAt | date:'dd.MM.yyyy'}}</td>
+        <th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">Date updated</th>
+        <td mat-cell *matCellDef="let product" class="py-2">{{product.updatedAt | date:'dd.MM.yyyy'}}</td>
       </ng-container>
     
       <ng-container matColumnDef="actions" sticky>
-        <th mat-header-cell *matHeaderCellDef>Actions</th>
-        <td mat-cell *matCellDef="let category">
+        <th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">Actions</th>
+        <td mat-cell *matCellDef="let category" class="py-2">
           <button mat-icon-button class="cursor-pointer dots ml-auto" [matMenuTriggerFor]="optionsMenu">
             <mat-icon>more_vert</mat-icon>
           </button>

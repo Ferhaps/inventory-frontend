@@ -1,14 +1,7 @@
 .log-container {
-  overflow-y: scroll;
-  max-height: 100%;
-
   table {
     th {
-      text-align: left;
       border-bottom: 2px solid #cccccc;
-      position: sticky;
-      top: 0;
-      z-index: 2;
       background-color: #eaf6fc;
     }
 
@@ -17,8 +10,6 @@
     }
 
     .log-heading {
-      height: 30px;
-      width: 110px;
       border-top: none !important;
     }
 
@@ -28,15 +19,9 @@
       }
 
       td {
-        text-align: left;
         border: none;
       }
     }
-  }
-
-  .no-data {
-    height: 200px;
-    font-size: 20px;
   }
 }
 

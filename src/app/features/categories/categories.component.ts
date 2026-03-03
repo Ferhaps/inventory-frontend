@@ -15,6 +15,7 @@ import { LoaderService } from '@ferhaps/easy-ui-lib';
 
 @Component({
   selector: 'app-categories',
+  host: { class: 'w-full h-full' },
   imports: [
     MatMenuModule,
     MatIconModule,

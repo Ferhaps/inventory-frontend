@@ -1,5 +1,5 @@
 <lib-default-dialog [dialogTitle]="'Add user'">
-  <form novalidate autocomplete="off" class="dialog-content flex flex-col items-center gap-8 w-3/4" #f="ngForm" (ngSubmit)="onSubmit(f)">
+  <form novalidate autocomplete="off" class="dialog-content flex flex-col items-center gap-2 w-3/4" #f="ngForm" (ngSubmit)="onSubmit(f)">
     <mat-form-field class="w-full">
       <mat-label>Email</mat-label>
       <input matInput name="email" [(ngModel)]="model.email" 
@@ -44,7 +44,7 @@
     </mat-form-field>
 
     <div class="text-center">
-      <button mat-raised-button class="main-btn" [disabled]="state === 'loading'">
+      <button mat-raised-button class="main-btn text-xl" [disabled]="state === 'loading'">
         @if (state === 'loading') {
           <mat-spinner diameter="25" />
         } @else {

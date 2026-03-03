@@ -1,33 +1,16 @@
 header {
-  display: flex;
-  align-items: center;
   background-color: var(--primary-color);
   min-height: var(--header-height);
-  color: #FFF;
-  gap: 2rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 
   nav {
     .nav-item {
-      padding: 0.25rem .6rem;
-      border-radius: 6px;
       transition: all 0.15s ease;
-      text-decoration: none;
 
       &.active, &:hover {
         background-color: #fff;
         color: #000;
       }
-    }
-  }
-
-  .right-part {
-    display: flex;
-    align-items: center;
-
-    .mat-divider {
-      height: 30px;
-      margin-left: 1.5rem;
     }
   }
 }

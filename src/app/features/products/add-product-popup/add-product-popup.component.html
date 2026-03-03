@@ -1,5 +1,5 @@
 <lib-default-dialog [dialogTitle]="'Add product'">
-  <form class="dialog-content flex flex-col items-center gap-4 w-3/4" #f="ngForm" (ngSubmit)="onSubmit(f)">
+  <form class="dialog-content flex flex-col items-center gap-2 w-3/4" #f="ngForm" (ngSubmit)="onSubmit(f)">
     <mat-form-field class="w-full">
       <mat-label>Product name</mat-label>
       <input matInput name="product-name" [(ngModel)]="model.name" #nameField="ngModel" type="text" required />
@@ -24,7 +24,7 @@
     </mat-form-field>
 
     <div class="text-center">
-      <button mat-raised-button class="main-btn" [disabled]="state === 'loading'">
+      <button mat-raised-button class="main-btn text-xl" [disabled]="state === 'loading'">
         @if (state === 'loading') {
           <mat-spinner diameter="25" />
         } @else {
