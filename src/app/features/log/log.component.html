@@ -1,24 +1,25 @@
 <div class="logs">
-  <div class="main-area ml1">
+  <div class="main-area ml-4">
     <div class="main-filters">
-      <div class="flexer upper-part">
-        <div class="fw700 fs20">Filters</div>
+      <div class="flex items-center upper-part">
+        <div class="font-bold text-xl">Filters</div>
         @if (selectedEvent || selectedUserId || selectedProductId || selectedCategoryId || range.start || range.end || selectedDateFilter) {
-          <div class="action right pointer flexer" (click)="clearFilters(eventsAuto)">
+          <div class="!text-[#009DDC] ml-auto cursor-pointer flex items-center" (click)="clearFilters(eventsAuto)">
             <strong>Clear</strong>
           </div>
         }
       </div>
-      <div class="mt1">
-        <div class="flexer">
+
+      <div class="mt-4">
+        <div class="flex items-center">
           <p>Dates</p>
-          <mat-chip-listbox class="ml05" name="dates" [(ngModel)]="selectedDateFilter" #filterChips="ngModel"
+          <mat-chip-listbox class="ml-2" name="dates" [(ngModel)]="selectedDateFilter" #filterChips="ngModel"
             (ngModelChange)="onDateFilterChange()">
             @for (filter of quickDateFiltes; track $index) {
               <mat-chip-option>{{filter}}</mat-chip-option>
             }
           </mat-chip-listbox>
-          <button class="ml05" mat-icon-button [matMenuTriggerFor]="quickFiltersMenu">
+          <button class="ml-2" mat-icon-button [matMenuTriggerFor]="quickFiltersMenu">
             <mat-icon>more_vert</mat-icon>
           </button>
           <mat-menu #quickFiltersMenu="matMenu">
@@ -29,7 +30,7 @@
             }
           </mat-menu>
         </div>
-        <mat-form-field class="w-100">
+        <mat-form-field class="w-full">
           <mat-date-range-input name="datepicker" [rangePicker]="picker" #rangePicker>
             <input matStartDate placeholder="Start date" name="startDate" [(ngModel)]="range.start"
               (dateInput)="onDateChange()">
@@ -40,11 +41,12 @@
           <mat-date-range-picker #picker></mat-date-range-picker>
         </mat-form-field>
       </div>
-      <div class="mt1">
-        <div class="mb05">
+
+      <div class="mt-2">
+        <div class="mb-2">
           <p>Events</p>
         </div>
-        <mat-form-field class="w-100">
+        <mat-form-field class="w-full">
           <input type="text" matInput placeholder="Select event" #eventsAutoComplete="ngModel"
             [matAutocomplete]="eventsAuto" [(ngModel)]="searchEvent" (input)="filterAutocomplete('events', this.searchEvent)" name="event" />
           <mat-autocomplete #eventsAuto="matAutocomplete" name="eventsOptions">
@@ -57,11 +59,11 @@
         </mat-form-field>
       </div>
 
-      <div class="mt1">
-        <div class="mb05">
+      <div class="mt-2">
+        <div class="mb-2">
           <p>Users</p>
         </div>
-        <mat-form-field class="w-100">
+        <mat-form-field class="w-full">
           <input type="text" placeholder="Search users" name="users"
             [matAutocomplete]="usersAuto" matInput [(ngModel)]="searchUser" #searchUserField="ngModel"
             (input)="filterAutocomplete('users', searchUser)" />
@@ -76,11 +78,11 @@
         </mat-form-field>
       </div>
 
-      <div class="mt1">
-        <div class="mb05">
+      <div class="mt-2">
+        <div class="mb-2">
           <p>Products</p>
         </div>
-        <mat-form-field class="w-100">
+        <mat-form-field class="w-full">
           <input type="text" placeholder="Search products" name="products"
             [matAutocomplete]="productsAuto" matInput [(ngModel)]="searchProduct" #searchProductField="ngModel"
             (input)="filterAutocomplete('products', searchProduct)" />
@@ -95,11 +97,11 @@
         </mat-form-field>
       </div>
 
-      <div class="mt1">
-        <div class="mb05">
+      <div class="mt-2">
+        <div class="mb-2">
           <p>Categories</p>
         </div>
-        <mat-form-field class="w-100">
+        <mat-form-field class="w-full">
           <input type="text" placeholder="Search categories" name="categories"
             [matAutocomplete]="categoriesAuto" matInput [(ngModel)]="searchCategory" #searchCategoryField="ngModel"
             (input)="filterAutocomplete('categories', searchCategory)" />
@@ -114,11 +116,12 @@
         </mat-form-field>
       </div>
     </div>
+    
     <div class="log-table">
       <app-log-table [headings]="['Date', 'Event', 'Data', 'Details']" [data]="logs" (scrolled)="onScroll()"
         (action)="onAction($event)" #logTable>
         @if (isFetching) {
-          <div class="centerer spinner">
+          <div class="grid place-items-center spinner">
             <mat-spinner />
           </div>
         }

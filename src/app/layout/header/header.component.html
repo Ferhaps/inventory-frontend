@@ -1,38 +1,42 @@
-<header class="centerer">
-  <!-- <img [ngSrc]="'assets/icons/logo.svg'" class="mr1 ml1"
+<header>
+  <!-- <img [ngSrc]="'assets/icons/logo.svg'" class="mr-4 ml-4"
     alt="logo" width="150" height="40" priority="priority"> -->
 
-  <nav class="flex align-items-center gap1 ml2">
-    <a class="nav-item" routerLink="products" routerLinkActive="active">
+  <nav class="flex items-center gap-4 ml-4">
+    <a class="nav-item flex items-center gap-2 cursor-pointer text-sm font-medium"
+      routerLink="products" routerLinkActive="active">
       <div class="logo">
         <mat-icon>list</mat-icon>
       </div>
-      <div class="nav-text">Products</div>
+      <div>Products</div>
     </a>
   
-    <a class="nav-item" routerLink="categories" routerLinkActive="active">
+    <a class="nav-item flex items-center gap-2 cursor-pointer text-sm font-medium"
+      routerLink="categories" routerLinkActive="active">
       <div class="logo">
         <mat-icon>category</mat-icon>
       </div>
-      <div class="nav-text">Categories</div>
+      <div>Categories</div>
     </a>
   
-    <a class="nav-item" routerLink="users" routerLinkActive="active">
+    <a class="nav-item flex items-center gap-2 cursor-pointer text-sm font-medium"
+      routerLink="users" routerLinkActive="active">
       <div class="logo">
         <mat-icon>people</mat-icon>
       </div>
-      <div class="nav-text">Users</div>
+      <div>Users</div>
     </a>
   
-    <a class="nav-item flexer pointer fs14 fw500" routerLink="log" routerLinkActive="active">
+    <a class="nav-item flex items-center gap-2 cursor-pointer text-sm font-medium"
+      routerLink="log" routerLinkActive="active">
       <div class="logo">
         <mat-icon>table_chart</mat-icon>
       </div>
-      <div class="nav-text">Log</div>
+      <div>Log</div>
     </a>
   </nav>
 
-  <div class="right right-part">
+  <div class="ml-auto right-part">
     <mat-slide-toggle
       style="min-width: 120px;"
       [checked]="themeService.isDarkMode$ | async"
@@ -42,7 +46,7 @@
 
     <mat-divider vertical="true" />
     
-    <div class="flexer ml1 mr1 pointer" [matMenuTriggerFor]="menu">
+    <div class="flex items-center ml-4 mr-4 cursor-pointer" [matMenuTriggerFor]="menu">
       <button mat-icon-button>
         <mat-icon>more_vert</mat-icon>
       </button>
@@ -51,7 +55,7 @@
     <mat-menu #menu="matMenu">
       <button mat-menu-item (click)="onOptionSelected('logout')">
         <mat-icon [svgIcon]="'logoutIcon'"></mat-icon>
-        <span class="fw500 red">Logout</span>
+        <span class="font-medium !text-red-500">Logout</span>
       </button>
     </mat-menu>
   </div>

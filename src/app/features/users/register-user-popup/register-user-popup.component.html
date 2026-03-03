@@ -1,6 +1,6 @@
 <lib-default-dialog [dialogTitle]="'Add user'">
-  <form novalidate autocomplete="off" class="dialog-content flex-col align-items-center gap2 w-75" #f="ngForm" (ngSubmit)="onSubmit(f)">
-    <mat-form-field class="w-100">
+  <form novalidate autocomplete="off" class="dialog-content flex flex-col items-center gap-8 w-3/4" #f="ngForm" (ngSubmit)="onSubmit(f)">
+    <mat-form-field class="w-full">
       <mat-label>Email</mat-label>
       <input matInput name="email" [(ngModel)]="model.email" 
         #emailField="ngModel" type="email" required email />
@@ -9,7 +9,7 @@
       }
     </mat-form-field>
 
-    <mat-form-field class="w-100">
+    <mat-form-field class="w-full">
       <mat-label>Role</mat-label>
       <mat-select [(ngModel)]="model.role" #roleField="ngModel" name="role" required>
         <mat-option value="ADMIN">ADMIN</mat-option>
@@ -20,7 +20,7 @@
       }
     </mat-form-field>
 
-    <mat-form-field class="w-100">
+    <mat-form-field class="w-full">
       <mat-label>Password</mat-label>
       <input matInput required libPasswordValidator
         [(ngModel)]="model.password" #passwordField="ngModel" name="password"
@@ -30,7 +30,7 @@
       }
     </mat-form-field>
 
-    <mat-form-field class="w-100">
+    <mat-form-field class="w-full">
       <mat-label>Repeat password</mat-label>
       <input matInput required libFieldsMatchValidator fieldToMatch="password"
         [(ngModel)]="model.passwordRepeat" #repeatPassField="ngModel" name="passwordRepeat"
@@ -43,7 +43,7 @@
         }
     </mat-form-field>
 
-    <div class="center">
+    <div class="text-center">
       <button mat-raised-button class="main-btn" [disabled]="state === 'loading'">
         @if (state === 'loading') {
           <mat-spinner diameter="25" />

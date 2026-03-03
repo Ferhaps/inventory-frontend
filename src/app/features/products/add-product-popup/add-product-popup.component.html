@@ -1,6 +1,6 @@
 <lib-default-dialog [dialogTitle]="'Add product'">
-  <form class="dialog-content flex-col align-items-center gap1 w-75" #f="ngForm" (ngSubmit)="onSubmit(f)">
-    <mat-form-field class="w-100">
+  <form class="dialog-content flex flex-col items-center gap-4 w-3/4" #f="ngForm" (ngSubmit)="onSubmit(f)">
+    <mat-form-field class="w-full">
       <mat-label>Product name</mat-label>
       <input matInput name="product-name" [(ngModel)]="model.name" #nameField="ngModel" type="text" required />
       @if (nameField.invalid) {
@@ -8,7 +8,7 @@
       }
     </mat-form-field>
 
-    <mat-form-field class="w-100">
+    <mat-form-field class="w-full">
       <mat-label>Category</mat-label>
       <mat-select [(ngModel)]="model.categoryId" #categoryField="ngModel" name="category" required>
         @for (category of categories; track category.id) {
@@ -23,7 +23,7 @@
       }
     </mat-form-field>
 
-    <div class="center">
+    <div class="text-center">
       <button mat-raised-button class="main-btn" [disabled]="state === 'loading'">
         @if (state === 'loading') {
           <mat-spinner diameter="25" />
