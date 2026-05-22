@@ -1,32 +1,33 @@
 .log-container {
-  table {
-    th {
-      border-bottom: 2px solid #cccccc;
-      background-color: #eaf6fc;
-    }
+	table {
+		th {
+			border-bottom: 2px solid #cccccc;
+			background-color: #eaf6fc;
+		}
 
-    td, th {
-      padding: 0.7rem !important;
-    }
+		td,
+		th {
+			padding: 0.7rem !important;
+		}
 
-    .log-heading {
-      border-top: none !important;
-    }
+		.log-heading {
+			border-top: none !important;
+		}
 
-    tbody {
-      tr {
-        border-top: 2px solid #E5E4E7;
-      }
+		tbody {
+			tr {
+				border-top: 2px solid #e5e4e7;
+			}
 
-      td {
-        border: none;
-      }
-    }
-  }
+			td {
+				border: none;
+			}
+		}
+	}
 }
 
 :host-context(.dark-theme) {
-  th {
-    background-color: var(--background-color) !important;
-  }
+	th {
+		background-color: var(--background-color) !important;
+	}
 }

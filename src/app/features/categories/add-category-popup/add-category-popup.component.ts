@@ -10,33 +10,33 @@ import { Category, PopupState } from '../../../shared/types';
 import { DefaultDialogComponent } from '@ferhaps/easy-ui-lib';
 
 @Component({
-  selector: 'app-add-category-popup',
-  imports: [
-    DefaultDialogComponent,
-    FormsModule,
-    MatButtonModule,
-    MatFormField,
-    MatProgressSpinnerModule,
-    MatInputModule
-  ],
-  templateUrl: './add-category-popup.component.html',
-  styleUrl: './add-category-popup.component.scss'
+	selector: 'app-add-category-popup',
+	imports: [
+		DefaultDialogComponent,
+		FormsModule,
+		MatButtonModule,
+		MatFormField,
+		MatProgressSpinnerModule,
+		MatInputModule,
+	],
+	templateUrl: './add-category-popup.component.html',
+	styleUrl: './add-category-popup.component.scss',
 })
 export class AddCategoryPopupComponent {
-  protected name: string = '';
-  protected state: PopupState = 'default';
+	protected name: string = '';
+	protected state: PopupState = 'default';
 
-  private categoryService = inject(CategoryService);
-  private ref = inject(MatDialogRef);
+	private categoryService = inject(CategoryService);
+	private ref = inject(MatDialogRef);
 
-  protected onSubmit(form: NgForm): void {
-    if (form.valid) {
-      this.state = 'loading';
-      this.categoryService.addCategory(this.name).subscribe({
-        next: (category: Category) => {
-          this.ref.close(category);
-        },
-      });
-    }
-  }
+	protected onSubmit(form: NgForm): void {
+		if (form.valid) {
+			this.state = 'loading';
+			this.categoryService.addCategory(this.name).subscribe({
+				next: (category: Category) => {
+					this.ref.close(category);
+				},
+			});
+		}
+	}
 }

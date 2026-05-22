@@ -1,22 +1,36 @@
 <lib-default-dialog [dialogTitle]="'Add Category'">
-  <form class="dialog-content flex flex-col items-center gap-4 w-3/4" #f="ngForm" (ngSubmit)="onSubmit(f)">
-    <mat-form-field class="w-full">
-      <mat-label>Category name</mat-label>
-      <input matInput name="category-name" [(ngModel)]="name" #categoryField="ngModel" type="text" required />
-      @if (categoryField.invalid) {
-        <mat-error>Category name is required</mat-error>
-      }
-    </mat-form-field>
+	<form
+		class="dialog-content flex flex-col items-center gap-4 w-3/4"
+		#f="ngForm"
+		(ngSubmit)="onSubmit(f)"
+	>
+		<mat-form-field class="w-full">
+			<mat-label>Category name</mat-label>
+			<input
+				matInput
+				name="category-name"
+				[(ngModel)]="name"
+				#categoryField="ngModel"
+				type="text"
+				required
+			/>
+			@if (categoryField.invalid) {
+				<mat-error>Category name is required</mat-error>
+			}
+		</mat-form-field>
 
-
-    <div class="text-center">
-      <button mat-raised-button class="main-btn text-xl" [disabled]="state === 'loading'">
-        @if (state === 'loading') {
-          <mat-spinner diameter="25" />
-        } @else {
-          Add
-        }
-      </button>
-    </div>
-  </form>
+		<div class="text-center">
+			<button
+				mat-raised-button
+				class="main-btn text-xl"
+				[disabled]="state === 'loading'"
+			>
+				@if (state === "loading") {
+					<mat-spinner diameter="25" />
+				} @else {
+					Add
+				}
+			</button>
+		</div>
+	</form>
 </lib-default-dialog>

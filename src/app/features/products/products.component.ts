@@ -1,5 +1,10 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { Category, LoggedUserInfo, Product, TableDataSource } from '../../shared/types';
+import {
+	Category,
+	LoggedUserInfo,
+	Product,
+	TableDataSource,
+} from '../../shared/types';
 import { ProductService } from './data-access/product.service';
 import { MatChipListboxChange, MatChipsModule } from '@angular/material/chips';
 import { CategoryService } from '../categories/data-access/category.service';
@@ -19,143 +24,156 @@ import { DefaultDeletePopupComponent } from '../../shared/default-delete-popup/d
 import { LoaderService } from '@ferhaps/easy-ui-lib';
 
 @Component({
-  selector: 'app-products',
-  host: { class: 'w-full h-full' },
-  imports: [
-    FormsModule,
-    MatMenuModule,
-    MatIconModule,
-    MatChipsModule,
-    MatTableModule,
-    MatInputModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    DatePipe
-  ],
-  templateUrl: './products.component.html',
-  styleUrl: './products.component.scss'
+	selector: 'app-products',
+	host: { class: 'w-full h-full' },
+	imports: [
+		FormsModule,
+		MatMenuModule,
+		MatIconModule,
+		MatChipsModule,
+		MatTableModule,
+		MatInputModule,
+		MatButtonModule,
+		MatDialogModule,
+		MatFormFieldModule,
+		DatePipe,
+	],
+	templateUrl: './products.component.html',
+	styleUrl: './products.component.scss',
 })
 export class ProductsComponent implements OnInit {
-  protected categories: Category[] = [];
-  protected currentCategoryId: string = '';
-  protected tableDataSource = signal<TableDataSource<Product>[]>([]);
-  protected displayedColumns: string[] = ['name', 'quantity', 'dateCreated', 'dateUpdated'];
-  private allProducts: Product[] = [];
-  private productActions: string[] = [];
+	protected categories: Category[] = [];
+	protected currentCategoryId: string = '';
+	protected tableDataSource = signal<TableDataSource<Product>[]>([]);
+	protected displayedColumns: string[] = [
+		'name',
+		'quantity',
+		'dateCreated',
+		'dateUpdated',
+	];
+	private allProducts: Product[] = [];
+	private productActions: string[] = [];
 
-  private categoryService = inject(CategoryService);
-  private productService = inject(ProductService);
-  private loadingService = inject(LoaderService);
-  private authService = inject(AuthService);
-  private dialog = inject(MatDialog);
+	private categoryService = inject(CategoryService);
+	private productService = inject(ProductService);
+	private loadingService = inject(LoaderService);
+	private authService = inject(AuthService);
+	private dialog = inject(MatDialog);
 
-  constructor() {
-    const loggedUser: LoggedUserInfo = this.authService.getLoggedUserInfo();
-    if (loggedUser.user.role === 'ADMIN') {
-      this.displayedColumns.push('actions');
-      this.productActions.push('Delete');
-    }
-  }
-  
-  public ngOnInit(): void {
-    this.getCategories();
-  }
+	constructor() {
+		const loggedUser: LoggedUserInfo = this.authService.getLoggedUserInfo();
+		if (loggedUser.user.role === 'ADMIN') {
+			this.displayedColumns.push('actions');
+			this.productActions.push('Delete');
+		}
+	}
 
-  private getCategories(): void {
-    this.loadingService.setLoading(true);
-    this.categoryService.getCategories().subscribe({
-      next: (categories: Category[]) => {
-        if (categories.length) {
-          this.categories = categories;
-          this.currentCategoryId = categories[0].id;
-          this.getProducts();
-        } else {
-          this.loadingService.setLoading(false);
-        }
-        console.log(categories);
-      },
-      error: () => this.loadingService.setLoading(false)
-    });
-  }
+	public ngOnInit(): void {
+		this.getCategories();
+	}
 
-  private getProducts(): void {
-    this.productService.getProducts().subscribe({
-      next: (products: Product[]) => {
-        this.allProducts = products;
-        this.setCurrentProducts();
-        this.loadingService.setLoading(false);
-        console.log(products);
-      },
-      error: () => this.loadingService.setLoading(false)
-    });
-  }
+	private getCategories(): void {
+		this.loadingService.setLoading(true);
+		this.categoryService.getCategories().subscribe({
+			next: (categories: Category[]) => {
+				if (categories.length) {
+					this.categories = categories;
+					this.currentCategoryId = categories[0].id;
+					this.getProducts();
+				} else {
+					this.loadingService.setLoading(false);
+				}
+				console.log(categories);
+			},
+			error: () => this.loadingService.setLoading(false),
+		});
+	}
 
-  protected showProductsOfCategory(event: MatChipListboxChange): void {
-    this.currentCategoryId = event.value;
-    this.setCurrentProducts();
-  }
+	private getProducts(): void {
+		this.productService.getProducts().subscribe({
+			next: (products: Product[]) => {
+				this.allProducts = products;
+				this.setCurrentProducts();
+				this.loadingService.setLoading(false);
+				console.log(products);
+			},
+			error: () => this.loadingService.setLoading(false),
+		});
+	}
 
-  private setCurrentProducts(): void {
-    const products = this.allProducts.filter((product) => product.categoryId === this.currentCategoryId);
-    this.tableDataSource.set(products.map((product) => (
-      { 
-        actions: this.productActions,
-        ...product,
-        newQuantity: product.quantity
-      }
-    )));
-  }
+	protected showProductsOfCategory(event: MatChipListboxChange): void {
+		this.currentCategoryId = event.value;
+		this.setCurrentProducts();
+	}
 
-  protected updateQuantity(productObj: Product): void {
-    this.productService.updateProductQuantity(productObj.id, productObj.newQuantity).subscribe({
-      next: () => {
-        const product: Product = this.allProducts.find((p) => p.id === productObj.id)!;
-        product.quantity = productObj.newQuantity;
-        this.setCurrentProducts();
-      },
-      error: () => this.setCurrentProducts()
-    });
-  }
+	private setCurrentProducts(): void {
+		const products = this.allProducts.filter(
+			(product) => product.categoryId === this.currentCategoryId,
+		);
+		this.tableDataSource.set(
+			products.map((product) => ({
+				actions: this.productActions,
+				...product,
+				newQuantity: product.quantity,
+			})),
+		);
+	}
 
-  protected openAddProductPopup(): void {
-    const popup = this.dialog.open(AddProductPopupComponent, {
-      width: '350px',
-      data: this.categories,
-      scrollStrategy: new NoopScrollStrategy()
-    });
+	protected updateQuantity(productObj: Product): void {
+		this.productService
+			.updateProductQuantity(productObj.id, productObj.newQuantity)
+			.subscribe({
+				next: () => {
+					const product: Product = this.allProducts.find(
+						(p) => p.id === productObj.id,
+					)!;
+					product.quantity = productObj.newQuantity;
+					this.setCurrentProducts();
+				},
+				error: () => this.setCurrentProducts(),
+			});
+	}
 
-    popup.afterClosed().subscribe((product: Product | undefined) => {
-      if (product) {
-        this.allProducts.push(product);
-        this.setCurrentProducts();
-      }
-    });
-  }
+	protected openAddProductPopup(): void {
+		const popup = this.dialog.open(AddProductPopupComponent, {
+			width: '350px',
+			data: this.categories,
+			scrollStrategy: new NoopScrollStrategy(),
+		});
 
-  private openDeleteProductPopup(product: Product): void {
-    const ref = this.dialog.open(DefaultDeletePopupComponent, {
-      width: '350px',
-      data: `product: ${product.name}`,
-      autoFocus: false,
-      scrollStrategy: new NoopScrollStrategy()
-    });
-    
-    ref.afterClosed().subscribe((result: boolean) => {
-      if (result) {
-        this.productService.deleteProduct(product.id).subscribe({
-          next: () => {
-            this.allProducts = this.allProducts.filter((p) => p.id !== product.id);
-            this.setCurrentProducts();
-          }
-        });
-      }
-    });
-  }
+		popup.afterClosed().subscribe((product: Product | undefined) => {
+			if (product) {
+				this.allProducts.push(product);
+				this.setCurrentProducts();
+			}
+		});
+	}
 
-  protected selectOption(product: Product, action: string): void {
-    if (action === 'Delete') {
-      this.openDeleteProductPopup(product);
-    }
-  }
+	private openDeleteProductPopup(product: Product): void {
+		const ref = this.dialog.open(DefaultDeletePopupComponent, {
+			width: '350px',
+			data: `product: ${product.name}`,
+			autoFocus: false,
+			scrollStrategy: new NoopScrollStrategy(),
+		});
+
+		ref.afterClosed().subscribe((result: boolean) => {
+			if (result) {
+				this.productService.deleteProduct(product.id).subscribe({
+					next: () => {
+						this.allProducts = this.allProducts.filter(
+							(p) => p.id !== product.id,
+						);
+						this.setCurrentProducts();
+					},
+				});
+			}
+		});
+	}
+
+	protected selectOption(product: Product, action: string): void {
+		if (action === 'Delete') {
+			this.openDeleteProductPopup(product);
+		}
+	}
 }

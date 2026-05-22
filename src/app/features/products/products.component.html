@@ -1,77 +1,123 @@
 <div class="products mx-4 h-[90%]">
-  <div class="flex items-center my-4 gap-4">
-    <h1 class="text-2xl font-bold">Products</h1>
-    <div class="!text-[#009DDC] cursor-pointer font-medium" (click)="openAddProductPopup()">+ add</div>
-    <mat-chip-listbox (change)="showProductsOfCategory($event)">
-      @for (category of categories; track category.id) {
-        <mat-chip-option [value]="category.id" [selected]="currentCategoryId == category.id">
-          {{ category.name }}
-        </mat-chip-option>
-      }
-    </mat-chip-listbox>
-  </div>
+	<div class="flex items-center my-4 gap-4">
+		<h1 class="text-2xl font-bold">Products</h1>
+		<div
+			class="!text-[#009DDC] cursor-pointer font-medium"
+			(click)="openAddProductPopup()"
+		>
+			+ add
+		</div>
+		<mat-chip-listbox (change)="showProductsOfCategory($event)">
+			@for (category of categories; track category.id) {
+				<mat-chip-option
+					[value]="category.id"
+					[selected]="currentCategoryId == category.id"
+				>
+					{{ category.name }}
+				</mat-chip-option>
+			}
+		</mat-chip-listbox>
+	</div>
 
-  <div class="overflow-y-auto min-h-[370px] table-wrapper mat-elevation-z5" tabindex="0">
-    <table mat-table [dataSource]="tableDataSource()">
-      <ng-container matColumnDef="name" sticky>
-        <th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">Name</th>
-        <td mat-cell *matCellDef="let product">{{product.name}}</td>
-      </ng-container>
-    
-      <ng-container matColumnDef="quantity" sticky>
-        <th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">Quantity</th>
-        <td mat-cell *matCellDef="let product" class="pt-6">
-          <div class="flex items-center gap-4">
-            <mat-form-field class="mt-6">
-              <input matInput type="number" [(ngModel)]="product.newQuantity"
-                #quantityInput="ngModel" name="quantityField">
-            </mat-form-field>
+	<div
+		class="overflow-y-auto min-h-[370px] table-wrapper mat-elevation-z5"
+		tabindex="0"
+	>
+		<table mat-table [dataSource]="tableDataSource()">
+			<ng-container matColumnDef="name" sticky>
+				<th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">
+					Name
+				</th>
+				<td mat-cell *matCellDef="let product">{{ product.name }}</td>
+			</ng-container>
 
-            @if (product.newQuantity !== product.quantity) {
-              <div class="flex items-center gap-2 mb-5">
-                <button mat-icon-button class="!text-green-600" (click)="updateQuantity(product)">
-                  <mat-icon>check_circle</mat-icon>
-                </button>
-  
-                <button mat-icon-button class="!text-red-500" (click)="product.newQuantity = product.quantity">
-                  <mat-icon>cancel</mat-icon>
-                </button>
-              </div>
-            }
-          </div>
-        </td>
-      </ng-container>
+			<ng-container matColumnDef="quantity" sticky>
+				<th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">
+					Quantity
+				</th>
+				<td mat-cell *matCellDef="let product" class="pt-6">
+					<div class="flex items-center gap-4">
+						<mat-form-field class="mt-6">
+							<input
+								matInput
+								type="number"
+								[(ngModel)]="product.newQuantity"
+								#quantityInput="ngModel"
+								name="quantityField"
+							/>
+						</mat-form-field>
 
-      <ng-container matColumnDef="dateCreated" sticky>
-        <th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">Date created</th>
-        <td mat-cell *matCellDef="let product">{{product.createdAt | date:'dd.MM.yyyy'}}</td>
-      </ng-container>
+						@if (product.newQuantity !== product.quantity) {
+							<div class="flex items-center gap-2 mb-5">
+								<button
+									mat-icon-button
+									class="!text-green-600"
+									(click)="updateQuantity(product)"
+								>
+									<mat-icon>check_circle</mat-icon>
+								</button>
 
-      <ng-container matColumnDef="dateUpdated" sticky>
-        <th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">Date updated</th>
-        <td mat-cell *matCellDef="let product">{{product.updatedAt | date:'dd.MM.yyyy'}}</td>
-      </ng-container>
-      
-      <ng-container matColumnDef="actions" sticky>
-        <th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">Actions</th>
-        <td mat-cell *matCellDef="let product">
-          <button mat-icon-button class="cursor-pointer dots ml-auto" [matMenuTriggerFor]="optionsMenu">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          
-          <mat-menu #optionsMenu="matMenu">
-            @for (action of product.actions; track $index) {
-              <div mat-menu-item (click)="selectOption(product, action)" class="font-medium"
-                [style.color]="action == 'Delete' ? '#ff0000' : null">
-                {{action}}
-              </div>
-            }
-          </mat-menu>
-        </td>
-      </ng-container>
-  
-      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-  </div>
+								<button
+									mat-icon-button
+									class="!text-red-500"
+									(click)="product.newQuantity = product.quantity"
+								>
+									<mat-icon>cancel</mat-icon>
+								</button>
+							</div>
+						}
+					</div>
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="dateCreated" sticky>
+				<th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">
+					Date created
+				</th>
+				<td mat-cell *matCellDef="let product">
+					{{ product.createdAt | date: "dd.MM.yyyy" }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="dateUpdated" sticky>
+				<th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">
+					Date updated
+				</th>
+				<td mat-cell *matCellDef="let product">
+					{{ product.updatedAt | date: "dd.MM.yyyy" }}
+				</td>
+			</ng-container>
+
+			<ng-container matColumnDef="actions" sticky>
+				<th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">
+					Actions
+				</th>
+				<td mat-cell *matCellDef="let product">
+					<button
+						mat-icon-button
+						class="cursor-pointer dots ml-auto"
+						[matMenuTriggerFor]="optionsMenu"
+					>
+						<mat-icon>more_vert</mat-icon>
+					</button>
+
+					<mat-menu #optionsMenu="matMenu">
+						@for (action of product.actions; track $index) {
+							<div
+								mat-menu-item
+								(click)="selectOption(product, action)"
+								class="font-medium"
+								[style.color]="action == 'Delete' ? '#ff0000' : null"
+							>
+								{{ action }}
+							</div>
+						}
+					</mat-menu>
+				</td>
+			</ng-container>
+
+			<tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+			<tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+		</table>
+	</div>
 </div>

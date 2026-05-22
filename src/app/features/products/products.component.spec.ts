@@ -10,357 +10,411 @@ import { Category, Product, LoggedUserInfo } from '../../shared/types';
 import { MatChipListboxChange } from '@angular/material/chips';
 
 describe('ProductsComponent', () => {
-  let component: ProductsComponent;
-  let fixture: ComponentFixture<ProductsComponent>;
-  let productService: jasmine.SpyObj<ProductService>;
-  let categoryService: jasmine.SpyObj<CategoryService>;
-  let authService: jasmine.SpyObj<AuthService>;
-  let loaderService: jasmine.SpyObj<LoaderService>;
-  let dialog: MatDialog;
+	let component: ProductsComponent;
+	let fixture: ComponentFixture<ProductsComponent>;
+	let productService: jasmine.SpyObj<ProductService>;
+	let categoryService: jasmine.SpyObj<CategoryService>;
+	let authService: jasmine.SpyObj<AuthService>;
+	let loaderService: jasmine.SpyObj<LoaderService>;
+	let dialog: MatDialog;
 
-  const mockCategories: Category[] = [
-    { id: 'cat1', name: 'Category 1' },
-    { id: 'cat2', name: 'Category 2' }
-  ];
+	const mockCategories: Category[] = [
+		{ id: 'cat1', name: 'Category 1' },
+		{ id: 'cat2', name: 'Category 2' },
+	];
 
-  const mockProducts: Product[] = [
-    {
-      id: 'prod1',
-      name: 'Product 1',
-      quantity: 10,
-      categoryId: 'cat1',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      newQuantity: 10
-    },
-    {
-      id: 'prod2',
-      name: 'Product 2',
-      quantity: 20,
-      categoryId: 'cat1',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      newQuantity: 20
-    },
-    { 
-      id: 'prod3',
-      name: 'Product 3',
-      quantity: 15,
-      categoryId: 'cat2',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      newQuantity: 15
-    }
-  ];
+	const mockProducts: Product[] = [
+		{
+			id: 'prod1',
+			name: 'Product 1',
+			quantity: 10,
+			categoryId: 'cat1',
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+			newQuantity: 10,
+		},
+		{
+			id: 'prod2',
+			name: 'Product 2',
+			quantity: 20,
+			categoryId: 'cat1',
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+			newQuantity: 20,
+		},
+		{
+			id: 'prod3',
+			name: 'Product 3',
+			quantity: 15,
+			categoryId: 'cat2',
+			createdAt: new Date().toISOString(),
+			updatedAt: new Date().toISOString(),
+			newQuantity: 15,
+		},
+	];
 
-  const mockAdminUser: LoggedUserInfo = {
-    token: 'mock-token',
-    user: { id: 'user1', email: 'admin@test.com', role: 'ADMIN' }
-  };
+	const mockAdminUser: LoggedUserInfo = {
+		token: 'mock-token',
+		user: { id: 'user1', email: 'admin@test.com', role: 'ADMIN' },
+	};
 
-  const mockRegularUser: LoggedUserInfo = {
-    token: 'mock-token',
-    user: { id: 'user2', email: 'user@test.com', role: 'OPERATOR' }
-  };
+	const mockRegularUser: LoggedUserInfo = {
+		token: 'mock-token',
+		user: { id: 'user2', email: 'user@test.com', role: 'OPERATOR' },
+	};
 
-  beforeEach(async () => {
-    const productServiceSpy = jasmine.createSpyObj('ProductService', [
-      'getProducts',
-      'addProduct',
-      'updateProductQuantity',
-      'deleteProduct'
-    ]);
-    const categoryServiceSpy = jasmine.createSpyObj('CategoryService', ['getCategories']);
-    const authServiceSpy = jasmine.createSpyObj('AuthService', ['getLoggedUserInfo']);
-    const loaderServiceSpy = jasmine.createSpyObj('LoaderService', ['setLoading']);
-    
-    await TestBed.configureTestingModule({
-      imports: [
-        ProductsComponent
-      ],
-      providers: [
-        { provide: ProductService, useValue: productServiceSpy },
-        { provide: CategoryService, useValue: categoryServiceSpy },
-        { provide: AuthService, useValue: authServiceSpy },
-        { provide: LoaderService, useValue: loaderServiceSpy },
-      ]
-    })
-    .overrideProvider(MatDialog, {
-      useValue: {
-        open: jasmine.createSpy('open').and.returnValue({ afterClosed: () => of(undefined) })
-      }
-    })
-    .compileComponents();
+	beforeEach(async () => {
+		const productServiceSpy = jasmine.createSpyObj('ProductService', [
+			'getProducts',
+			'addProduct',
+			'updateProductQuantity',
+			'deleteProduct',
+		]);
+		const categoryServiceSpy = jasmine.createSpyObj('CategoryService', [
+			'getCategories',
+		]);
+		const authServiceSpy = jasmine.createSpyObj('AuthService', [
+			'getLoggedUserInfo',
+		]);
+		const loaderServiceSpy = jasmine.createSpyObj('LoaderService', [
+			'setLoading',
+		]);
 
-    productService = TestBed.inject(ProductService) as jasmine.SpyObj<ProductService>;
-    categoryService = TestBed.inject(CategoryService) as jasmine.SpyObj<CategoryService>;
-    authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
-    loaderService = TestBed.inject(LoaderService) as jasmine.SpyObj<LoaderService>;
-    authService.getLoggedUserInfo.and.returnValue(mockRegularUser);
-    dialog = TestBed.inject(MatDialog);
-  });
+		await TestBed.configureTestingModule({
+			imports: [ProductsComponent],
+			providers: [
+				{ provide: ProductService, useValue: productServiceSpy },
+				{ provide: CategoryService, useValue: categoryServiceSpy },
+				{ provide: AuthService, useValue: authServiceSpy },
+				{ provide: LoaderService, useValue: loaderServiceSpy },
+			],
+		})
+			.overrideProvider(MatDialog, {
+				useValue: {
+					open: jasmine
+						.createSpy('open')
+						.and.returnValue({ afterClosed: () => of(undefined) }),
+				},
+			})
+			.compileComponents();
 
-  describe('Component Initialization', () => {
-    it('should create the component', () => {
-      categoryService.getCategories.and.returnValue(of([]));
-      
-      fixture = TestBed.createComponent(ProductsComponent);
-      component = fixture.componentInstance;
-      
-      expect(component).toBeTruthy();
-    });
+		productService = TestBed.inject(
+			ProductService,
+		) as jasmine.SpyObj<ProductService>;
+		categoryService = TestBed.inject(
+			CategoryService,
+		) as jasmine.SpyObj<CategoryService>;
+		authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
+		loaderService = TestBed.inject(
+			LoaderService,
+		) as jasmine.SpyObj<LoaderService>;
+		authService.getLoggedUserInfo.and.returnValue(mockRegularUser);
+		dialog = TestBed.inject(MatDialog);
+	});
 
-    it('should add actions column for ADMIN users', () => {
-      authService.getLoggedUserInfo.and.returnValue(mockAdminUser);
-      categoryService.getCategories.and.returnValue(of(mockCategories));
-      productService.getProducts.and.returnValue(of(mockProducts));
-      
-      fixture = TestBed.createComponent(ProductsComponent);
-      component = fixture.componentInstance;
-      
-      expect(component['displayedColumns']).toContain('actions');
-    });
+	describe('Component Initialization', () => {
+		it('should create the component', () => {
+			categoryService.getCategories.and.returnValue(of([]));
 
-    it('should not add actions column for non-ADMIN users', () => {
-      categoryService.getCategories.and.returnValue(of(mockCategories));
-      productService.getProducts.and.returnValue(of(mockProducts));
-      
-      fixture = TestBed.createComponent(ProductsComponent);
-      component = fixture.componentInstance;
+			fixture = TestBed.createComponent(ProductsComponent);
+			component = fixture.componentInstance;
 
-      expect(component['displayedColumns']).not.toContain('actions');
-    });
+			expect(component).toBeTruthy();
+		});
 
-    it('should load categories and products on init', () => {
-      categoryService.getCategories.and.returnValue(of(mockCategories));
-      productService.getProducts.and.returnValue(of(mockProducts));
-      
-      fixture = TestBed.createComponent(ProductsComponent);
-      component = fixture.componentInstance;
-      fixture.detectChanges();
-      
-      expect(categoryService.getCategories).toHaveBeenCalled();
-      expect(productService.getProducts).toHaveBeenCalled();
-      expect(component['categories']).toEqual(mockCategories);
-      expect(component['allProducts']).toEqual(mockProducts);
-    });
+		it('should add actions column for ADMIN users', () => {
+			authService.getLoggedUserInfo.and.returnValue(mockAdminUser);
+			categoryService.getCategories.and.returnValue(of(mockCategories));
+			productService.getProducts.and.returnValue(of(mockProducts));
 
-    it('should set loading state correctly', () => {
-      categoryService.getCategories.and.returnValue(of(mockCategories));
-      productService.getProducts.and.returnValue(of(mockProducts));
-      
-      fixture = TestBed.createComponent(ProductsComponent);
-      component = fixture.componentInstance;
-      fixture.detectChanges();
-      
-      expect(loaderService.setLoading).toHaveBeenCalledWith(true);
-      expect(loaderService.setLoading).toHaveBeenCalledWith(false);
-    });
+			fixture = TestBed.createComponent(ProductsComponent);
+			component = fixture.componentInstance;
 
-    it('should handle empty categories gracefully', () => {
-      categoryService.getCategories.and.returnValue(of([]));
-      
-      fixture = TestBed.createComponent(ProductsComponent);
-      component = fixture.componentInstance;
-      fixture.detectChanges();
-      
-      expect(productService.getProducts).not.toHaveBeenCalled();
-      expect(loaderService.setLoading).toHaveBeenCalledWith(false);
-    });
-  });
+			expect(component['displayedColumns']).toContain('actions');
+		});
 
-  describe('Category Selection', () => {
-    beforeEach(() => {
-      categoryService.getCategories.and.returnValue(of(mockCategories));
-      productService.getProducts.and.returnValue(of(mockProducts));
-      
-      fixture = TestBed.createComponent(ProductsComponent);
-      component = fixture.componentInstance;
-      fixture.detectChanges();
-    });
+		it('should not add actions column for non-ADMIN users', () => {
+			categoryService.getCategories.and.returnValue(of(mockCategories));
+			productService.getProducts.and.returnValue(of(mockProducts));
 
-    it('should filter products by selected category', () => {
-      component['showProductsOfCategory']({ value: 'cat1' } as MatChipListboxChange);
+			fixture = TestBed.createComponent(ProductsComponent);
+			component = fixture.componentInstance;
 
-      const displayedProducts = component['tableDataSource']();
-      expect(displayedProducts.length).toBe(2);
-      expect(displayedProducts.every(p => p.categoryId === 'cat1')).toBe(true);
-    });
+			expect(component['displayedColumns']).not.toContain('actions');
+		});
 
-    it('should update displayed products when category changes', () => {
-      const event = { value: 'cat2' } as MatChipListboxChange;
+		it('should load categories and products on init', () => {
+			categoryService.getCategories.and.returnValue(of(mockCategories));
+			productService.getProducts.and.returnValue(of(mockProducts));
 
-      component['showProductsOfCategory'](event);
+			fixture = TestBed.createComponent(ProductsComponent);
+			component = fixture.componentInstance;
+			fixture.detectChanges();
 
-      expect(component['currentCategoryId']).toBe('cat2');
-      const displayedProducts = component['tableDataSource']();
-      expect(displayedProducts.length).toBe(1);
-      expect(displayedProducts[0].categoryId).toBe('cat2');
-    });
+			expect(categoryService.getCategories).toHaveBeenCalled();
+			expect(productService.getProducts).toHaveBeenCalled();
+			expect(component['categories']).toEqual(mockCategories);
+			expect(component['allProducts']).toEqual(mockProducts);
+		});
 
-    it('should initialize newQuantity field for products', () => {
-      component['setCurrentProducts']();
+		it('should set loading state correctly', () => {
+			categoryService.getCategories.and.returnValue(of(mockCategories));
+			productService.getProducts.and.returnValue(of(mockProducts));
 
-      const displayedProducts = component['tableDataSource']();
-      displayedProducts.forEach(product => {
-        expect(product.newQuantity).toBe(product.quantity);
-      });
-    });
-  });
+			fixture = TestBed.createComponent(ProductsComponent);
+			component = fixture.componentInstance;
+			fixture.detectChanges();
 
-  describe('Product Quantity Update', () => {
-    beforeEach(() => {
-      categoryService.getCategories.and.returnValue(of(mockCategories));
-      productService.getProducts.and.returnValue(of(mockProducts));
-      
-      fixture = TestBed.createComponent(ProductsComponent);
-      component = fixture.componentInstance;
-      fixture.detectChanges();
-    });
+			expect(loaderService.setLoading).toHaveBeenCalledWith(true);
+			expect(loaderService.setLoading).toHaveBeenCalledWith(false);
+		});
 
-    it('should update product quantity successfully', () => {
-      productService.updateProductQuantity.and.returnValue(of({}));
-      const product = { ...mockProducts[0], newQuantity: 25 };
+		it('should handle empty categories gracefully', () => {
+			categoryService.getCategories.and.returnValue(of([]));
 
-      component['updateQuantity'](product);
+			fixture = TestBed.createComponent(ProductsComponent);
+			component = fixture.componentInstance;
+			fixture.detectChanges();
 
-      expect(productService.updateProductQuantity).toHaveBeenCalledWith('prod1', 25);
-      expect(component['allProducts'][0].quantity).toBe(25);
-    });
+			expect(productService.getProducts).not.toHaveBeenCalled();
+			expect(loaderService.setLoading).toHaveBeenCalledWith(false);
+		});
+	});
 
-    it('should revert to original quantity on update error', () => {
-      productService.updateProductQuantity.and.returnValue(throwError(() => new Error('Update failed')));
-      const product = { ...mockProducts[0], newQuantity: 25 };
-      const originalQuantity = mockProducts[0].quantity;
+	describe('Category Selection', () => {
+		beforeEach(() => {
+			categoryService.getCategories.and.returnValue(of(mockCategories));
+			productService.getProducts.and.returnValue(of(mockProducts));
 
-      component['updateQuantity'](product);
+			fixture = TestBed.createComponent(ProductsComponent);
+			component = fixture.componentInstance;
+			fixture.detectChanges();
+		});
 
-      expect(productService.updateProductQuantity).toHaveBeenCalled();
-      expect(component['tableDataSource']()[0].newQuantity).toBe(originalQuantity);
-    });
-  });
+		it('should filter products by selected category', () => {
+			component['showProductsOfCategory']({
+				value: 'cat1',
+			} as MatChipListboxChange);
 
-  describe('Add Product Dialog', () => {
-    beforeEach(() => {
-      categoryService.getCategories.and.returnValue(of(mockCategories));
-      productService.getProducts.and.returnValue(of(mockProducts));
+			const displayedProducts = component['tableDataSource']();
+			expect(displayedProducts.length).toBe(2);
+			expect(displayedProducts.every((p) => p.categoryId === 'cat1')).toBe(
+				true,
+			);
+		});
 
-      fixture = TestBed.createComponent(ProductsComponent);
-      component = fixture.componentInstance;
-      fixture.detectChanges();
-    });
+		it('should update displayed products when category changes', () => {
+			const event = { value: 'cat2' } as MatChipListboxChange;
 
-    it('should add new product to list when dialog returns product', (done) => {
-      const newProduct: Product = {
-        id: 'prod4',
-        name: 'New Product',
-        quantity: 5,
-        categoryId: 'cat1',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        newQuantity: 5
-      };
+			component['showProductsOfCategory'](event);
 
-      productService.addProduct.and.returnValue(of(newProduct));
-      (dialog.open as jasmine.Spy).and.returnValue({ afterClosed: () => of(newProduct) } as any);
+			expect(component['currentCategoryId']).toBe('cat2');
+			const displayedProducts = component['tableDataSource']();
+			expect(displayedProducts.length).toBe(1);
+			expect(displayedProducts[0].categoryId).toBe('cat2');
+		});
 
-      const initialLength = component['allProducts'].length;
+		it('should initialize newQuantity field for products', () => {
+			component['setCurrentProducts']();
 
-      component['openAddProductPopup']();
+			const displayedProducts = component['tableDataSource']();
+			displayedProducts.forEach((product) => {
+				expect(product.newQuantity).toBe(product.quantity);
+			});
+		});
+	});
 
-      (dialog.open as jasmine.Spy).calls.mostRecent().returnValue.afterClosed().subscribe(() => {
-        expect(component['allProducts'].length).toBe(initialLength + 1);
-        expect(component['allProducts']).toContain(newProduct);
-        done();
-      });
-    });
+	describe('Product Quantity Update', () => {
+		beforeEach(() => {
+			categoryService.getCategories.and.returnValue(of(mockCategories));
+			productService.getProducts.and.returnValue(of(mockProducts));
 
-    it('should not add product when dialog is cancelled', (done) => {
-      const initialLength = component['allProducts'].length;
-      (dialog.open as jasmine.Spy).and.returnValue({ afterClosed: () => of(undefined) } as any);
+			fixture = TestBed.createComponent(ProductsComponent);
+			component = fixture.componentInstance;
+			fixture.detectChanges();
+		});
 
-      component['openAddProductPopup']();
+		it('should update product quantity successfully', () => {
+			productService.updateProductQuantity.and.returnValue(of({}));
+			const product = { ...mockProducts[0], newQuantity: 25 };
 
-      (dialog.open as jasmine.Spy).calls.mostRecent().returnValue.afterClosed().subscribe(() => {
-        expect(productService.addProduct).not.toHaveBeenCalled();
-        expect(component['allProducts'].length).toBe(initialLength);
-        done();
-      });
-    });
-  });
+			component['updateQuantity'](product);
 
-  describe('Delete Product', () => {
-    beforeEach(() => {
-      authService.getLoggedUserInfo.and.returnValue(mockAdminUser);
-      categoryService.getCategories.and.returnValue(of(mockCategories));
-      productService.getProducts.and.returnValue(of(mockProducts));
+			expect(productService.updateProductQuantity).toHaveBeenCalledWith(
+				'prod1',
+				25,
+			);
+			expect(component['allProducts'][0].quantity).toBe(25);
+		});
 
-      fixture = TestBed.createComponent(ProductsComponent);
-      component = fixture.componentInstance;
-      fixture.detectChanges();
-    });
+		it('should revert to original quantity on update error', () => {
+			productService.updateProductQuantity.and.returnValue(
+				throwError(() => new Error('Update failed')),
+			);
+			const product = { ...mockProducts[0], newQuantity: 25 };
+			const originalQuantity = mockProducts[0].quantity;
 
-    it('should open delete confirmation dialog', (done) => {
-      (dialog.open as jasmine.Spy).and.returnValue({ afterClosed: () => of(false) } as any);
+			component['updateQuantity'](product);
 
-      component['selectOption'](mockProducts[0], 'Delete');
+			expect(productService.updateProductQuantity).toHaveBeenCalled();
+			expect(component['tableDataSource']()[0].newQuantity).toBe(
+				originalQuantity,
+			);
+		});
+	});
 
-      expect(dialog.open).toHaveBeenCalled();
+	describe('Add Product Dialog', () => {
+		beforeEach(() => {
+			categoryService.getCategories.and.returnValue(of(mockCategories));
+			productService.getProducts.and.returnValue(of(mockProducts));
 
-      (dialog.open as jasmine.Spy).calls.mostRecent().returnValue.afterClosed().subscribe(() => {
-        done();
-      });
-    });
+			fixture = TestBed.createComponent(ProductsComponent);
+			component = fixture.componentInstance;
+			fixture.detectChanges();
+		});
 
-    it('should delete product when confirmed', (done) => {
-      productService.deleteProduct.and.returnValue(of({}));
-      (dialog.open as jasmine.Spy).and.returnValue({ afterClosed: () => of(true) } as any);
-      const initialLength = component['allProducts'].length;
+		it('should add new product to list when dialog returns product', (done) => {
+			const newProduct: Product = {
+				id: 'prod4',
+				name: 'New Product',
+				quantity: 5,
+				categoryId: 'cat1',
+				createdAt: new Date().toISOString(),
+				updatedAt: new Date().toISOString(),
+				newQuantity: 5,
+			};
 
-      component['selectOption'](mockProducts[0], 'Delete');
+			productService.addProduct.and.returnValue(of(newProduct));
+			(dialog.open as jasmine.Spy).and.returnValue({
+				afterClosed: () => of(newProduct),
+			} as any);
 
-      (dialog.open as jasmine.Spy).calls.mostRecent().returnValue.afterClosed().subscribe(() => {
-        expect(productService.deleteProduct).toHaveBeenCalledWith('prod1');
-        expect(component['allProducts'].length).toBe(initialLength - 1);
-        expect(component['allProducts'].find(p => p.id === 'prod1')).toBeUndefined();
-        done();
-      });
-    });
+			const initialLength = component['allProducts'].length;
 
-    it('should not delete product when cancelled', (done) => {
-      (dialog.open as jasmine.Spy).and.returnValue({ afterClosed: () => of(false) } as any);
-      const initialLength = component['allProducts'].length;
+			component['openAddProductPopup']();
 
-      component['selectOption'](mockProducts[0], 'Delete');
+			(dialog.open as jasmine.Spy).calls
+				.mostRecent()
+				.returnValue.afterClosed()
+				.subscribe(() => {
+					expect(component['allProducts'].length).toBe(initialLength + 1);
+					expect(component['allProducts']).toContain(newProduct);
+					done();
+				});
+		});
 
-      (dialog.open as jasmine.Spy).calls.mostRecent().returnValue.afterClosed().subscribe(() => {
-        expect(productService.deleteProduct).not.toHaveBeenCalled();
-        expect(component['allProducts'].length).toBe(initialLength);
-        done();
-      });
-    });
-  });
+		it('should not add product when dialog is cancelled', (done) => {
+			const initialLength = component['allProducts'].length;
+			(dialog.open as jasmine.Spy).and.returnValue({
+				afterClosed: () => of(undefined),
+			} as any);
 
-  describe('Error Handling', () => {
-    it('should handle category loading error', () => {
-      categoryService.getCategories.and.returnValue(throwError(() => new Error('Load failed')));
-      
-      fixture = TestBed.createComponent(ProductsComponent);
-      component = fixture.componentInstance;
-      fixture.detectChanges();
-      
-      expect(loaderService.setLoading).toHaveBeenCalledWith(false);
-    });
+			component['openAddProductPopup']();
 
-    it('should handle product loading error', () => {
-      categoryService.getCategories.and.returnValue(of(mockCategories));
-      productService.getProducts.and.returnValue(throwError(() => new Error('Load failed')));
-      
-      fixture = TestBed.createComponent(ProductsComponent);
-      component = fixture.componentInstance;
-      fixture.detectChanges();
-      
-      expect(loaderService.setLoading).toHaveBeenCalledWith(false);
-    });
-  });
+			(dialog.open as jasmine.Spy).calls
+				.mostRecent()
+				.returnValue.afterClosed()
+				.subscribe(() => {
+					expect(productService.addProduct).not.toHaveBeenCalled();
+					expect(component['allProducts'].length).toBe(initialLength);
+					done();
+				});
+		});
+	});
+
+	describe('Delete Product', () => {
+		beforeEach(() => {
+			authService.getLoggedUserInfo.and.returnValue(mockAdminUser);
+			categoryService.getCategories.and.returnValue(of(mockCategories));
+			productService.getProducts.and.returnValue(of(mockProducts));
+
+			fixture = TestBed.createComponent(ProductsComponent);
+			component = fixture.componentInstance;
+			fixture.detectChanges();
+		});
+
+		it('should open delete confirmation dialog', (done) => {
+			(dialog.open as jasmine.Spy).and.returnValue({
+				afterClosed: () => of(false),
+			} as any);
+
+			component['selectOption'](mockProducts[0], 'Delete');
+
+			expect(dialog.open).toHaveBeenCalled();
+
+			(dialog.open as jasmine.Spy).calls
+				.mostRecent()
+				.returnValue.afterClosed()
+				.subscribe(() => {
+					done();
+				});
+		});
+
+		it('should delete product when confirmed', (done) => {
+			productService.deleteProduct.and.returnValue(of({}));
+			(dialog.open as jasmine.Spy).and.returnValue({
+				afterClosed: () => of(true),
+			} as any);
+			const initialLength = component['allProducts'].length;
+
+			component['selectOption'](mockProducts[0], 'Delete');
+
+			(dialog.open as jasmine.Spy).calls
+				.mostRecent()
+				.returnValue.afterClosed()
+				.subscribe(() => {
+					expect(productService.deleteProduct).toHaveBeenCalledWith('prod1');
+					expect(component['allProducts'].length).toBe(initialLength - 1);
+					expect(
+						component['allProducts'].find((p) => p.id === 'prod1'),
+					).toBeUndefined();
+					done();
+				});
+		});
+
+		it('should not delete product when cancelled', (done) => {
+			(dialog.open as jasmine.Spy).and.returnValue({
+				afterClosed: () => of(false),
+			} as any);
+			const initialLength = component['allProducts'].length;
+
+			component['selectOption'](mockProducts[0], 'Delete');
+
+			(dialog.open as jasmine.Spy).calls
+				.mostRecent()
+				.returnValue.afterClosed()
+				.subscribe(() => {
+					expect(productService.deleteProduct).not.toHaveBeenCalled();
+					expect(component['allProducts'].length).toBe(initialLength);
+					done();
+				});
+		});
+	});
+
+	describe('Error Handling', () => {
+		it('should handle category loading error', () => {
+			categoryService.getCategories.and.returnValue(
+				throwError(() => new Error('Load failed')),
+			);
+
+			fixture = TestBed.createComponent(ProductsComponent);
+			component = fixture.componentInstance;
+			fixture.detectChanges();
+
+			expect(loaderService.setLoading).toHaveBeenCalledWith(false);
+		});
+
+		it('should handle product loading error', () => {
+			categoryService.getCategories.and.returnValue(of(mockCategories));
+			productService.getProducts.and.returnValue(
+				throwError(() => new Error('Load failed')),
+			);
+
+			fixture = TestBed.createComponent(ProductsComponent);
+			component = fixture.componentInstance;
+			fixture.detectChanges();
+
+			expect(loaderService.setLoading).toHaveBeenCalledWith(false);
+		});
+	});
 });

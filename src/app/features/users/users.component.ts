@@ -13,95 +13,100 @@ import { DefaultDeletePopupComponent } from '../../shared/default-delete-popup/d
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'app-users',
-  host: { class: 'w-full h-full' },
-  imports: [
-    MatTableModule,
-    MatDialogModule,
-    MatIconModule,
-    MatMenuModule,
-    MatButtonModule
-  ],
-  templateUrl: './users.component.html',
-  styleUrl: './users.component.scss'
+	selector: 'app-users',
+	host: { class: 'w-full h-full' },
+	imports: [
+		MatTableModule,
+		MatDialogModule,
+		MatIconModule,
+		MatMenuModule,
+		MatButtonModule,
+	],
+	templateUrl: './users.component.html',
+	styleUrl: './users.component.scss',
 })
 export class UsersComponent {
-  protected users = signal<TableDataSource<User>[]>([]);
-  protected displayedColumns: string[] = ['email', 'role'];
-  protected loggedUser: LoggedUserInfo;
-  
-  private userService = inject(UserService);
-  private loadingService = inject(LoaderService);
-  private authService = inject(AuthService);
-  private dialog = inject(MatDialog);
+	protected users = signal<TableDataSource<User>[]>([]);
+	protected displayedColumns: string[] = ['email', 'role'];
+	protected loggedUser: LoggedUserInfo;
 
-  constructor() {
-    this.loggedUser = this.authService.getLoggedUserInfo();
-    if (this.loggedUser?.user?.role === 'ADMIN') {
-      this.displayedColumns.push('actions');
-    }
-  }
+	private userService = inject(UserService);
+	private loadingService = inject(LoaderService);
+	private authService = inject(AuthService);
+	private dialog = inject(MatDialog);
 
-  public ngOnInit(): void {
-    this.getUsers();
-  }
+	constructor() {
+		this.loggedUser = this.authService.getLoggedUserInfo();
+		if (this.loggedUser?.user?.role === 'ADMIN') {
+			this.displayedColumns.push('actions');
+		}
+	}
 
-  private getUsers(): void {
-    this.loadingService.setLoading(true);
-    this.userService.getUsers().subscribe({
-      next: (users: User[]) => {
-        this.users.set(
-          users.map((u) => ({
-            ...u,
-            actions: this.loggedUser.user.role === 'ADMIN' && u.id !== this.loggedUser.user.id ? ['Delete'] : []
-          }))
-        );
-        this.loadingService.setLoading(false);
-        console.log(users);
-      },
-      error: () => this.loadingService.setLoading(false)
-    });
-  }
+	public ngOnInit(): void {
+		this.getUsers();
+	}
 
-  protected openRegisterUserPopup(): void {
-    const popup = this.dialog.open(RegisterUserPopupComponent, {
-      width: '350px',
-      scrollStrategy: new NoopScrollStrategy()
-    });
+	private getUsers(): void {
+		this.loadingService.setLoading(true);
+		this.userService.getUsers().subscribe({
+			next: (users: User[]) => {
+				this.users.set(
+					users.map((u) => ({
+						...u,
+						actions:
+							this.loggedUser.user.role === 'ADMIN' &&
+							u.id !== this.loggedUser.user.id
+								? ['Delete']
+								: [],
+					})),
+				);
+				this.loadingService.setLoading(false);
+				console.log(users);
+			},
+			error: () => this.loadingService.setLoading(false),
+		});
+	}
 
-    popup.afterClosed().subscribe((user: User | undefined) => {
-      if (user) {
-        const newUser = {
-          ...user,
-          actions: this.loggedUser.user.role === 'ADMIN' ? ['Delete'] : []
-        };
-        this.users.set([...this.users(), newUser]);
-      }
-    });
-  }
+	protected openRegisterUserPopup(): void {
+		const popup = this.dialog.open(RegisterUserPopupComponent, {
+			width: '350px',
+			scrollStrategy: new NoopScrollStrategy(),
+		});
 
-   private openUserCategoryPopup(user: User): void {
-      const ref = this.dialog.open(DefaultDeletePopupComponent, {
-        width: '350px',
-        data: `user: ${user.email}`,
-        autoFocus: false,
-        restoreFocus: false,
-        scrollStrategy: new NoopScrollStrategy()
-      });
-      
-      ref.afterClosed().subscribe((result: boolean) => {
-        if (result) {
-          this.userService.deleteUser(user.id).subscribe({
-            next: () => {
-              this.users.set(this.users().filter((c) => c.id !== user.id));
-          }});
-        }
-      });
-    }
+		popup.afterClosed().subscribe((user: User | undefined) => {
+			if (user) {
+				const newUser = {
+					...user,
+					actions: this.loggedUser.user.role === 'ADMIN' ? ['Delete'] : [],
+				};
+				this.users.set([...this.users(), newUser]);
+			}
+		});
+	}
 
-  protected selectOption(user: User, action: string): void {
-    if (action === 'Delete') {
-      this.openUserCategoryPopup(user);
-    }
-  }
+	private openUserCategoryPopup(user: User): void {
+		const ref = this.dialog.open(DefaultDeletePopupComponent, {
+			width: '350px',
+			data: `user: ${user.email}`,
+			autoFocus: false,
+			restoreFocus: false,
+			scrollStrategy: new NoopScrollStrategy(),
+		});
+
+		ref.afterClosed().subscribe((result: boolean) => {
+			if (result) {
+				this.userService.deleteUser(user.id).subscribe({
+					next: () => {
+						this.users.set(this.users().filter((c) => c.id !== user.id));
+					},
+				});
+			}
+		});
+	}
+
+	protected selectOption(user: User, action: string): void {
+		if (action === 'Delete') {
+			this.openUserCategoryPopup(user);
+		}
+	}
 }

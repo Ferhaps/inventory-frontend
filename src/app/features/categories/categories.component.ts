@@ -14,87 +14,91 @@ import { DefaultDeletePopupComponent } from '../../shared/default-delete-popup/d
 import { LoaderService } from '@ferhaps/easy-ui-lib';
 
 @Component({
-  selector: 'app-categories',
-  host: { class: 'w-full h-full' },
-  imports: [
-    MatMenuModule,
-    MatIconModule,
-    MatTableModule,
-    MatDialogModule,
-    MatButtonModule,
-    DatePipe
-  ],
-  templateUrl: './categories.component.html',
-  styleUrl: './categories.component.scss'
+	selector: 'app-categories',
+	host: { class: 'w-full h-full' },
+	imports: [
+		MatMenuModule,
+		MatIconModule,
+		MatTableModule,
+		MatDialogModule,
+		MatButtonModule,
+		DatePipe,
+	],
+	templateUrl: './categories.component.html',
+	styleUrl: './categories.component.scss',
 })
 export class CategoriesComponent implements OnInit {
-  protected categories = signal<TableDataSource<Category>[]>([]);
-  protected displayedColumns: string[] = ['name', 'dateCreated', 'dateUpdated'];
-  
-  private categoryService = inject(CategoryService);
-  private loadingService = inject(LoaderService);
-  private authService = inject(AuthService);
-  private dialog = inject(MatDialog);
+	protected categories = signal<TableDataSource<Category>[]>([]);
+	protected displayedColumns: string[] = ['name', 'dateCreated', 'dateUpdated'];
 
-  constructor() {
-    const loggedUser: LoggedUserInfo = this.authService.getLoggedUserInfo();
-    if (loggedUser.user.role === 'ADMIN') {
-      this.displayedColumns.push('actions');
-    }
-  }
+	private categoryService = inject(CategoryService);
+	private loadingService = inject(LoaderService);
+	private authService = inject(AuthService);
+	private dialog = inject(MatDialog);
 
-  public ngOnInit(): void {
-    this.getCategories();
-  }
+	constructor() {
+		const loggedUser: LoggedUserInfo = this.authService.getLoggedUserInfo();
+		if (loggedUser.user.role === 'ADMIN') {
+			this.displayedColumns.push('actions');
+		}
+	}
 
-  private getCategories(): void {
-    this.loadingService.setLoading(true);
-    this.categoryService.getCategories().subscribe({
-      next: (categories: Category[]) => {
-        this.categories.set(categories.map((c) => ({ ...c, actions: ['Delete'] })));
-        this.loadingService.setLoading(false);
-        console.log(categories);
-      },
-      error: () => this.loadingService.setLoading(false)
-    });
-  }
+	public ngOnInit(): void {
+		this.getCategories();
+	}
 
-  protected openAddCategoryPopup(): void {
-    const popup = this.dialog.open(AddCategoryPopupComponent, {
-      width: '350px',
-      scrollStrategy: new NoopScrollStrategy()
-    });
+	private getCategories(): void {
+		this.loadingService.setLoading(true);
+		this.categoryService.getCategories().subscribe({
+			next: (categories: Category[]) => {
+				this.categories.set(
+					categories.map((c) => ({ ...c, actions: ['Delete'] })),
+				);
+				this.loadingService.setLoading(false);
+				console.log(categories);
+			},
+			error: () => this.loadingService.setLoading(false),
+		});
+	}
 
-    popup.afterClosed().subscribe((category: Category | undefined) => {
-      if (category) {
-        const newCategoryRow = { ...category, actions: ['Delete'] };
-        this.categories.set([...this.categories(), newCategoryRow]);
-      }
-    });
-  }
+	protected openAddCategoryPopup(): void {
+		const popup = this.dialog.open(AddCategoryPopupComponent, {
+			width: '350px',
+			scrollStrategy: new NoopScrollStrategy(),
+		});
 
-  private openDeleteCategoryPopup(category: Category): void {
-    const ref = this.dialog.open(DefaultDeletePopupComponent, {
-      width: '350px',
-      data: `category: ${category.name}`,
-      autoFocus: false,
-      scrollStrategy: new NoopScrollStrategy()
-    });
-    
-    ref.afterClosed().subscribe((result: boolean) => {
-      if (result) {
-        this.categoryService.deleteCategory(category.id).subscribe({
-          next: () => {
-            this.categories.set(this.categories().filter((c) => c.id !== category.id));
-          }
-        });
-      }
-    });
-  }
+		popup.afterClosed().subscribe((category: Category | undefined) => {
+			if (category) {
+				const newCategoryRow = { ...category, actions: ['Delete'] };
+				this.categories.set([...this.categories(), newCategoryRow]);
+			}
+		});
+	}
 
-  protected selectOption(category: Category, action: string): void {
-    if (action === 'Delete') {
-      this.openDeleteCategoryPopup(category);
-    }
-  }
+	private openDeleteCategoryPopup(category: Category): void {
+		const ref = this.dialog.open(DefaultDeletePopupComponent, {
+			width: '350px',
+			data: `category: ${category.name}`,
+			autoFocus: false,
+			scrollStrategy: new NoopScrollStrategy(),
+		});
+
+		ref.afterClosed().subscribe((result: boolean) => {
+			if (result) {
+				this.categoryService.deleteCategory(category.id).subscribe({
+					next: () => {
+						this.categories.set(
+							this.categories().filter((c) => c.id !== category.id),
+						);
+					},
+				});
+			}
+		});
+	}
+
+	protected selectOption(category: Category, action: string): void {
+		if (action === 'Delete') {
+			this.openDeleteCategoryPopup(category);
+		}
+	}
 }

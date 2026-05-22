@@ -1,6 +1,17 @@
 <lib-default-dialog [dialogTitle]="'Delete'">
-  <div class="dialog-content pr-4 pl-4">
-    <div class="text-center text-lg">Are you sure you want to delete <strong>{{ data }}</strong>?</div>
-    <div class="grid place-items-center mt-4"><button mat-raised-button class="main-btn text-xl" (click)="deleteAndClose()">Delete</button></div>
-  </div>
+	<div class="dialog-content pr-4 pl-4">
+		<div class="text-center text-lg">
+			Are you sure you want to delete <strong>{{ data }}</strong
+			>?
+		</div>
+		<div class="grid place-items-center mt-4">
+			<button
+				mat-raised-button
+				class="main-btn text-xl"
+				(click)="deleteAndClose()"
+			>
+				Delete
+			</button>
+		</div>
+	</div>
 </lib-default-dialog>

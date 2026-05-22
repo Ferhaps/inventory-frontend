@@ -1,131 +1,230 @@
 <div class="logs">
-  <div class="main-area ml-4 flex">
-    <div class="main-filters min-w-[380px] pr-4 overflow-y-auto h-full">
-      <div class="flex items-center upper-part py-[8.5px]">
-        <div class="font-bold text-xl">Filters</div>
-        @if (selectedEvent || selectedUserId || selectedProductId || selectedCategoryId || range.start || range.end || selectedDateFilter) {
-          <div class="!text-[#009DDC] ml-auto cursor-pointer flex items-center" (click)="clearFilters(eventsAuto)">
-            <strong>Clear</strong>
-          </div>
-        }
-      </div>
+	<div class="main-area ml-4 flex">
+		<div class="main-filters min-w-[380px] pr-4 overflow-y-auto h-full">
+			<div class="flex items-center upper-part py-[8.5px]">
+				<div class="font-bold text-xl">Filters</div>
+				@if (
+					selectedEvent ||
+					selectedUserId ||
+					selectedProductId ||
+					selectedCategoryId ||
+					range.start ||
+					range.end ||
+					selectedDateFilter
+				) {
+					<div
+						class="!text-[#009DDC] ml-auto cursor-pointer flex items-center"
+						(click)="clearFilters(eventsAuto)"
+					>
+						<strong>Clear</strong>
+					</div>
+				}
+			</div>
 
-      <div class="mt-4">
-        <div class="flex items-center mb-2">
-          <p class="!m-0 font-medium">Dates</p>
-          <mat-chip-listbox class="ml-2" name="dates" [(ngModel)]="selectedDateFilter" #filterChips="ngModel"
-            (ngModelChange)="onDateFilterChange()">
-            @for (filter of quickDateFiltes; track $index) {
-              <mat-chip-option>{{filter}}</mat-chip-option>
-            }
-          </mat-chip-listbox>
-          <button class="ml-2" mat-icon-button [matMenuTriggerFor]="quickFiltersMenu">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #quickFiltersMenu="matMenu">
-            @for (filter of moreFilters; track $index; let i = $index) {
-              <button mat-menu-item (click)="selectedDateFilter = filter; onDateFilterChange(); switchPlaces(filter, i)">
-                <span>{{filter}}</span>
-              </button>
-            }
-          </mat-menu>
-        </div>
-        <mat-form-field class="w-full">
-          <mat-date-range-input name="datepicker" [rangePicker]="picker" #rangePicker>
-            <input matStartDate placeholder="Start date" name="startDate" [(ngModel)]="range.start"
-              (dateInput)="onDateChange()">
-            <input matEndDate placeholder="End date" name="endDate" [(ngModel)]="range.end"
-              (dateInput)="onDateChange()">
-          </mat-date-range-input>
-          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-date-range-picker #picker></mat-date-range-picker>
-        </mat-form-field>
-      </div>
+			<div class="mt-4">
+				<div class="flex items-center mb-2">
+					<p class="!m-0 font-medium">Dates</p>
+					<mat-chip-listbox
+						class="ml-2"
+						name="dates"
+						[(ngModel)]="selectedDateFilter"
+						#filterChips="ngModel"
+						(ngModelChange)="onDateFilterChange()"
+					>
+						@for (filter of quickDateFiltes; track $index) {
+							<mat-chip-option>{{ filter }}</mat-chip-option>
+						}
+					</mat-chip-listbox>
+					<button
+						class="ml-2"
+						mat-icon-button
+						[matMenuTriggerFor]="quickFiltersMenu"
+					>
+						<mat-icon>more_vert</mat-icon>
+					</button>
+					<mat-menu #quickFiltersMenu="matMenu">
+						@for (filter of moreFilters; track $index; let i = $index) {
+							<button
+								mat-menu-item
+								(click)="
+									selectedDateFilter = filter;
+									onDateFilterChange();
+									switchPlaces(filter, i)
+								"
+							>
+								<span>{{ filter }}</span>
+							</button>
+						}
+					</mat-menu>
+				</div>
+				<mat-form-field class="w-full">
+					<mat-date-range-input
+						name="datepicker"
+						[rangePicker]="picker"
+						#rangePicker
+					>
+						<input
+							matStartDate
+							placeholder="Start date"
+							name="startDate"
+							[(ngModel)]="range.start"
+							(dateInput)="onDateChange()"
+						/>
+						<input
+							matEndDate
+							placeholder="End date"
+							name="endDate"
+							[(ngModel)]="range.end"
+							(dateInput)="onDateChange()"
+						/>
+					</mat-date-range-input>
+					<mat-datepicker-toggle
+						matIconSuffix
+						[for]="picker"
+					></mat-datepicker-toggle>
+					<mat-date-range-picker #picker></mat-date-range-picker>
+				</mat-form-field>
+			</div>
 
-      <div class="mt-2">
-        <div class="mb-2">
-          <p class="!m-0 font-medium">Events</p>
-        </div>
-        <mat-form-field class="w-full">
-          <input type="text" matInput placeholder="Select event" #eventsAutoComplete="ngModel"
-            [matAutocomplete]="eventsAuto" [(ngModel)]="searchEvent" (input)="filterAutocomplete('events', this.searchEvent)" name="event" />
-          <mat-autocomplete #eventsAuto="matAutocomplete" name="eventsOptions">
-            @for (event of filteredLogEvents; track $index) {
-              <mat-option [value]="event" (click)="selectedEvent = event; onEventOptionClick(eventsAuto);">
-                {{event | snakeCaseParser}}
-              </mat-option>
-            }
-          </mat-autocomplete>
-        </mat-form-field>
-      </div>
+			<div class="mt-2">
+				<div class="mb-2">
+					<p class="!m-0 font-medium">Events</p>
+				</div>
+				<mat-form-field class="w-full">
+					<input
+						type="text"
+						matInput
+						placeholder="Select event"
+						#eventsAutoComplete="ngModel"
+						[matAutocomplete]="eventsAuto"
+						[(ngModel)]="searchEvent"
+						(input)="filterAutocomplete('events', this.searchEvent)"
+						name="event"
+					/>
+					<mat-autocomplete #eventsAuto="matAutocomplete" name="eventsOptions">
+						@for (event of filteredLogEvents; track $index) {
+							<mat-option
+								[value]="event"
+								(click)="selectedEvent = event; onEventOptionClick(eventsAuto)"
+							>
+								{{ event | snakeCaseParser }}
+							</mat-option>
+						}
+					</mat-autocomplete>
+				</mat-form-field>
+			</div>
 
-      <div class="mt-2">
-        <div class="mb-2">
-          <p class="!m-0 font-medium">Users</p>
-        </div>
-        <mat-form-field class="w-full">
-          <input type="text" placeholder="Search users" name="users"
-            [matAutocomplete]="usersAuto" matInput [(ngModel)]="searchUser" #searchUserField="ngModel"
-            (input)="filterAutocomplete('users', searchUser)" />
-          <mat-autocomplete #usersAuto="matAutocomplete">
-            @for (user of filteredUsers; track $index) {
-              <mat-option [value]="user.email"
-                (click)="this.selectedUserId = user.id; searchUser = user.email; onUsersClick(usersAuto);">
-                {{user.email}}
-              </mat-option>
-            }
-          </mat-autocomplete>
-        </mat-form-field>
-      </div>
+			<div class="mt-2">
+				<div class="mb-2">
+					<p class="!m-0 font-medium">Users</p>
+				</div>
+				<mat-form-field class="w-full">
+					<input
+						type="text"
+						placeholder="Search users"
+						name="users"
+						[matAutocomplete]="usersAuto"
+						matInput
+						[(ngModel)]="searchUser"
+						#searchUserField="ngModel"
+						(input)="filterAutocomplete('users', searchUser)"
+					/>
+					<mat-autocomplete #usersAuto="matAutocomplete">
+						@for (user of filteredUsers; track $index) {
+							<mat-option
+								[value]="user.email"
+								(click)="
+									this.selectedUserId = user.id;
+									searchUser = user.email;
+									onUsersClick(usersAuto)
+								"
+							>
+								{{ user.email }}
+							</mat-option>
+						}
+					</mat-autocomplete>
+				</mat-form-field>
+			</div>
 
-      <div class="mt-2">
-        <div class="mb-2">
-          <p class="!m-0 font-medium">Products</p>
-        </div>
-        <mat-form-field class="w-full">
-          <input type="text" placeholder="Search products" name="products"
-            [matAutocomplete]="productsAuto" matInput [(ngModel)]="searchProduct" #searchProductField="ngModel"
-            (input)="filterAutocomplete('products', searchProduct)" />
-          <mat-autocomplete #productsAuto="matAutocomplete">
-            @for (product of filteredProducts; track $index) {
-              <mat-option [value]="product.id"
-                (click)="this.selectedProductId = product.id; searchProduct = product.name; onProductClick(productsAuto);">
-                {{product.name}}
-              </mat-option>
-            }
-          </mat-autocomplete>
-        </mat-form-field>
-      </div>
+			<div class="mt-2">
+				<div class="mb-2">
+					<p class="!m-0 font-medium">Products</p>
+				</div>
+				<mat-form-field class="w-full">
+					<input
+						type="text"
+						placeholder="Search products"
+						name="products"
+						[matAutocomplete]="productsAuto"
+						matInput
+						[(ngModel)]="searchProduct"
+						#searchProductField="ngModel"
+						(input)="filterAutocomplete('products', searchProduct)"
+					/>
+					<mat-autocomplete #productsAuto="matAutocomplete">
+						@for (product of filteredProducts; track $index) {
+							<mat-option
+								[value]="product.id"
+								(click)="
+									this.selectedProductId = product.id;
+									searchProduct = product.name;
+									onProductClick(productsAuto)
+								"
+							>
+								{{ product.name }}
+							</mat-option>
+						}
+					</mat-autocomplete>
+				</mat-form-field>
+			</div>
 
-      <div class="mt-2">
-        <div class="mb-2">
-          <p class="!m-0 font-medium">Categories</p>
-        </div>
-        <mat-form-field class="w-full">
-          <input type="text" placeholder="Search categories" name="categories"
-            [matAutocomplete]="categoriesAuto" matInput [(ngModel)]="searchCategory" #searchCategoryField="ngModel"
-            (input)="filterAutocomplete('categories', searchCategory)" />
-          <mat-autocomplete #categoriesAuto="matAutocomplete">
-            @for (category of filteredCategories; track $index) {
-              <mat-option [value]="category.id"
-                (click)="this.selectedCategoryId = category.id; searchCategory = category.name; onCategoryClick(usersAuto);">
-                {{category.name}}
-              </mat-option>
-            }
-          </mat-autocomplete>
-        </mat-form-field>
-      </div>
-    </div>
+			<div class="mt-2">
+				<div class="mb-2">
+					<p class="!m-0 font-medium">Categories</p>
+				</div>
+				<mat-form-field class="w-full">
+					<input
+						type="text"
+						placeholder="Search categories"
+						name="categories"
+						[matAutocomplete]="categoriesAuto"
+						matInput
+						[(ngModel)]="searchCategory"
+						#searchCategoryField="ngModel"
+						(input)="filterAutocomplete('categories', searchCategory)"
+					/>
+					<mat-autocomplete #categoriesAuto="matAutocomplete">
+						@for (category of filteredCategories; track $index) {
+							<mat-option
+								[value]="category.id"
+								(click)="
+									this.selectedCategoryId = category.id;
+									searchCategory = category.name;
+									onCategoryClick(usersAuto)
+								"
+							>
+								{{ category.name }}
+							</mat-option>
+						}
+					</mat-autocomplete>
+				</mat-form-field>
+			</div>
+		</div>
 
-    <div class="log-table w-full">
-      <app-log-table [headings]="['Date', 'Event', 'Data', 'Details']" [data]="logs" (scrolled)="onScroll()"
-        (action)="onAction($event)" #logTable>
-        @if (isFetching) {
-          <div class="grid place-items-center spinner">
-            <mat-spinner />
-          </div>
-        }
-      </app-log-table>
-    </div>
-  </div>
+		<div class="log-table w-full">
+			<app-log-table
+				[headings]="['Date', 'Event', 'Data', 'Details']"
+				[data]="logs"
+				(scrolled)="onScroll()"
+				(action)="onAction($event)"
+				#logTable
+			>
+				@if (isFetching) {
+					<div class="grid place-items-center spinner">
+						<mat-spinner />
+					</div>
+				}
+			</app-log-table>
+		</div>
+	</div>
 </div>

@@ -1,70 +1,68 @@
-@use 'tailwindcss';
-@use './theme.scss';
+@use "tailwindcss";
+@use "./theme.scss";
 
 :root {
-  --primary-color: #31adff;
-  --header-height: 68px;
+	--primary-color: #31adff;
+	--header-height: 68px;
 }
 
 body {
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+	font-family: Roboto, "Helvetica Neue", sans-serif;
 
-  ::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-  }
+	::-webkit-scrollbar {
+		width: 4px;
+		height: 4px;
+	}
 
-  ::-webkit-scrollbar-track {
-    background: #F1F1F1;
-    border-radius: 100px;
-  }
+	::-webkit-scrollbar-track {
+		background: #f1f1f1;
+		border-radius: 100px;
+	}
 
-  ::-webkit-scrollbar-thumb {
-    border-radius: 100px;
-    background: #8F8F8F;
-  }
+	::-webkit-scrollbar-thumb {
+		border-radius: 100px;
+		background: #8f8f8f;
+	}
 
-  input[type="number"]::-webkit-inner-spin-button,
-  input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
+	input[type="number"]::-webkit-inner-spin-button,
+	input[type="number"]::-webkit-outer-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
 
-  input[type="number"] {
-    appearance: none;
-    -moz-appearance: textfield;
-  }
+	input[type="number"] {
+		appearance: none;
+		-moz-appearance: textfield;
+	}
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    border-spacing: 0px;
-  }
+	table {
+		width: 100%;
+		border-collapse: collapse;
+		border-spacing: 0px;
+	}
 
-  .main-btn {
-    background-color: #009DDC !important;
-    color: white !important;
-    min-width: 130px !important;
+	.main-btn {
+		background-color: #009ddc !important;
+		color: white !important;
+		min-width: 130px !important;
 
-    &:disabled {
-      pointer-events: none;
-      background-color: #F1F1F1 !important;
-    }
-  }
+		&:disabled {
+			pointer-events: none;
+			background-color: #f1f1f1 !important;
+		}
+	}
 
-  .link {
-    text-decoration: underline;
-    cursor: pointer;
-    transition: all ease-out 0.2s;
+	.link {
+		text-decoration: underline;
+		cursor: pointer;
+		transition: all ease-out 0.2s;
 
-    &:hover {
-      color: #009DDC !important;
-    }
+		&:hover {
+			color: #009ddc !important;
+		}
 
-    &:focus-visible {
-      outline: none;
-    }
-  }
+		&:focus-visible {
+			outline: none;
+		}
+	}
 }
-
-

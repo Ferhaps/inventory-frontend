@@ -12,67 +12,70 @@ import { LoggedUserInfo } from '../shared/types';
 import { PasswordValidatorDirective } from '@ferhaps/easy-ui-lib';
 
 @Component({
-  selector: 'app-login',
-  imports: [
-    FormsModule,
-    MatIconModule,
-    MatInputModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatProgressSpinnerModule,
-    PasswordValidatorDirective
-  ],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+	selector: 'app-login',
+	imports: [
+		FormsModule,
+		MatIconModule,
+		MatInputModule,
+		MatButtonModule,
+		MatFormFieldModule,
+		MatProgressSpinnerModule,
+		PasswordValidatorDirective,
+	],
+	templateUrl: './login.component.html',
+	styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-  protected loginModel: { email: string, password: string } = { email: '', password: '' };
-  protected isLoading = signal(false);
-  protected hidePass = signal(true);
+	protected loginModel: { email: string; password: string } = {
+		email: '',
+		password: '',
+	};
+	protected isLoading = signal(false);
+	protected hidePass = signal(true);
 
-  private authService = inject(AuthService);
-  private router = inject(Router);
-  
-  constructor () {
-    const userInfo: LoggedUserInfo = this.authService.getLoggedUserInfo();
-    if (userInfo?.token) {
-      this.router.navigateByUrl('products');
-    }
-  }
+	private authService = inject(AuthService);
+	private router = inject(Router);
 
-  protected onPassEyeClick(event: MouseEvent): void {
-    event.preventDefault();
-    this.hidePass.set(!this.hidePass());
-  }
+	constructor() {
+		const userInfo: LoggedUserInfo = this.authService.getLoggedUserInfo();
+		if (userInfo?.token) {
+			this.router.navigateByUrl('products');
+		}
+	}
 
-  protected onLoginSubmit(f: NgForm): void {
-    if (f.valid) {
-      this.isLoading.set(true);
-      this.authService.login(this.loginModel).subscribe({
-        next: (userInfo: LoggedUserInfo) => {
-          if (userInfo?.token) {
-            localStorage.setItem(TOKEN_KEY, JSON.stringify(userInfo));
-            this.router.navigateByUrl('products');
-          } else {
-            this.isLoading.set(false);
-          }
-        },
-        error: () => {
-          this.isLoading.set(false);
-        }
-      });
-    }
-  }
+	protected onPassEyeClick(event: MouseEvent): void {
+		event.preventDefault();
+		this.hidePass.set(!this.hidePass());
+	}
 
-  // private autoLogin(token: string): void {
-  //   this.authService.extendToken(token).subscribe({
-  //     next: () => {
-  //       localStorage.setItem(TOKEN_KEY, token);
-  //       this.router.navigateByUrl('products');
-  //     },
-  //     error: () => {
-  //       this.isLoading.set(false);
-  //     }
-  //   })
-  // }
+	protected onLoginSubmit(f: NgForm): void {
+		if (f.valid) {
+			this.isLoading.set(true);
+			this.authService.login(this.loginModel).subscribe({
+				next: (userInfo: LoggedUserInfo) => {
+					if (userInfo?.token) {
+						localStorage.setItem(TOKEN_KEY, JSON.stringify(userInfo));
+						this.router.navigateByUrl('products');
+					} else {
+						this.isLoading.set(false);
+					}
+				},
+				error: () => {
+					this.isLoading.set(false);
+				},
+			});
+		}
+	}
+
+	// private autoLogin(token: string): void {
+	//   this.authService.extendToken(token).subscribe({
+	//     next: () => {
+	//       localStorage.setItem(TOKEN_KEY, token);
+	//       this.router.navigateByUrl('products');
+	//     },
+	//     error: () => {
+	//       this.isLoading.set(false);
+	//     }
+	//   })
+	// }
 }

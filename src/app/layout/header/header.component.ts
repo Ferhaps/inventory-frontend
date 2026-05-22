@@ -10,31 +10,31 @@ import { AsyncPipe } from '@angular/common';
 import { ThemeService } from '../../services/theme.service';
 
 @Component({
-  selector: 'app-header',
-  templateUrl: 'header.component.html',
-  styleUrls: ['header.component.scss'],
-  imports: [
-    AsyncPipe,
-    MatMenuModule,
-    CustomMatIconModule,
-    MatButtonModule,
-    MatDividerModule,
-    RouterModule,
-    MatSlideToggleModule
-  ]
+	selector: 'app-header',
+	templateUrl: 'header.component.html',
+	styleUrls: ['header.component.scss'],
+	imports: [
+		AsyncPipe,
+		MatMenuModule,
+		CustomMatIconModule,
+		MatButtonModule,
+		MatDividerModule,
+		RouterModule,
+		MatSlideToggleModule,
+	],
 })
 export class HeaderComponent {
-  private authService = inject(AuthService);
+	private authService = inject(AuthService);
 
-  protected themeService = inject(ThemeService);
+	protected themeService = inject(ThemeService);
 
-  protected onOptionSelected(option: string): void {
-    switch (option) {
-      case 'logout':
-        this.authService.logout();
-        break;
-      default:
-        break;
-    }
-  }
+	protected onOptionSelected(option: string): void {
+		switch (option) {
+			case 'logout':
+				this.authService.logout();
+				break;
+			default:
+				break;
+		}
+	}
 }

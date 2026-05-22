@@ -11,48 +11,50 @@ import { MatButtonModule } from '@angular/material/button';
 import { DefaultDialogComponent } from '@ferhaps/easy-ui-lib';
 
 type AddProductModel = {
-  name: string;
-  categoryId: string | undefined;
+	name: string;
+	categoryId: string | undefined;
 };
 
 @Component({
-  selector: 'app-add-product-popup',
-  imports: [
-    FormsModule,
-    DefaultDialogComponent,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatProgressSpinnerModule
-  ],
-  templateUrl: './add-product-popup.component.html',
-  styleUrl: './add-product-popup.component.scss'
+	selector: 'app-add-product-popup',
+	imports: [
+		FormsModule,
+		DefaultDialogComponent,
+		MatFormFieldModule,
+		MatInputModule,
+		MatSelectModule,
+		MatButtonModule,
+		MatProgressSpinnerModule,
+	],
+	templateUrl: './add-product-popup.component.html',
+	styleUrl: './add-product-popup.component.scss',
 })
 export class AddProductPopupComponent {
-  protected model: AddProductModel = {
-    name: '',
-    categoryId: undefined
-  };
-  protected state: PopupState = 'default';
+	protected model: AddProductModel = {
+		name: '',
+		categoryId: undefined,
+	};
+	protected state: PopupState = 'default';
 
-  private productService = inject(ProductService);
-  private ref = inject(MatDialogRef);
+	private productService = inject(ProductService);
+	private ref = inject(MatDialogRef);
 
-  constructor(@Inject(MAT_DIALOG_DATA) public categories: Category[]) {
-    if (categories.length > 0) {
-      this.model.categoryId = categories[0].id;
-    }
-  }
+	constructor(@Inject(MAT_DIALOG_DATA) public categories: Category[]) {
+		if (categories.length > 0) {
+			this.model.categoryId = categories[0].id;
+		}
+	}
 
-  protected onSubmit(form: NgForm): void {
-    if (form.valid) {
-      this.state = 'loading';
-      this.productService.addProduct(this.model.name, this.model.categoryId as string).subscribe({
-        next: (product: Product) => {
-          this.ref.close(product);
-        },
-      });
-    }
-  }
+	protected onSubmit(form: NgForm): void {
+		if (form.valid) {
+			this.state = 'loading';
+			this.productService
+				.addProduct(this.model.name, this.model.categoryId as string)
+				.subscribe({
+					next: (product: Product) => {
+						this.ref.close(product);
+					},
+				});
+		}
+	}
 }

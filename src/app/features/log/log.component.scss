@@ -1,21 +1,21 @@
 .logs {
-  .main-area {
-    height: calc(100vh - 67px);
+	.main-area {
+		height: calc(100vh - 67px);
 
-    .main-filters {
-      .upper-part {
-        border-bottom: 2px solid #E5E4E7;
-      }
-    }
-  }
+		.main-filters {
+			.upper-part {
+				border-bottom: 2px solid #e5e4e7;
+			}
+		}
+	}
 
-  .log-table {
-    background-color: #EAF6FC;
-  }
+	.log-table {
+		background-color: #eaf6fc;
+	}
 }
 
 :host-context(.dark-theme) {
-  .log-table {
-    background-color: var(--background-color) !important;
-  }
+	.log-table {
+		background-color: var(--background-color) !important;
+	}
 }

@@ -7,28 +7,43 @@ import { Observable } from 'rxjs';
 import { LoggedUserInfo, User, UserRole } from '../shared/types';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
 export class AuthService {
-  private authUrl = environment.backendUrl + '/auth';
-  
-  private http = inject(HttpClient);
-  private router = inject(Router);
+	private authUrl = environment.backendUrl + '/auth';
 
-  public login(body: { email: string, password: string }): Observable<LoggedUserInfo> {
-    return this.http.post<LoggedUserInfo>(this.authUrl + '/login', body, JSON_HTTP_OPTIONS);
-  }
+	private http = inject(HttpClient);
+	private router = inject(Router);
 
-  public register(body: { email: string, password: string, role: UserRole }): Observable<User> {
-    return this.http.post<User>(this.authUrl + '/register', body, JSON_HTTP_OPTIONS);
-  }
+	public login(body: {
+		email: string;
+		password: string;
+	}): Observable<LoggedUserInfo> {
+		return this.http.post<LoggedUserInfo>(
+			this.authUrl + '/login',
+			body,
+			JSON_HTTP_OPTIONS,
+		);
+	}
 
-  public getLoggedUserInfo(): LoggedUserInfo {
-    return JSON.parse(localStorage.getItem(TOKEN_KEY)!);
-  }
+	public register(body: {
+		email: string;
+		password: string;
+		role: UserRole;
+	}): Observable<User> {
+		return this.http.post<User>(
+			this.authUrl + '/register',
+			body,
+			JSON_HTTP_OPTIONS,
+		);
+	}
 
-  public logout(): void {
-    localStorage.removeItem(TOKEN_KEY);
-    this.router.navigateByUrl('/login');
-  }
+	public getLoggedUserInfo(): LoggedUserInfo {
+		return JSON.parse(localStorage.getItem(TOKEN_KEY)!);
+	}
+
+	public logout(): void {
+		localStorage.removeItem(TOKEN_KEY);
+		this.router.navigateByUrl('/login');
+	}
 }

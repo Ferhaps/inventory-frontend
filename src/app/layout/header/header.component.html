@@ -1,63 +1,79 @@
 <header class="flex items-center text-white gap-8">
-  <!-- <img [ngSrc]="'assets/icons/logo.svg'" class="mr-4 ml-4"
+	<!-- <img [ngSrc]="'assets/icons/logo.svg'" class="mr-4 ml-4"
     alt="logo" width="150" height="40" priority="priority"> -->
 
-  <nav class="flex items-center gap-4 ml-4">
-    <a class="nav-item flex items-center gap-2 cursor-pointer text-sm font-medium no-underline text-white py-1 px-2.5 rounded-md"
-      routerLink="products" routerLinkActive="active">
-      <div class="logo">
-        <mat-icon>list</mat-icon>
-      </div>
-      <div>Products</div>
-    </a>
-  
-    <a class="nav-item flex items-center gap-2 cursor-pointer text-sm font-medium no-underline text-white py-1 px-2.5 rounded-md"
-      routerLink="categories" routerLinkActive="active">
-      <div class="logo">
-        <mat-icon>category</mat-icon>
-      </div>
-      <div>Categories</div>
-    </a>
-  
-    <a class="nav-item flex items-center gap-2 cursor-pointer text-sm font-medium no-underline text-white py-1 px-2.5 rounded-md"
-      routerLink="users" routerLinkActive="active">
-      <div class="logo">
-        <mat-icon>people</mat-icon>
-      </div>
-      <div>Users</div>
-    </a>
-  
-    <a class="nav-item flex items-center gap-2 cursor-pointer text-sm font-medium no-underline text-white py-1 px-2.5 rounded-md"
-      routerLink="log" routerLinkActive="active">
-      <div class="logo">
-        <mat-icon>table_chart</mat-icon>
-      </div>
-      <div>Log</div>
-    </a>
-  </nav>
+	<nav class="flex items-center gap-4 ml-4">
+		<a
+			class="nav-item flex items-center gap-2 cursor-pointer text-sm font-medium no-underline text-white py-1 px-2.5 rounded-md"
+			routerLink="products"
+			routerLinkActive="active"
+		>
+			<div class="logo">
+				<mat-icon>list</mat-icon>
+			</div>
+			<div>Products</div>
+		</a>
 
-  <div class="ml-auto flex items-center right-part">
-    <mat-slide-toggle
-      style="min-width: 120px;"
-      class="mr-6"
-      [checked]="themeService.isDarkMode$ | async"
-      (change)="themeService.toggleTheme()">
-      Dark Mode
-    </mat-slide-toggle>
+		<a
+			class="nav-item flex items-center gap-2 cursor-pointer text-sm font-medium no-underline text-white py-1 px-2.5 rounded-md"
+			routerLink="categories"
+			routerLinkActive="active"
+		>
+			<div class="logo">
+				<mat-icon>category</mat-icon>
+			</div>
+			<div>Categories</div>
+		</a>
 
-    <mat-divider class="h-[30px]" vertical="true" />
-    
-    <div class="flex items-center ml-4 mr-4 cursor-pointer" [matMenuTriggerFor]="menu">
-      <button mat-icon-button>
-        <mat-icon>more_vert</mat-icon>
-      </button>
-    </div>
-    
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item (click)="onOptionSelected('logout')">
-        <mat-icon [svgIcon]="'logoutIcon'"></mat-icon>
-        <span class="font-medium !text-red-500">Logout</span>
-      </button>
-    </mat-menu>
-  </div>
+		<a
+			class="nav-item flex items-center gap-2 cursor-pointer text-sm font-medium no-underline text-white py-1 px-2.5 rounded-md"
+			routerLink="users"
+			routerLinkActive="active"
+		>
+			<div class="logo">
+				<mat-icon>people</mat-icon>
+			</div>
+			<div>Users</div>
+		</a>
+
+		<a
+			class="nav-item flex items-center gap-2 cursor-pointer text-sm font-medium no-underline text-white py-1 px-2.5 rounded-md"
+			routerLink="log"
+			routerLinkActive="active"
+		>
+			<div class="logo">
+				<mat-icon>table_chart</mat-icon>
+			</div>
+			<div>Log</div>
+		</a>
+	</nav>
+
+	<div class="ml-auto flex items-center right-part">
+		<mat-slide-toggle
+			style="min-width: 120px"
+			class="mr-6"
+			[checked]="themeService.isDarkMode$ | async"
+			(change)="themeService.toggleTheme()"
+		>
+			Dark Mode
+		</mat-slide-toggle>
+
+		<mat-divider class="h-[30px]" vertical="true" />
+
+		<div
+			class="flex items-center ml-4 mr-4 cursor-pointer"
+			[matMenuTriggerFor]="menu"
+		>
+			<button mat-icon-button>
+				<mat-icon>more_vert</mat-icon>
+			</button>
+		</div>
+
+		<mat-menu #menu="matMenu">
+			<button mat-menu-item (click)="onOptionSelected('logout')">
+				<mat-icon [svgIcon]="'logoutIcon'"></mat-icon>
+				<span class="font-medium !text-red-500">Logout</span>
+			</button>
+		</mat-menu>
+	</div>
 </header>

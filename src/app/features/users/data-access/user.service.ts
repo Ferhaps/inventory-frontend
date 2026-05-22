@@ -6,18 +6,18 @@ import { JSON_HTTP_OPTIONS } from '../../../shared/utils';
 import { User } from '../../../shared/types';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root',
 })
 export class UserService {
-  private usersUrl = environment.backendUrl + '/users';
+	private usersUrl = environment.backendUrl + '/users';
 
-  private http = inject(HttpClient);
+	private http = inject(HttpClient);
 
-  public getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(this.usersUrl, JSON_HTTP_OPTIONS);
-  }
+	public getUsers(): Observable<User[]> {
+		return this.http.get<User[]>(this.usersUrl, JSON_HTTP_OPTIONS);
+	}
 
-  public deleteUser(id: string): Observable<any> {
-    return this.http.delete(this.usersUrl + `/${id}`, JSON_HTTP_OPTIONS);
-  }
+	public deleteUser(id: string): Observable<any> {
+		return this.http.delete(this.usersUrl + `/${id}`, JSON_HTTP_OPTIONS);
+	}
 }

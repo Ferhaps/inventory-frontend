@@ -1,23 +1,24 @@
 header {
-  background-color: var(--primary-color);
-  min-height: var(--header-height);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+	background-color: var(--primary-color);
+	min-height: var(--header-height);
+	border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 
-  nav {
-    .nav-item {
-      transition: all 0.15s ease;
+	nav {
+		.nav-item {
+			transition: all 0.15s ease;
 
-      &.active, &:hover {
-        background-color: #fff;
-        color: #000;
-      }
-    }
-  }
+			&.active,
+			&:hover {
+				background-color: #fff;
+				color: #000;
+			}
+		}
+	}
 }
 
 :host-context(.dark-theme) {
-  header {
-    background-color: var(--dark-primary-color) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
-  }
+	header {
+		background-color: var(--dark-primary-color) !important;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+	}
 }
