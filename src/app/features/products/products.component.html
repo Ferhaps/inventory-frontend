@@ -1,28 +1,19 @@
 <div class="products mx-4 h-[90%]">
 	<div class="flex items-center my-4 gap-4">
 		<h1 class="text-2xl font-bold">Products</h1>
-		<div
-			class="!text-[#009DDC] cursor-pointer font-medium"
-			(click)="openAddProductPopup()"
-		>
+		<div class="!text-[#009DDC] cursor-pointer font-medium" (click)="openAddProductPopup()">
 			+ add
 		</div>
 		<mat-chip-listbox (change)="showProductsOfCategory($event)">
 			@for (category of categories; track category.id) {
-				<mat-chip-option
-					[value]="category.id"
-					[selected]="currentCategoryId == category.id"
-				>
-					{{ category.name }}
-				</mat-chip-option>
+			<mat-chip-option [value]="category.id" [selected]="currentCategoryId == category.id">
+				{{ category.name }}
+			</mat-chip-option>
 			}
 		</mat-chip-listbox>
 	</div>
 
-	<div
-		class="overflow-y-auto min-h-[370px] table-wrapper mat-elevation-z5"
-		tabindex="0"
-	>
+	<div class="overflow-y-auto min-h-[370px] table-wrapper mat-elevation-z5" tabindex="0">
 		<table mat-table [dataSource]="tableDataSource()">
 			<ng-container matColumnDef="name" sticky>
 				<th mat-header-cell *matHeaderCellDef class="font-semibold text-lg">
@@ -38,34 +29,19 @@
 				<td mat-cell *matCellDef="let product" class="pt-6">
 					<div class="flex items-center gap-4">
 						<mat-form-field class="mt-6">
-							<input
-								matInput
-								type="number"
-								[(ngModel)]="product.newQuantity"
-								#quantityInput="ngModel"
-								name="quantityField"
-							/>
+							<input matInput type="number" [(ngModel)]="product.newQuantity" #quantityInput="ngModel"
+								name="quantityField" />
 						</mat-form-field>
 
-						@if (product.newQuantity !== product.quantity) {
-							<div class="flex items-center gap-2 mb-5">
-								<button
-									mat-icon-button
-									class="!text-green-600"
-									(click)="updateQuantity(product)"
-								>
-									<mat-icon>check_circle</mat-icon>
-								</button>
+						<div class="flex items-center gap-2 mb-5" [class.invisible]="product.newQuantity === product.quantity">
+							<button mat-icon-button class="!text-green-600" (click)="updateQuantity(product)">
+								<mat-icon>check_circle</mat-icon>
+							</button>
 
-								<button
-									mat-icon-button
-									class="!text-red-500"
-									(click)="product.newQuantity = product.quantity"
-								>
-									<mat-icon>cancel</mat-icon>
-								</button>
-							</div>
-						}
+							<button mat-icon-button class="!text-red-500" (click)="product.newQuantity = product.quantity">
+								<mat-icon>cancel</mat-icon>
+							</button>
+						</div>
 					</div>
 				</td>
 			</ng-container>
@@ -93,24 +69,16 @@
 					Actions
 				</th>
 				<td mat-cell *matCellDef="let product">
-					<button
-						mat-icon-button
-						class="cursor-pointer dots ml-auto"
-						[matMenuTriggerFor]="optionsMenu"
-					>
+					<button mat-icon-button class="cursor-pointer dots ml-auto" [matMenuTriggerFor]="optionsMenu">
 						<mat-icon>more_vert</mat-icon>
 					</button>
 
 					<mat-menu #optionsMenu="matMenu">
 						@for (action of product.actions; track $index) {
-							<div
-								mat-menu-item
-								(click)="selectOption(product, action)"
-								class="font-medium"
-								[style.color]="action == 'Delete' ? '#ff0000' : null"
-							>
-								{{ action }}
-							</div>
+						<div mat-menu-item (click)="selectOption(product, action)" class="font-medium"
+							[style.color]="action == 'Delete' ? '#ff0000' : null">
+							{{ action }}
+						</div>
 						}
 					</mat-menu>
 				</td>
