@@ -17,6 +17,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { DatePipe } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AddProductPopupComponent } from './add-product-popup/add-product-popup.component';
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import { AuthService } from '../../services/auth.service';
@@ -59,6 +60,7 @@ export class ProductsComponent implements OnInit {
 	private loadingService = inject(LoaderService);
 	private authService = inject(AuthService);
 	private dialog = inject(MatDialog);
+	private snackBar = inject(MatSnackBar);
 
 	constructor() {
 		const loggedUser: LoggedUserInfo = this.authService.getLoggedUserInfo();
@@ -129,6 +131,9 @@ export class ProductsComponent implements OnInit {
 					)!;
 					product.quantity = productObj.newQuantity;
 					this.setCurrentProducts();
+					this.snackBar.open('Quantity updated successfully', 'Close', {
+						duration: 3000,
+					});
 				},
 				error: () => this.setCurrentProducts(),
 			});
