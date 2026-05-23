@@ -48,7 +48,6 @@ export class ProductsComponent implements OnInit {
 	protected currentCategoryId: string = '';
 	protected tableDataSource = signal<TableDataSource<Product>[]>([]);
 	protected searchTerm = signal('');
-	protected searchBarVisible = signal(true);
 	protected displayedColumns: string[] = [
 		'name',
 		'quantity',
@@ -88,7 +87,7 @@ export class ProductsComponent implements OnInit {
 				} else {
 					this.loadingService.setLoading(false);
 				}
-				console.log(categories);
+				console.log('categores: ', categories);
 			},
 			error: () => this.loadingService.setLoading(false),
 		});
@@ -100,7 +99,7 @@ export class ProductsComponent implements OnInit {
 				this.allProducts = products;
 				this.setCurrentProducts();
 				this.loadingService.setLoading(false);
-				console.log(products);
+				console.log('products: ', products);
 			},
 			error: () => this.loadingService.setLoading(false),
 		});
@@ -109,8 +108,6 @@ export class ProductsComponent implements OnInit {
 	protected showProductsOfCategory(event: MatChipListboxChange): void {
 		this.currentCategoryId = event.value;
 		this.searchTerm.set('');
-		this.searchBarVisible.set(false);
-		setTimeout(() => this.searchBarVisible.set(true));
 		this.setCurrentProducts();
 	}
 

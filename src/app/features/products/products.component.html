@@ -5,9 +5,11 @@
 			+ add
 		</div>
 
-		@if (searchBarVisible()) {
-		<lib-search-bar [for]="'products'" (search)="onSearch($event)" />
-		}
+		<lib-search-bar
+			[for]="'products'"
+			[(ngModel)]="searchTerm"
+			(search)="onSearch($event)"
+		/>
 
 		<mat-chip-listbox (change)="showProductsOfCategory($event)">
 			@for (category of categories; track category.id) {
