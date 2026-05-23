@@ -22,7 +22,7 @@ import { AddProductPopupComponent } from './add-product-popup/add-product-popup.
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import { AuthService } from '../../services/auth.service';
 import { DefaultDeletePopupComponent } from '../../shared/default-delete-popup/default-delete-popup.component';
-import { LoaderService } from '@ferhaps/easy-ui-lib';
+import { LoaderService, SearchBarComponent } from '@ferhaps/easy-ui-lib';
 
 @Component({
 	selector: 'app-products',
@@ -38,6 +38,7 @@ import { LoaderService } from '@ferhaps/easy-ui-lib';
 		MatDialogModule,
 		MatFormFieldModule,
 		DatePipe,
+		SearchBarComponent,
 	],
 	templateUrl: './products.component.html',
 	styleUrl: './products.component.scss',
@@ -46,6 +47,8 @@ export class ProductsComponent implements OnInit {
 	protected categories: Category[] = [];
 	protected currentCategoryId: string = '';
 	protected tableDataSource = signal<TableDataSource<Product>[]>([]);
+	protected searchTerm = signal('');
+	protected searchBarVisible = signal(true);
 	protected displayedColumns: string[] = [
 		'name',
 		'quantity',
@@ -105,6 +108,14 @@ export class ProductsComponent implements OnInit {
 
 	protected showProductsOfCategory(event: MatChipListboxChange): void {
 		this.currentCategoryId = event.value;
+		this.searchTerm.set('');
+		this.searchBarVisible.set(false);
+		setTimeout(() => this.searchBarVisible.set(true));
+		this.setCurrentProducts();
+	}
+
+	protected onSearch(event: string | Event): void {
+		this.searchTerm.set(typeof event === 'string' ? event : '');
 		this.setCurrentProducts();
 	}
 
@@ -112,8 +123,16 @@ export class ProductsComponent implements OnInit {
 		const products = this.allProducts.filter(
 			(product) => product.categoryId === this.currentCategoryId,
 		);
+		const term = this.searchTerm().toLowerCase();
+		const sorted = term
+			? [...products].sort((a, b) => {
+				const aMatch = a.name.toLowerCase().includes(term) ? 0 : 1;
+				const bMatch = b.name.toLowerCase().includes(term) ? 0 : 1;
+				return aMatch - bMatch;
+			})
+			: products;
 		this.tableDataSource.set(
-			products.map((product) => ({
+			sorted.map((product) => ({
 				actions: this.productActions,
 				...product,
 				newQuantity: product.quantity,

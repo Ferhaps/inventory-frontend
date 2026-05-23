@@ -4,6 +4,11 @@
 		<div class="!text-[#009DDC] cursor-pointer font-medium" (click)="openAddProductPopup()">
 			+ add
 		</div>
+
+		@if (searchBarVisible()) {
+		<lib-search-bar [for]="'products'" (search)="onSearch($event)" />
+		}
+
 		<mat-chip-listbox (change)="showProductsOfCategory($event)">
 			@for (category of categories; track category.id) {
 			<mat-chip-option [value]="category.id" [selected]="currentCategoryId == category.id">
