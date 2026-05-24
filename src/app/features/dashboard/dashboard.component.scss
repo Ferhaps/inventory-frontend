@@ -1,0 +1,53 @@
+.stat-card {
+	background-color: var(--mat-sys-surface);
+	transition: box-shadow 0.2s ease;
+
+	&.low-stock-alert {
+		border-left: 3px solid #ef4444;
+	}
+}
+
+.stat-label {
+	color: var(--mat-sys-on-surface-variant);
+}
+
+.panel {
+	background-color: var(--mat-sys-surface);
+}
+
+.chart-container {
+	height: 300px;
+	position: relative;
+}
+
+.activity-item {
+	transition: background-color 0.15s ease;
+
+	&:hover {
+		background-color: rgba(0, 0, 0, 0.04);
+	}
+
+	.activity-dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background-color: var(--primary-color);
+	}
+
+	.activity-meta {
+		color: var(--mat-sys-on-surface-variant);
+	}
+}
+
+.empty-state {
+	color: var(--mat-sys-on-surface-variant);
+	text-align: center;
+	padding: 2rem 0;
+	font-size: 0.9rem;
+}
+
+:host-context(.dark-theme) {
+	.activity-item:hover {
+		background-color: rgba(255, 255, 255, 0.06);
+	}
+}

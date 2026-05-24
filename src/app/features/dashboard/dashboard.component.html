@@ -1,0 +1,106 @@
+<div class="dashboard mx-4 py-4 overflow-y-auto h-[calc(100%-1rem)]">
+
+	<!-- Stat Cards -->
+	<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+		<div class="stat-card mat-elevation-z2 p-5 rounded-xl flex items-center gap-4">
+			<div class="stat-icon bg-blue-100 text-blue-500 rounded-full p-3">
+				<mat-icon>inventory_2</mat-icon>
+			</div>
+			<div>
+				<div class="text-3xl font-bold">{{ totalProducts() }}</div>
+				<div class="stat-label text-sm mt-0.5">Total Products</div>
+			</div>
+		</div>
+
+		<div class="stat-card mat-elevation-z2 p-5 rounded-xl flex items-center gap-4">
+			<div class="stat-icon bg-purple-100 text-purple-500 rounded-full p-3">
+				<mat-icon>category</mat-icon>
+			</div>
+			<div>
+				<div class="text-3xl font-bold">{{ totalCategories() }}</div>
+				<div class="stat-label text-sm mt-0.5">Categories</div>
+			</div>
+		</div>
+
+		<div class="stat-card mat-elevation-z2 p-5 rounded-xl flex items-center gap-4">
+			<div class="stat-icon bg-green-100 text-green-600 rounded-full p-3">
+				<mat-icon>people</mat-icon>
+			</div>
+			<div>
+				<div class="text-3xl font-bold">{{ totalUsers() }}</div>
+				<div class="stat-label text-sm mt-0.5">Users</div>
+			</div>
+		</div>
+
+		<div class="stat-card mat-elevation-z2 p-5 rounded-xl flex items-center gap-4"
+			[class.low-stock-alert]="lowStockCount() > 0">
+			<div class="stat-icon rounded-full p-3"
+				[class.bg-red-100]="lowStockCount() > 0"
+				[class.text-red-500]="lowStockCount() > 0"
+				[class.bg-gray-100]="lowStockCount() === 0"
+				[class.text-gray-400]="lowStockCount() === 0">
+				<mat-icon>warning</mat-icon>
+			</div>
+			<div>
+				<div class="text-3xl font-bold" [class.text-red-500]="lowStockCount() > 0">
+					{{ lowStockCount() }}
+				</div>
+				<div class="stat-label text-sm mt-0.5">Low Stock Items</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Chart + Activity -->
+	@if (isLoaded()) {
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+			<!-- Donut Chart -->
+			<div class="panel mat-elevation-z2 p-5 rounded-xl">
+				<h2 class="text-lg font-semibold mb-4">Products by Category</h2>
+				@if (totalProducts() > 0) {
+					<div class="chart-container">
+						<canvas #chartCanvas></canvas>
+					</div>
+				} @else {
+					<div class="empty-state">No products found.</div>
+				}
+			</div>
+
+			<!-- Recent Activity -->
+			<div class="panel mat-elevation-z2 p-5 rounded-xl">
+				<h2 class="text-lg font-semibold mb-4">Recent Activity</h2>
+				@if (recentLogs().length > 0) {
+					<div class="flex flex-col gap-1">
+						@for (log of recentLogs(); track log.id) {
+							<div class="activity-item flex items-center gap-3 px-3 py-2.5 rounded-lg">
+								<div class="activity-dot shrink-0"></div>
+								<div class="flex-1 min-w-0">
+									<div class="font-medium text-sm truncate">
+										{{ log.event | snakeCaseParser }}
+									</div>
+									@if (log.user) {
+										<div class="activity-meta text-xs truncate mt-0.5">
+											{{ log.user.email }}
+										</div>
+									}
+									@if (log.product) {
+										<div class="activity-meta text-xs truncate mt-0.5">
+											{{ log.product.name }}
+										</div>
+									}
+								</div>
+								<div class="activity-meta text-xs shrink-0">
+									{{ log.timestamp | date: 'dd.MM.yy HH:mm' }}
+								</div>
+							</div>
+						}
+					</div>
+				} @else {
+					<div class="empty-state">No recent activity.</div>
+				}
+			</div>
+
+		</div>
+	}
+
+</div>

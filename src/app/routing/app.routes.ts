@@ -22,6 +22,19 @@ export const routes: Routes = [
 		// ],
 		children: [
 			{
+				path: '',
+				redirectTo: 'dashboard',
+				pathMatch: 'full',
+			},
+			{
+				path: 'dashboard',
+				title: 'Inventory Dashboard',
+				loadComponent: () =>
+					import('../features/dashboard/dashboard.component').then(
+						(c) => c.DashboardComponent,
+					),
+			},
+			{
 				path: 'products',
 				title: 'Inventory Products',
 				loadComponent: () =>
