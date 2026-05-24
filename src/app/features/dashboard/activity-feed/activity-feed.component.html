@@ -9,12 +9,17 @@
 					</div>
 					@if (log.user) {
 						<div class="activity-meta text-xs truncate mt-0.5">
-							{{ log.user.email }}
+							User: {{ log.user.email }}
 						</div>
 					}
 					@if (log.product) {
 						<div class="activity-meta text-xs truncate mt-0.5">
-							{{ log.product.name }}
+							Product: {{ log.product.name }}
+						</div>
+					}
+					@if (log.category) {
+						<div class="activity-meta text-xs truncate mt-0.5">
+							Category: {{ log.category.name }}
 						</div>
 					}
 				</div>
