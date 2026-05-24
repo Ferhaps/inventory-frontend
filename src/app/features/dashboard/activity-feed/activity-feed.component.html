@@ -8,22 +8,22 @@
 						{{ log.event | snakeCaseParser }}
 					</div>
 					@if (log.user) {
-						<div class="activity-meta text-xs truncate mt-0.5">
+						<div class="text-gray-500 text-xs truncate mt-0.5">
 							User: {{ log.user.email }}
 						</div>
 					}
 					@if (log.product) {
-						<div class="activity-meta text-xs truncate mt-0.5">
+						<div class="text-gray-500 text-xs truncate mt-0.5">
 							Product: {{ log.product.name }}
 						</div>
 					}
 					@if (log.category) {
-						<div class="activity-meta text-xs truncate mt-0.5">
+						<div class="text-gray-500 text-xs truncate mt-0.5">
 							Category: {{ log.category.name }}
 						</div>
 					}
 				</div>
-				<div class="activity-meta text-xs shrink-0">
+				<div class="text-gray-500 text-xs shrink-0">
 					{{ log.timestamp | date: 'dd.MM.yy HH:mm' }}
 				</div>
 			</div>
