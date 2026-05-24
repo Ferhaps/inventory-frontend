@@ -39,7 +39,7 @@ export class LoginComponent {
 	constructor() {
 		const userInfo: LoggedUserInfo = this.authService.getLoggedUserInfo();
 		if (userInfo?.token) {
-			this.router.navigateByUrl('products');
+			this.router.navigateByUrl('dashboard');
 		}
 	}
 
@@ -55,7 +55,7 @@ export class LoginComponent {
 				next: (userInfo: LoggedUserInfo) => {
 					if (userInfo?.token) {
 						localStorage.setItem(TOKEN_KEY, JSON.stringify(userInfo));
-						this.router.navigateByUrl('products');
+						this.router.navigateByUrl('dashboard');
 					} else {
 						this.isLoading.set(false);
 					}
