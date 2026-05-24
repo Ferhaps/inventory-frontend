@@ -115,7 +115,5 @@ $dark-theme: mat.m2-define-dark-theme(
 body {
 	background-color: var(--background-color);
 	color: var(--text-color);
-	transition:
-		background-color 0.15s ease,
-		color 0.15s ease;
+	transition: background-color 0.15s ease, color 0.15s ease;
 }

@@ -1,6 +1,4 @@
 <div class="dashboard flex flex-col h-full overflow-hidden p-4">
-
-	<!-- Stat Cards -->
 	<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4 shrink-0">
 		<div class="stat-card mat-elevation-z2 p-5 rounded-xl flex items-center gap-4">
 			<div class="stat-icon bg-blue-100 text-blue-500 rounded-full p-3">
@@ -55,9 +53,11 @@
 			<div class="panel mat-elevation-z2 p-5 rounded-xl flex flex-col overflow-hidden">
 				<h2 class="text-lg font-semibold mb-4 shrink-0">Products by Category</h2>
 				@if (totalProducts() > 0) {
-					<div class="chart-container flex-1 min-h-0">
-						<canvas #chartCanvas></canvas>
-					</div>
+					<app-category-chart
+						class="flex-1 min-h-0"
+						[products]="products"
+						[categories]="categories"
+					/>
 				} @else {
 					<div class="empty-state">No products found.</div>
 				}
