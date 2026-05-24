@@ -8,11 +8,11 @@ import {
 	viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DatePipe } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { Chart, registerables } from 'chart.js';
-import { LoaderService, SnakeCaseParserPipe } from '@ferhaps/easy-ui-lib';
+import { LoaderService } from '@ferhaps/easy-ui-lib';
 import { MatIconModule } from '@angular/material/icon';
+import { ActivityFeedComponent } from './activity-feed/activity-feed.component';
 import { ProductService } from '../products/data-access/product.service';
 import { CategoryService } from '../categories/data-access/category.service';
 import { UserService } from '../users/data-access/user.service';
@@ -38,7 +38,10 @@ const CHART_COLORS = [
 @Component({
 	selector: 'app-dashboard',
 	host: { class: 'w-full h-full' },
-	imports: [DatePipe, SnakeCaseParserPipe, MatIconModule],
+	imports: [
+    MatIconModule,
+    ActivityFeedComponent
+  ],
 	templateUrl: './dashboard.component.html',
 	styleUrl: './dashboard.component.scss',
 })
