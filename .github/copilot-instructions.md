@@ -92,7 +92,8 @@ protected isLoading = signal(false);
 
 ### Forms
 
-Use **template-driven forms** with `NgForm` and `[(ngModel)]`. Never use ReactiveFormsModule.
+Use **template-driven forms** with `NgForm` and `[(ngModel)]`.
+Use ReactiveFormsModule only in very complex scenarios.
 
 ```typescript
 protected onSubmit(form: NgForm): void {
