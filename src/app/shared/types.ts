@@ -26,6 +26,8 @@ export type Product = {
 export type Category = {
 	id: string;
 	name: string;
+	updatedAt: string;
+	createdAt: string;
 };
 
 export type TableDataSource<T> = {
