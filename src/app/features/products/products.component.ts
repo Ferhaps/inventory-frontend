@@ -158,7 +158,7 @@ export class ProductsComponent implements OnInit {
 	protected openAddProductPopup(): void {
 		const popup = this.dialog.open(AddProductPopupComponent, {
 			width: '350px',
-			data: this.categories,
+			data: { categories: this.categories, currentCategoryId: this.currentCategoryId },
 			scrollStrategy: new NoopScrollStrategy(),
 		});
 
