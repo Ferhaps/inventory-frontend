@@ -17,9 +17,9 @@ export class ProductService {
 		return this.http.get<Product[]>(this.productsUrl, JSON_HTTP_OPTIONS);
 	}
 
-	public addProduct(name: string, category: string): Observable<Product> {
+	public addProduct(name: string, category: string, quantity: number): Observable<Product> {
 		return this.http.post<Product>(
-			this.productsUrl + `?name=${name}&categoryId=${category}`,
+			this.productsUrl + `?name=${name}&categoryId=${category}&quantity=${quantity}`,
 			{},
 			JSON_HTTP_OPTIONS,
 		);
