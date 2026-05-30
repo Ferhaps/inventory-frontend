@@ -78,7 +78,7 @@ export class CategoriesComponent implements OnInit {
 	private openDeleteCategoryPopup(category: Category): void {
 		const ref = this.dialog.open(DefaultDeletePopupComponent, {
 			width: '350px',
-			data: `category: ${category.name}`,
+			data: `category: ${category.name}. Keep in mind that all the products that belong to this category will be deleted as well`,
 			autoFocus: false,
 			scrollStrategy: new NoopScrollStrategy(),
 		});
