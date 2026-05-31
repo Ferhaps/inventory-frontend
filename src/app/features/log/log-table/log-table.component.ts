@@ -47,10 +47,8 @@ export class LogTableComponent {
 		});
 	}
 
-	protected navigate(route: string, id: string | undefined): void {
-		if (id) {
-			this.router.navigate([route, id]);
-		}
+	protected navigate(route: string): void {
+		this.router.navigate([route]);
 	}
 
 	protected onScroll() {

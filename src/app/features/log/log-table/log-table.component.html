@@ -1,84 +1,62 @@
 @if (!loading) {
-	<div
-		class="log-container overflow-y-scroll max-h-full"
-		#scrollContainer
-		(scroll)="onScroll()"
-	>
-		<table>
-			@if (headings()) {
-				<thead>
-					<tr>
-						@for (
-							heading of headings();
-							track heading;
-							let headIndex = $index
-						) {
-							<th
-								class="log-heading text-left sticky top-0 z-2 h-[30px] w-[110px]"
-							>
-								{{ heading }}
-							</th>
+<div class="log-container overflow-y-scroll max-h-full" #scrollContainer (scroll)="onScroll()">
+	<table>
+		@if (headings()) {
+		<thead>
+			<tr>
+				@for (heading of headings(); track heading; let headIndex = $index) {
+				<th class="log-heading text-left sticky top-0 z-2 h-[30px] w-[110px]">
+					{{ heading }}
+				</th>
+				}
+			</tr>
+		</thead>
+		}
+
+		@if (data() && data().length > 0) {
+		<tbody>
+			@for (obj of data(); let i = $index; track i) {
+			<tr>
+				<td>
+					{{ obj.timestamp | date: "dd.MM.yyyy HH:mm:ss" }}
+				</td>
+				<td>
+					{{ obj.event | snakeCaseParser }}
+				</td>
+				<td>
+					<div class="flex items-center">
+						@if (obj.user) {
+						<div class="mr-[0.2rem]">User:</div>
+						<div class="mr-2 link" (click)="navigate('users')">
+							{{ obj.user.email || "-" }}
+						</div>
 						}
-					</tr>
-				</thead>
+
+						@if (obj.product) {
+						<div class="mr-[0.2rem]">Product:</div>
+						<div class="mr-2 link" (click)="navigate('products')">
+							{{ obj.product.name || "-" }}
+						</div>
+						}
+
+						@if (obj.category) {
+						<div class="mr-[0.2rem]">Category:</div>
+						<div class="mr-2 link" (click)="navigate('categories')">
+							{{ obj.category.name || "-" }}
+						</div>
+						}
+					</div>
+				</td>
+				<td class="text-left">{{ obj.details || "-" }}</td>
+			</tr>
 			}
-
-			@if (data() && data().length > 0) {
-				<tbody>
-					@for (obj of data(); let i = $index; track i) {
-						<tr>
-							<td>
-								{{ obj.timestamp | date: "dd.MM.yyyy HH:mm:ss" }}
-							</td>
-							<td>
-								{{ obj.event | snakeCaseParser }}
-							</td>
-							<td>
-								<div class="flex items-center">
-									@if (obj.user) {
-										<div class="mr-[0.2rem]">User:</div>
-										<div
-											class="mr-2"
-											[class.link]="!obj.event.includes('DELETE')"
-											(click)="navigate('users', obj.user.id)"
-										>
-											{{ obj.user.email || "-" }}
-										</div>
-									}
-
-									@if (obj.product) {
-										<div class="mr-[0.2rem]">Product:</div>
-										<div
-											class="mr-2"
-											[class.link]="!obj.event.includes('DELETE')"
-											(click)="navigate('products', obj.product.id)"
-										>
-											{{ obj.product.name || "-" }}
-										</div>
-									}
-
-									@if (obj.category) {
-										<div class="mr-[0.2rem]">Category:</div>
-										<div
-											class="mr-2"
-											[class.link]="!obj.event.includes('DELETE')"
-											(click)="navigate('categories', obj.category.id)"
-										>
-											{{ obj.category.name || "-" }}
-										</div>
-									}
-								</div>
-							</td>
-							<td class="text-left">{{ obj.details || "-" }}</td>
-						</tr>
-					}
-				</tbody>
-			}
-		</table>
-		<ng-content></ng-content>
-	</div>
+		</tbody>
+		}
+	</table>
+	<ng-content></ng-content>
+</div>
 } @else {
-	<div class="grid place-items-center">
-		<mat-spinner />
-	</div>
+<div class="grid place-items-center">
+	<mat-spinner />
+</div>
 }
