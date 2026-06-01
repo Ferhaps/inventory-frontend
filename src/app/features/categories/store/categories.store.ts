@@ -19,10 +19,6 @@ export const CategoriesStore = signalStore(
 		status: 'idle',
 	}),
 
-	withComputed(({ categories }) => ({
-		count: computed(() => categories().length),
-	})),
-
 	withMethods((store, categoryService = inject(CategoryService)) => ({
 		load: rxMethod<void>(
 			pipe(

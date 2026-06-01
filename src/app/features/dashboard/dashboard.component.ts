@@ -15,7 +15,7 @@ import { CategoryChartComponent } from './category-chart/category-chart.componen
 import { ProductService } from '../products/data-access/product.service';
 import { UserService } from '../users/data-access/user.service';
 import { LogService } from '../log/data-access/log.service';
-import { Category, Log, Product } from '../../shared/types';
+import { Log, Product } from '../../shared/types';
 import { CategoriesStore } from '../categories/store/categories.store';
 
 const LOW_STOCK_THRESHOLD = 20;
@@ -33,14 +33,14 @@ const LOW_STOCK_THRESHOLD = 20;
 })
 export class DashboardComponent implements OnInit {
 	protected totalProducts = signal(0);
-	protected totalCategories = computed(() => this.categoriesStore.count());
+	protected categories = computed(() => this.categoriesStore.categories());
+	protected totalCategories = computed(() => this.categories().length);
 	protected totalUsers = signal(0);
 	protected lowStockCount = signal(0);
 	protected recentLogs = signal<Log[]>([]);
 	protected isLoaded = signal(false);
 
 	protected products: Product[] = [];
-	protected categories = computed(() => this.categoriesStore.categories());
 
 	private readonly categoriesStore = inject(CategoriesStore);
 	private productService = inject(ProductService);
