@@ -1,6 +1,8 @@
 <div class="dashboard flex flex-col h-full overflow-hidden p-4">
 	<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4 shrink-0">
-		<div class="stat-card mat-elevation-z2 p-5 rounded-xl flex items-center gap-4">
+		<div
+			class="stat-card mat-elevation-z2 p-5 rounded-xl flex items-center gap-4"
+		>
 			<div class="stat-icon bg-blue-100 text-blue-500 rounded-full p-3">
 				<mat-icon>inventory_2</mat-icon>
 			</div>
@@ -10,7 +12,9 @@
 			</div>
 		</div>
 
-		<div class="stat-card mat-elevation-z2 p-5 rounded-xl flex items-center gap-4">
+		<div
+			class="stat-card mat-elevation-z2 p-5 rounded-xl flex items-center gap-4"
+		>
 			<div class="stat-icon bg-purple-100 text-purple-500 rounded-full p-3">
 				<mat-icon>category</mat-icon>
 			</div>
@@ -20,7 +24,9 @@
 			</div>
 		</div>
 
-		<div class="stat-card mat-elevation-z2 p-5 rounded-xl flex items-center gap-4">
+		<div
+			class="stat-card mat-elevation-z2 p-5 rounded-xl flex items-center gap-4"
+		>
 			<div class="stat-icon bg-green-100 text-green-600 rounded-full p-3">
 				<mat-icon>people</mat-icon>
 			</div>
@@ -30,15 +36,24 @@
 			</div>
 		</div>
 
-		<div class="stat-card mat-elevation-z2 p-5 rounded-xl flex items-center gap-4"
-			[class.low-stock-alert]="lowStockCount() > 0">
-			<div class="stat-icon rounded-full p-3" [class.bg-red-100]="lowStockCount() > 0"
-				[class.text-red-500]="lowStockCount() > 0" [class.bg-gray-100]="lowStockCount() === 0"
-				[class.text-gray-400]="lowStockCount() === 0">
+		<div
+			class="stat-card mat-elevation-z2 p-5 rounded-xl flex items-center gap-4"
+			[class.low-stock-alert]="lowStockCount() > 0"
+		>
+			<div
+				class="stat-icon rounded-full p-3"
+				[class.bg-red-100]="lowStockCount() > 0"
+				[class.text-red-500]="lowStockCount() > 0"
+				[class.bg-gray-100]="lowStockCount() === 0"
+				[class.text-gray-400]="lowStockCount() === 0"
+			>
 				<mat-icon>warning</mat-icon>
 			</div>
 			<div>
-				<div class="text-3xl font-bold" [class.text-red-500]="lowStockCount() > 0">
+				<div
+					class="text-3xl font-bold"
+					[class.text-red-500]="lowStockCount() > 0"
+				>
 					{{ lowStockCount() }}
 				</div>
 				<div class="stat-label text-sm mt-0.5">Low Stock Items</div>
@@ -47,20 +62,30 @@
 	</div>
 
 	@if (isLoaded()) {
-	<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
-		<div class="panel mat-elevation-z2 p-5 rounded-xl flex flex-col overflow-hidden">
-			<h2 class="text-lg font-semibold mb-4 shrink-0">Products by Category</h2>
-			@if (totalProducts() > 0) {
-			<app-category-chart class="flex-1 min-h-0" [products]="products" [categories]="categories()" />
-			} @else {
-			<div class="empty-state">No products found.</div>
-			}
-		</div>
+		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+			<div
+				class="panel mat-elevation-z2 p-5 rounded-xl flex flex-col overflow-hidden"
+			>
+				<h2 class="text-lg font-semibold mb-4 shrink-0">
+					Products by Category
+				</h2>
+				@if (totalProducts() > 0) {
+					<app-category-chart
+						class="flex-1 min-h-0"
+						[products]="products"
+						[categories]="categories()"
+					/>
+				} @else {
+					<div class="empty-state">No products found.</div>
+				}
+			</div>
 
-		<div class="panel mat-elevation-z2 p-5 rounded-xl flex flex-col overflow-hidden">
-			<h2 class="text-lg font-semibold mb-3 shrink-0">Recent Activity</h2>
-			<app-activity-feed class="flex-1 min-h-0" [logs]="recentLogs()" />
+			<div
+				class="panel mat-elevation-z2 p-5 rounded-xl flex flex-col overflow-hidden"
+			>
+				<h2 class="text-lg font-semibold mb-3 shrink-0">Recent Activity</h2>
+				<app-activity-feed class="flex-1 min-h-0" [logs]="recentLogs()" />
+			</div>
 		</div>
-	</div>
 	}
 </div>

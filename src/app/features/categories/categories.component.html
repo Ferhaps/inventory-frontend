@@ -45,10 +45,10 @@
 					</button>
 					<mat-menu #optionsMenu="matMenu">
 						@for (action of category.actions; track $index) {
-						<div mat-menu-item (click)="selectOption(category, action)" class="font-medium"
-							[style.color]="action == 'Delete' ? '#ff0000' : null">
-							{{ action }}
-						</div>
+							<div mat-menu-item (click)="selectOption(category, action)" class="font-medium"
+								[style.color]="action == 'Delete' ? '#ff0000' : null">
+								{{ action }}
+							</div>
 						}
 					</mat-menu>
 				</td>

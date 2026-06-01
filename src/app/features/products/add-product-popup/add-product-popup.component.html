@@ -4,7 +4,7 @@
 			<mat-label>Product name</mat-label>
 			<input matInput name="product-name" [(ngModel)]="model.name" #nameField="ngModel" type="text" required />
 			@if (nameField.invalid) {
-			<mat-error>Product name is required</mat-error>
+				<mat-error>Product name is required</mat-error>
 			}
 		</mat-form-field>
 
@@ -13,7 +13,7 @@
 			<input matInput name="quantity" [(ngModel)]="model.quantity" #quantityField="ngModel" type="number" min="0"
 				required />
 			@if (quantityField.invalid) {
-			<mat-error>Quantity is required</mat-error>
+				<mat-error>Quantity is required</mat-error>
 			}
 		</mat-form-field>
 
@@ -21,23 +21,23 @@
 			<mat-label>Category</mat-label>
 			<mat-select [(ngModel)]="model.categoryId" #categoryField="ngModel" name="category" required>
 				@for (category of categories(); track category.id) {
-				<mat-option [value]="category.id">{{ category.name }}</mat-option>
+					<mat-option [value]="category.id">{{ category.name }}</mat-option>
 				}
 			</mat-select>
 			@if (categoryField.invalid && categories().length > 0) {
-			<mat-error>Category is required</mat-error>
+				<mat-error>Category is required</mat-error>
 			}
 			@if (categories().length === 0) {
-			<mat-error>You must create a category first</mat-error>
+				<mat-error>You must create a category first</mat-error>
 			}
 		</mat-form-field>
 
 		<div class="text-center">
 			<button mat-raised-button class="main-btn text-xl" [disabled]="state === 'loading'">
 				@if (state === "loading") {
-				<mat-spinner diameter="25" />
+					<mat-spinner diameter="25" />
 				} @else {
-				Add
+					Add
 				}
 			</button>
 		</div>

@@ -9,9 +9,9 @@
 
 		<mat-chip-listbox (change)="showProductsForCategory($event)">
 			@for (category of categories(); track category.id) {
-			<mat-chip-option [value]="category.id" [selected]="currentCategoryId() == category.id">
-				{{ category.name }}
-			</mat-chip-option>
+				<mat-chip-option [value]="category.id" [selected]="currentCategoryId() == category.id">
+					{{ category.name }}
+				</mat-chip-option>
 			}
 		</mat-chip-listbox>
 	</div>
@@ -78,10 +78,10 @@
 
 					<mat-menu #optionsMenu="matMenu">
 						@for (action of product.actions; track $index) {
-						<div mat-menu-item (click)="selectOption(product, action)" class="font-medium"
-							[style.color]="action == 'Delete' ? '#ff0000' : null">
-							{{ action }}
-						</div>
+							<div mat-menu-item (click)="selectOption(product, action)" class="font-medium"
+								[style.color]="action == 'Delete' ? '#ff0000' : null">
+								{{ action }}
+							</div>
 						}
 					</mat-menu>
 				</td>
