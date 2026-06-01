@@ -32,10 +32,8 @@
 
 		<div class="stat-card mat-elevation-z2 p-5 rounded-xl flex items-center gap-4"
 			[class.low-stock-alert]="lowStockCount() > 0">
-			<div class="stat-icon rounded-full p-3"
-				[class.bg-red-100]="lowStockCount() > 0"
-				[class.text-red-500]="lowStockCount() > 0"
-				[class.bg-gray-100]="lowStockCount() === 0"
+			<div class="stat-icon rounded-full p-3" [class.bg-red-100]="lowStockCount() > 0"
+				[class.text-red-500]="lowStockCount() > 0" [class.bg-gray-100]="lowStockCount() === 0"
 				[class.text-gray-400]="lowStockCount() === 0">
 				<mat-icon>warning</mat-icon>
 			</div>
@@ -49,24 +47,20 @@
 	</div>
 
 	@if (isLoaded()) {
-		<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
-			<div class="panel mat-elevation-z2 p-5 rounded-xl flex flex-col overflow-hidden">
-				<h2 class="text-lg font-semibold mb-4 shrink-0">Products by Category</h2>
-				@if (totalProducts() > 0) {
-					<app-category-chart
-						class="flex-1 min-h-0"
-						[products]="products"
-						[categories]="categories"
-					/>
-				} @else {
-					<div class="empty-state">No products found.</div>
-				}
-			</div>
-
-			<div class="panel mat-elevation-z2 p-5 rounded-xl flex flex-col overflow-hidden">
-				<h2 class="text-lg font-semibold mb-3 shrink-0">Recent Activity</h2>
-				<app-activity-feed class="flex-1 min-h-0" [logs]="recentLogs()" />
-			</div>
+	<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-0">
+		<div class="panel mat-elevation-z2 p-5 rounded-xl flex flex-col overflow-hidden">
+			<h2 class="text-lg font-semibold mb-4 shrink-0">Products by Category</h2>
+			@if (totalProducts() > 0) {
+			<app-category-chart class="flex-1 min-h-0" [products]="products" [categories]="categories()" />
+			} @else {
+			<div class="empty-state">No products found.</div>
+			}
 		</div>
+
+		<div class="panel mat-elevation-z2 p-5 rounded-xl flex flex-col overflow-hidden">
+			<h2 class="text-lg font-semibold mb-3 shrink-0">Recent Activity</h2>
+			<app-activity-feed class="flex-1 min-h-0" [logs]="recentLogs()" />
+		</div>
+	</div>
 	}
 </div>
