@@ -24,8 +24,8 @@ import { Category, Log, LogBody, Product, User } from '../../shared/types';
 import { CustomDateAdapter } from '../../shared/custom-date-adapter';
 import { UserService } from '../users/data-access/user.service';
 import { ProductService } from '../products/data-access/product.service';
-import { CategoryService } from '../categories/data-access/category.service';
 import { LoaderService, SnakeCaseParserPipe } from '@ferhaps/easy-ui-lib';
+import { CategoriesStore } from '../categories/store/categories.store';
 
 type QuickDateFilter =
 	| 'Today'
@@ -105,8 +105,8 @@ export class LogComponent implements OnInit {
 	protected stopScrolling: boolean = false;
 	private itemsPerPage: number = 50;
 
+	private readonly categoryStore = inject(CategoriesStore);
 	private snakeCasePipe = inject(SnakeCaseParserPipe);
-	private categoryService = inject(CategoryService);
 	private productService = inject(ProductService);
 	private loaderService = inject(LoaderService);
 	private userService = inject(UserService);
@@ -194,12 +194,9 @@ export class LogComponent implements OnInit {
 	}
 
 	private getCategories(): void {
-		this.categoryService.getCategories().subscribe((categories: Category[]) => {
-			if (categories) {
-				this.allCategories = categories;
-				this.filteredCategories = categories;
-			}
-		});
+		this.categoryStore.load();
+		this.allCategories = this.categoryStore.categories();
+		this.filteredCategories = this.allCategories;
 	}
 
 	protected onEventOptionClick(auto: MatAutocomplete): void {
