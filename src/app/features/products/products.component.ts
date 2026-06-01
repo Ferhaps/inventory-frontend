@@ -1,13 +1,12 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { CategoriesStore } from './../categories/store/categories.store';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import {
-	Category,
 	LoggedUserInfo,
 	Product,
 	TableDataSource,
 } from '../../shared/types';
 import { ProductService } from './data-access/product.service';
 import { MatChipListboxChange, MatChipsModule } from '@angular/material/chips';
-import { CategoryService } from '../categories/data-access/category.service';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
@@ -43,9 +42,9 @@ import { LoaderService, SearchBarComponent } from '@ferhaps/easy-ui-lib';
 	templateUrl: './products.component.html',
 	styleUrl: './products.component.scss',
 })
-export class ProductsComponent implements OnInit {
-	protected categories: Category[] = [];
-	protected currentCategoryId: string = '';
+export class ProductsComponent {
+	protected categories = computed(() => this.categoriesStore.categories());
+	protected currentCategoryId = signal<string | undefined>(undefined);
 	protected tableDataSource = signal<TableDataSource<Product>[]>([]);
 	protected searchTerm = signal('');
 	protected displayedColumns: string[] = [
@@ -57,7 +56,7 @@ export class ProductsComponent implements OnInit {
 	private allProducts: Product[] = [];
 	private productActions: string[] = [];
 
-	private categoryService = inject(CategoryService);
+	private readonly categoriesStore = inject(CategoriesStore);
 	private productService = inject(ProductService);
 	private loadingService = inject(LoaderService);
 	private authService = inject(AuthService);
@@ -70,26 +69,12 @@ export class ProductsComponent implements OnInit {
 			this.displayedColumns.push('actions');
 			this.productActions.push('Delete');
 		}
-	}
 
-	public ngOnInit(): void {
-		this.getCategories();
-	}
-
-	private getCategories(): void {
-		this.loadingService.setLoading(true);
-		this.categoryService.getCategories().subscribe({
-			next: (categories: Category[]) => {
-				if (categories.length) {
-					this.categories = categories;
-					this.currentCategoryId = categories[0].id;
-					this.getProducts();
-				} else {
-					this.loadingService.setLoading(false);
-				}
-				console.log('categores: ', categories);
-			},
-			error: () => this.loadingService.setLoading(false),
+		this.categoriesStore.load();
+		effect(() => {
+			if (this.categories().length > 0) {
+				this.getProducts();
+			}
 		});
 	}
 
@@ -97,6 +82,7 @@ export class ProductsComponent implements OnInit {
 		this.productService.getProducts().subscribe({
 			next: (products: Product[]) => {
 				this.allProducts = products;
+				this.currentCategoryId.set(this.categories()[0]?.id);
 				this.setCurrentProducts();
 				this.loadingService.setLoading(false);
 				console.log('products: ', products);
@@ -105,8 +91,8 @@ export class ProductsComponent implements OnInit {
 		});
 	}
 
-	protected showProductsOfCategory(event: MatChipListboxChange): void {
-		this.currentCategoryId = event.value;
+	protected showProductsForCategory(event: MatChipListboxChange): void {
+		this.currentCategoryId.set(event.value);
 		this.searchTerm.set('');
 		this.setCurrentProducts();
 	}
@@ -118,7 +104,7 @@ export class ProductsComponent implements OnInit {
 
 	private setCurrentProducts(): void {
 		const products = this.allProducts.filter(
-			(product) => product.categoryId === this.currentCategoryId,
+			(product) => product.categoryId === this.currentCategoryId(),
 		);
 		const term = this.searchTerm().toLowerCase();
 		const sorted = term
@@ -158,7 +144,7 @@ export class ProductsComponent implements OnInit {
 	protected openAddProductPopup(): void {
 		const popup = this.dialog.open(AddProductPopupComponent, {
 			width: '350px',
-			data: { categories: this.categories, currentCategoryId: this.currentCategoryId },
+			data: this.currentCategoryId(),
 			scrollStrategy: new NoopScrollStrategy(),
 		});
 

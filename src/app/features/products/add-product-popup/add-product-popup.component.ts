@@ -1,4 +1,4 @@
-import { Component, Inject, inject } from '@angular/core';
+import { Component, computed, Inject, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Category, PopupState, Product } from '../../../shared/types';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -9,16 +9,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { DefaultDialogComponent } from '@ferhaps/easy-ui-lib';
+import { CategoriesStore } from '../../categories/store/categories.store';
 
 type AddProductModel = {
 	name: string;
 	categoryId: string | undefined;
 	quantity: number;
-};
-
-type AddProductDialogData = {
-	categories: Category[];
-	currentCategoryId: string;
 };
 
 @Component({
@@ -36,21 +32,18 @@ type AddProductDialogData = {
 	styleUrl: './add-product-popup.component.scss',
 })
 export class AddProductPopupComponent {
+	private currentCategoryId = inject<string>(MAT_DIALOG_DATA);
 	protected model: AddProductModel = {
 		name: '',
-		categoryId: undefined,
+		categoryId: this.currentCategoryId,
 		quantity: 0,
 	};
 	protected state: PopupState = 'default';
-	protected categories: Category[] = [];
+	protected categories = computed(() => this.categoriesStore.categories());
 
+	private readonly categoriesStore = inject(CategoriesStore);
 	private productService = inject(ProductService);
 	private ref = inject(MatDialogRef);
-
-	constructor(@Inject(MAT_DIALOG_DATA) data: AddProductDialogData) {
-		this.categories = data.categories;
-		this.model.categoryId = data.currentCategoryId || (data.categories[0]?.id);
-	}
 
 	protected onSubmit(form: NgForm): void {
 		if (form.valid) {
