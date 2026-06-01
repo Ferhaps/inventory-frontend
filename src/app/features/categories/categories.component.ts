@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
@@ -12,6 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../services/auth.service';
 import { DefaultDeletePopupComponent } from '../../shared/default-delete-popup/default-delete-popup.component';
 import { LoaderService } from '@ferhaps/easy-ui-lib';
+import { CategoriesStore } from './store/categories.store';
 
 @Component({
 	selector: 'app-categories',
@@ -27,38 +28,26 @@ import { LoaderService } from '@ferhaps/easy-ui-lib';
 	templateUrl: './categories.component.html',
 	styleUrl: './categories.component.scss',
 })
-export class CategoriesComponent implements OnInit {
-	protected categories = signal<TableDataSource<Category>[]>([]);
+export class CategoriesComponent {
+	protected categories = computed(() => this.store.categories().map((c) => ({ ...c, actions: ['Delete'] })));
 	protected displayedColumns: string[] = ['name', 'dateCreated', 'dateUpdated'];
 
 	private categoryService = inject(CategoryService);
 	private loadingService = inject(LoaderService);
 	private authService = inject(AuthService);
 	private dialog = inject(MatDialog);
+	private readonly store = inject(CategoriesStore);
 
 	constructor() {
 		const loggedUser: LoggedUserInfo = this.authService.getLoggedUserInfo();
 		if (loggedUser.user.role === 'ADMIN') {
 			this.displayedColumns.push('actions');
 		}
-	}
 
-	public ngOnInit(): void {
-		this.getCategories();
-	}
-
-	private getCategories(): void {
-		this.loadingService.setLoading(true);
-		this.categoryService.getCategories().subscribe({
-			next: (categories: Category[]) => {
-				this.categories.set(
-					categories.map((c) => ({ ...c, actions: ['Delete'] })),
-				);
-				this.loadingService.setLoading(false);
-				console.log(categories);
-			},
-			error: () => this.loadingService.setLoading(false),
+		effect(() => {
+			this.loadingService.setLoading(this.store.status() === 'loading');
 		});
+		this.store.load();
 	}
 
 	protected openAddCategoryPopup(): void {
@@ -69,8 +58,7 @@ export class CategoriesComponent implements OnInit {
 
 		popup.afterClosed().subscribe((category: Category | undefined) => {
 			if (category) {
-				const newCategoryRow = { ...category, actions: ['Delete'] };
-				this.categories.set([...this.categories(), newCategoryRow]);
+				this.store.addOne(category);
 			}
 		});
 	}
@@ -86,11 +74,7 @@ export class CategoriesComponent implements OnInit {
 		ref.afterClosed().subscribe((result: boolean) => {
 			if (result) {
 				this.categoryService.deleteCategory(category.id).subscribe({
-					next: () => {
-						this.categories.set(
-							this.categories().filter((c) => c.id !== category.id),
-						);
-					},
+					next: () => this.store.removeOne(category.id)
 				});
 			}
 		});
