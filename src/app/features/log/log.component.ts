@@ -22,10 +22,10 @@ import { LogTableComponent } from './log-table/log-table.component';
 import { LogService } from './data-access/log.service';
 import { Category, Log, LogBody, Product, User } from '../../shared/types';
 import { CustomDateAdapter } from '../../shared/custom-date-adapter';
-import { UserService } from '../users/data-access/user.service';
 import { ProductService } from '../products/data-access/product.service';
 import { LoaderService, SnakeCaseParserPipe } from '@ferhaps/easy-ui-lib';
 import { CategoriesStore } from '../categories/store/categories.store';
+import { UsersStore } from '../users/store/users.store';
 
 type QuickDateFilter =
 	| 'Today'
@@ -106,10 +106,10 @@ export class LogComponent implements OnInit {
 	private itemsPerPage: number = 50;
 
 	private readonly categoryStore = inject(CategoriesStore);
+	private readonly usersStore = inject(UsersStore);
 	private snakeCasePipe = inject(SnakeCaseParserPipe);
 	private productService = inject(ProductService);
 	private loaderService = inject(LoaderService);
-	private userService = inject(UserService);
 	private logService = inject(LogService);
 
 	public ngOnInit(): void {
@@ -176,12 +176,9 @@ export class LogComponent implements OnInit {
 	}
 
 	private getUsers(): void {
-		this.userService.getUsers().subscribe((users: User[]) => {
-			if (users) {
-				this.allUsers = users;
-				this.filteredUsers = users;
-			}
-		});
+		this.usersStore.load();
+		this.allUsers = this.usersStore.users();
+		this.filteredUsers = this.allUsers;
 	}
 
 	private getProducts(): void {
