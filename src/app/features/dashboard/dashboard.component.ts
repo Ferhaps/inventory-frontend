@@ -13,10 +13,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { ActivityFeedComponent } from './activity-feed/activity-feed.component';
 import { CategoryChartComponent } from './category-chart/category-chart.component';
 import { ProductService } from '../products/data-access/product.service';
-import { UserService } from '../users/data-access/user.service';
 import { LogService } from '../log/data-access/log.service';
 import { Log, Product } from '../../shared/types';
 import { CategoriesStore } from '../categories/store/categories.store';
+import { UsersStore } from '../users/store/users.store';
 
 const LOW_STOCK_THRESHOLD = 20;
 
@@ -35,7 +35,7 @@ export class DashboardComponent implements OnInit {
 	protected totalProducts = signal(0);
 	protected categories = computed(() => this.categoriesStore.categories());
 	protected totalCategories = computed(() => this.categories().length);
-	protected totalUsers = signal(0);
+	protected totalUsers = computed(() => this.usersStore.users().length);
 	protected lowStockCount = signal(0);
 	protected recentLogs = signal<Log[]>([]);
 	protected isLoaded = signal(false);
@@ -43,8 +43,8 @@ export class DashboardComponent implements OnInit {
 	protected products: Product[] = [];
 
 	private readonly categoriesStore = inject(CategoriesStore);
+	private readonly usersStore = inject(UsersStore);
 	private productService = inject(ProductService);
-	private userService = inject(UserService);
 	private logService = inject(LogService);
 	private loaderService = inject(LoaderService);
 	private destroyRef = inject(DestroyRef);
@@ -52,19 +52,18 @@ export class DashboardComponent implements OnInit {
 	public ngOnInit(): void {
 		this.loaderService.setLoading(true);
 		this.categoriesStore.load();
+		this.usersStore.load();
 
 		forkJoin({
 			products: this.productService.getProducts(),
-			users: this.userService.getUsers(),
 			logs: this.logService.getLogs({ pageSize: 10 }),
 		})
 			.pipe(takeUntilDestroyed(this.destroyRef))
 			.subscribe({
-				next: ({ products, users, logs }) => {
+				next: ({ products, logs }) => {
 					this.products = products;
 
 					this.totalProducts.set(products.length);
-					this.totalUsers.set(users.length);
 					this.lowStockCount.set(
 						products.filter((p) => p.quantity < LOW_STOCK_THRESHOLD).length,
 					);
