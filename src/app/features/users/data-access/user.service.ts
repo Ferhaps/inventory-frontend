@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 import { JSON_HTTP_OPTIONS } from '../../../shared/utils';
 import { User } from '../../../shared/types';
 
@@ -13,8 +13,8 @@ export class UserService {
 
 	private http = inject(HttpClient);
 
-	public getUsers(): Observable<User[]> {
-		return this.http.get<User[]>(this.usersUrl, JSON_HTTP_OPTIONS);
+	public getUsers(): Promise<User[]> {
+		return firstValueFrom(this.http.get<User[]>(this.usersUrl, JSON_HTTP_OPTIONS));
 	}
 
 	public deleteUser(id: string): Observable<any> {
