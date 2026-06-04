@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { DefaultDeletePopupComponent } from '../../shared/default-delete-popup/default-delete-popup.component';
 import { MatButtonModule } from '@angular/material/button';
+import { UsersStore } from './store/users.store';
 
 @Component({
 	selector: 'app-users',
@@ -30,8 +31,9 @@ export class UsersComponent {
 	protected displayedColumns: string[] = ['email', 'role'];
 	protected loggedUser: LoggedUserInfo;
 
-	private userService = inject(UserService);
 	private loadingService = inject(LoaderService);
+	private readonly store = inject(UsersStore);
+	private userService = inject(UserService);
 	private authService = inject(AuthService);
 	private dialog = inject(MatDialog);
 
@@ -40,31 +42,21 @@ export class UsersComponent {
 		if (this.loggedUser?.user?.role === 'ADMIN') {
 			this.displayedColumns.push('actions');
 		}
-	}
 
-	public ngOnInit(): void {
-		this.getUsers();
-	}
-
-	private getUsers(): void {
-		this.loadingService.setLoading(true);
-		this.userService.getUsers().subscribe({
-			next: (users: User[]) => {
-				this.users.set(
-					users.map((u) => ({
-						...u,
-						actions:
-							this.loggedUser.user.role === 'ADMIN' &&
-							u.id !== this.loggedUser.user.id
-								? ['Delete']
-								: [],
-					})),
-				);
-				this.loadingService.setLoading(false);
-				console.log(users);
-			},
-			error: () => this.loadingService.setLoading(false),
+		effect(() => {
+			this.loadingService.setLoading(this.store.status() === 'loading');
+			this.users.set(
+				this.store.users().map((u) => ({
+					...u,
+					actions:
+						this.loggedUser.user.role === 'ADMIN' &&
+						u.id !== this.loggedUser.user.id
+							? ['Delete']
+							: [],
+				})),
+			);
 		});
+		this.store.load();
 	}
 
 	protected openRegisterUserPopup(): void {
@@ -79,7 +71,7 @@ export class UsersComponent {
 					...user,
 					actions: this.loggedUser.user.role === 'ADMIN' ? ['Delete'] : [],
 				};
-				this.users.set([...this.users(), newUser]);
+				this.store.addOne(newUser);
 			}
 		});
 	}
@@ -97,7 +89,7 @@ export class UsersComponent {
 			if (result) {
 				this.userService.deleteUser(user.id).subscribe({
 					next: () => {
-						this.users.set(this.users().filter((c) => c.id !== user.id));
+						this.store.removeOne(user.id);
 					},
 				});
 			}
