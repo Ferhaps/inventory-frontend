@@ -1,5 +1,6 @@
 import {
 	AfterViewInit,
+	ChangeDetectionStrategy,
 	Component,
 	DestroyRef,
 	ElementRef,
@@ -29,6 +30,7 @@ const CHART_COLORS = [
 	host: { class: 'block' },
 	templateUrl: './category-chart.component.html',
 	styleUrl: './category-chart.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CategoryChartComponent implements AfterViewInit {
 	products = input.required<Product[]>();

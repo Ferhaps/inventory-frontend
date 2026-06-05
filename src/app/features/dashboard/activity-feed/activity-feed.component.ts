@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { SnakeCaseParserPipe } from '@ferhaps/easy-ui-lib';
 import { Log } from '../../../shared/types';
@@ -12,6 +12,7 @@ import { Log } from '../../../shared/types';
 	],
 	templateUrl: './activity-feed.component.html',
 	styleUrl: './activity-feed.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActivityFeedComponent {
 	public logs = input.required<Log[]>();

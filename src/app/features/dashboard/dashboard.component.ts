@@ -1,4 +1,5 @@
 import {
+	ChangeDetectionStrategy,
 	Component,
 	DestroyRef,
 	OnInit,
@@ -28,6 +29,7 @@ const LOW_STOCK_THRESHOLD = 20;
 		ActivityFeedComponent,
 		CategoryChartComponent
 	],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	templateUrl: './dashboard.component.html',
 	styleUrl: './dashboard.component.scss',
 })
