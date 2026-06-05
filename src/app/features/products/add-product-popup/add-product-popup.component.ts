@@ -1,4 +1,4 @@
-import { Component, computed, Inject, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Inject, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Category, PopupState, Product } from '../../../shared/types';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -28,6 +28,7 @@ type AddProductModel = {
 		MatButtonModule,
 		MatProgressSpinnerModule,
 	],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	templateUrl: './add-product-popup.component.html',
 	styleUrl: './add-product-popup.component.scss',
 })

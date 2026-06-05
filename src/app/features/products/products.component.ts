@@ -1,5 +1,5 @@
 import { CategoriesStore } from './../categories/store/categories.store';
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import {
 	LoggedUserInfo,
 	Product,
@@ -39,6 +39,7 @@ import { LoaderService, SearchBarComponent } from '@ferhaps/easy-ui-lib';
 		DatePipe,
 		SearchBarComponent,
 	],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	templateUrl: './products.component.html',
 	styleUrl: './products.component.scss',
 })
