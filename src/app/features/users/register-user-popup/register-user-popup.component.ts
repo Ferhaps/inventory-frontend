@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -34,6 +34,7 @@ export type RegisterUserModel = {
 		FieldsMatchValidatorDirective,
 		MatButtonModule,
 	],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	templateUrl: './register-user-popup.component.html',
 	styleUrl: './register-user-popup.component.scss',
 })
