@@ -130,7 +130,7 @@
 						(input)="filterAutocomplete('users', searchUser)"
 					/>
 					<mat-autocomplete #usersAuto="matAutocomplete">
-						@for (user of filteredUsers; track $index) {
+						@for (user of filteredUsers(); track $index) {
 							<mat-option
 								[value]="user.email"
 								(click)="
@@ -200,7 +200,7 @@
 								(click)="
 									this.selectedCategoryId = category.id;
 									searchCategory = category.name;
-									onCategoryClick(usersAuto)
+									onCategoryClick(categoriesAuto)
 								"
 							>
 								{{ category.name }}

@@ -1,4 +1,12 @@
-import { Component, OnInit, inject, viewChild } from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	OnInit,
+	inject,
+	signal,
+	viewChild,
+} from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
@@ -60,6 +68,7 @@ type QuickDateFilter =
 	],
 	templateUrl: './log.component.html',
 	styleUrls: ['./log.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogComponent implements OnInit {
 	protected logTable = viewChild.required<LogTableComponent>('logTable');
@@ -87,7 +96,7 @@ export class LogComponent implements OnInit {
 	private lastSelectedUserId: string | undefined;
 	protected searchUser: string | undefined;
 	protected allUsers: User[] = [];
-	protected filteredUsers: User[] = [];
+	protected filteredUsers = signal<User[]>([]);
 
 	protected selectedProductId: string | undefined;
 	private lastSelectedProductId: string | undefined;
@@ -111,8 +120,11 @@ export class LogComponent implements OnInit {
 	private productService = inject(ProductService);
 	private loaderService = inject(LoaderService);
 	private logService = inject(LogService);
+	private cdr = inject(ChangeDetectorRef);
 
 	public ngOnInit(): void {
+		this.usersStore.load();
+		this.categoryStore.load();
 		this.getLogs(true);
 		this.getEvents();
 		this.getUsers();
@@ -157,13 +169,13 @@ export class LogComponent implements OnInit {
 				if (logs.length < this.itemsPerPage) {
 					this.stopScrolling = true;
 				}
-				this.logs = logs;
-				console.log('logs', this.logs);
+				this.logs = [...logs];
+				this.cdr.markForCheck();
 			},
 			error: () => {
 				this.loaderService.setLoading(false);
 				this.isFetching = false;
-				// console.log('err', err);
+				this.cdr.markForCheck();
 			},
 		});
 	}
@@ -172,13 +184,13 @@ export class LogComponent implements OnInit {
 		this.logService.getLogEvents().subscribe((types: string[]) => {
 			this.allLogEvents = types;
 			this.filteredLogEvents = types;
+			this.cdr.markForCheck();
 		});
 	}
 
 	private getUsers(): void {
-		this.usersStore.load();
 		this.allUsers = this.usersStore.users();
-		this.filteredUsers = this.allUsers;
+		this.filteredUsers.set(this.allUsers);
 	}
 
 	private getProducts(): void {
@@ -186,12 +198,12 @@ export class LogComponent implements OnInit {
 			if (products) {
 				this.allProducts = products;
 				this.filteredProducts = products;
+				this.cdr.markForCheck();
 			}
 		});
 	}
 
 	private getCategories(): void {
-		this.categoryStore.load();
 		this.allCategories = this.categoryStore.categories();
 		this.filteredCategories = this.allCategories;
 	}
@@ -225,7 +237,7 @@ export class LogComponent implements OnInit {
 			this.selectedUserId = '';
 			this.lastSelectedUserId = '';
 			this.searchUser = '';
-			this.filteredUsers = this.allUsers;
+			this.filteredUsers.set(this.allUsers);
 			auto.options.forEach((o: MatOption) => o.deselect());
 			this.resetPaging();
 			this.getLogs(true);

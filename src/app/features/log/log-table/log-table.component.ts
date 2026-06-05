@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import {
+	ChangeDetectionStrategy,
 	Component,
-	effect,
 	ElementRef,
 	inject,
 	input,
@@ -24,6 +24,7 @@ import { SnakeCaseParserPipe } from '@ferhaps/easy-ui-lib';
 		MatTooltipModule,
 		MatProgressSpinnerModule,
 	],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogTableComponent {
 	public data = input.required<Log[]>();
@@ -32,20 +33,9 @@ export class LogTableComponent {
 	protected action = output<any>();
 	protected scrolled = output<void>();
 
-	public scrollContainer =
-		viewChild.required<ElementRef<HTMLDivElement>>('scrollContainer');
-
-	protected loading: boolean = true;
+	public scrollContainer = viewChild.required<ElementRef<HTMLDivElement>>('scrollContainer');
 
 	private router = inject(Router);
-
-	constructor() {
-		effect(() => {
-			if (this.data()) {
-				this.loading = false;
-			}
-		});
-	}
 
 	protected navigate(route: string): void {
 		this.router.navigate([route]);
