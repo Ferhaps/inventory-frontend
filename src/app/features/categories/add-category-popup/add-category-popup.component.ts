@@ -1,5 +1,5 @@
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormField } from '@angular/material/form-field';
@@ -19,6 +19,7 @@ import { DefaultDialogComponent } from '@ferhaps/easy-ui-lib';
 		MatProgressSpinnerModule,
 		MatInputModule,
 	],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	templateUrl: './add-category-popup.component.html',
 	styleUrl: './add-category-popup.component.scss',
 })

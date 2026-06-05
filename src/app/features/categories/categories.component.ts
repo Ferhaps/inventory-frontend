@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, effect, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
@@ -25,6 +25,7 @@ import { CategoriesStore } from './store/categories.store';
 		MatButtonModule,
 		DatePipe,
 	],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	templateUrl: './categories.component.html',
 	styleUrl: './categories.component.scss',
 })
