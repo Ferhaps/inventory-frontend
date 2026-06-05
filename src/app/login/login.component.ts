@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -22,6 +22,7 @@ import { PasswordValidatorDirective } from '@ferhaps/easy-ui-lib';
 		MatProgressSpinnerModule,
 		PasswordValidatorDirective,
 	],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 	templateUrl: './login.component.html',
 	styleUrl: './login.component.scss',
 })
