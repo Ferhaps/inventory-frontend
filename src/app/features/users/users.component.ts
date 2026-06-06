@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
@@ -28,7 +28,16 @@ import { UsersStore } from './store/users.store';
 	styleUrl: './users.component.scss',
 })
 export class UsersComponent {
-	protected users = signal<TableDataSource<User>[]>([]);
+	protected users = computed<TableDataSource<User>[]>(
+		() => this.store.users().map((u) => ({
+			...u,
+			actions:
+				this.loggedUser.user.role === 'ADMIN' &&
+				u.id !== this.loggedUser.user.id
+					? ['Delete']
+					: [],
+		})),
+	);
 	protected displayedColumns: string[] = ['email', 'role'];
 	protected loggedUser: LoggedUserInfo;
 
@@ -46,16 +55,6 @@ export class UsersComponent {
 
 		effect(() => {
 			this.loadingService.setLoading(this.store.status() === 'loading');
-			this.users.set(
-				this.store.users().map((u) => ({
-					...u,
-					actions:
-						this.loggedUser.user.role === 'ADMIN' &&
-						u.id !== this.loggedUser.user.id
-							? ['Delete']
-							: [],
-				})),
-			);
 		});
 		this.store.load();
 	}
