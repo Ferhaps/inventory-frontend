@@ -194,7 +194,7 @@
 						(input)="filterAutocomplete('categories', searchCategory)"
 					/>
 					<mat-autocomplete #categoriesAuto="matAutocomplete">
-						@for (category of filteredCategories; track $index) {
+						@for (category of filteredCategories(); track $index) {
 							<mat-option
 								[value]="category.id"
 								(click)="

@@ -3,6 +3,7 @@ import {
 	ChangeDetectorRef,
 	Component,
 	OnInit,
+	computed,
 	inject,
 	signal,
 	viewChild,
@@ -95,7 +96,7 @@ export class LogComponent implements OnInit {
 	protected selectedUserId: string | undefined;
 	private lastSelectedUserId: string | undefined;
 	protected searchUser: string | undefined;
-	protected allUsers: User[] = [];
+	protected allUsers = computed(() => this.usersStore.users());
 	protected filteredUsers = signal<User[]>([]);
 
 	protected selectedProductId: string | undefined;
@@ -107,8 +108,8 @@ export class LogComponent implements OnInit {
 	protected selectedCategoryId: string | undefined;
 	private lastSelectedCategorytId: string | undefined;
 	protected searchCategory: string | undefined;
-	protected allCategories: Category[] = [];
-	protected filteredCategories: Category[] = [];
+	protected allCategories = computed(() => this.categoryStore.categories());
+	protected filteredCategories = signal<Category[]>([]);
 
 	protected isFetching: boolean = false;
 	protected stopScrolling: boolean = false;
@@ -122,14 +123,14 @@ export class LogComponent implements OnInit {
 	private logService = inject(LogService);
 	private cdr = inject(ChangeDetectorRef);
 
-	public ngOnInit(): void {
-		this.usersStore.load();
-		this.categoryStore.load();
+	public async ngOnInit(): Promise<void> {
 		this.getLogs(true);
 		this.getEvents();
-		this.getUsers();
 		this.getProducts();
-		this.getCategories();
+
+		
+		this.setUsers();
+		this.setCategories();
 	}
 
 	protected getLogs(init: boolean = false): void {
@@ -188,9 +189,10 @@ export class LogComponent implements OnInit {
 		});
 	}
 
-	private getUsers(): void {
-		this.allUsers = this.usersStore.users();
-		this.filteredUsers.set(this.allUsers);
+	private async setUsers(): Promise<void> {
+		await this.usersStore.load();
+		this.filteredUsers.set(this.allUsers());
+		console.log('users', this.allUsers());
 	}
 
 	private getProducts(): void {
@@ -203,9 +205,10 @@ export class LogComponent implements OnInit {
 		});
 	}
 
-	private getCategories(): void {
-		this.allCategories = this.categoryStore.categories();
-		this.filteredCategories = this.allCategories;
+	private async setCategories(): Promise<void> {
+		await this.categoryStore.load();
+		this.filteredCategories.set(this.allCategories());
+		console.log('categories', this.allCategories());
 	}
 
 	protected onEventOptionClick(auto: MatAutocomplete): void {
@@ -237,7 +240,7 @@ export class LogComponent implements OnInit {
 			this.selectedUserId = '';
 			this.lastSelectedUserId = '';
 			this.searchUser = '';
-			this.filteredUsers.set(this.allUsers);
+			this.filteredUsers.set(this.allUsers());
 			auto.options.forEach((o: MatOption) => o.deselect());
 			this.resetPaging();
 			this.getLogs(true);
@@ -277,7 +280,7 @@ export class LogComponent implements OnInit {
 			this.selectedCategoryId = '';
 			this.lastSelectedCategorytId = '';
 			this.searchCategory = '';
-			this.filteredCategories = this.allCategories;
+			this.filteredCategories.set(this.allCategories());
 			auto.options.forEach((o: MatOption) => o.deselect());
 			this.resetPaging();
 			this.getLogs(true);
@@ -364,7 +367,7 @@ export class LogComponent implements OnInit {
 			}
 
 			if (type === 'users') {
-				return this.allUsers.filter((user) =>
+				return this.allUsers().filter((user) =>
 					user.email.toLowerCase().includes(filterValue),
 				);
 			}
@@ -376,7 +379,7 @@ export class LogComponent implements OnInit {
 			}
 
 			if (type === 'categories') {
-				return this.allCategories.filter((category) =>
+				return this.allCategories().filter((category) =>
 					category.name.toLowerCase().includes(filterValue),
 				);
 			}
