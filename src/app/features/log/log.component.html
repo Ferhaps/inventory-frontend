@@ -1,16 +1,16 @@
 <div class="logs">
 	<div class="main-area ml-4 flex">
-		<div class="main-filters min-w-[400px] pr-4 overflow-y-auto h-full">
+		<div class="main-filters min-w-[450px] pr-4 overflow-y-auto h-full">
 			<div class="flex items-center upper-part py-[8.5px]">
 				<div class="font-bold text-xl">Filters</div>
 				@if (
-					selectedEvent ||
+					selectedEvent() ||
 					selectedUserId ||
 					selectedProductId ||
 					selectedCategoryId ||
-					range.start ||
-					range.end ||
-					selectedDateFilter
+					range().start ||
+					range().end ||
+					selectedDateFilter()
 				) {
 					<div
 						class="!text-[#009DDC] ml-auto cursor-pointer flex items-center"
@@ -31,7 +31,7 @@
 						#filterChips="ngModel"
 						(ngModelChange)="onDateFilterChange()"
 					>
-						@for (filter of quickDateFiltes; track $index) {
+						@for (filter of quickDateFiltes(); track $index) {
 							<mat-chip-option>{{ filter }}</mat-chip-option>
 						}
 					</mat-chip-listbox>
@@ -43,13 +43,13 @@
 						<mat-icon>more_vert</mat-icon>
 					</button>
 					<mat-menu #quickFiltersMenu="matMenu">
-						@for (filter of moreFilters; track $index; let i = $index) {
+						@for (filter of moreFilters(); track $index; let i = $index) {
 							<button
 								mat-menu-item
 								(click)="
-									selectedDateFilter = filter;
+									selectedDateFilter.set(filter);
 									onDateFilterChange();
-									switchPlaces(filter, i)
+									switchQuickFilterPlaces(filter, i)
 								"
 							>
 								<span>{{ filter }}</span>
@@ -67,14 +67,14 @@
 							matStartDate
 							placeholder="Start date"
 							name="startDate"
-							[(ngModel)]="range.start"
+							[(ngModel)]="range().start"
 							(dateInput)="onDateChange()"
 						/>
 						<input
 							matEndDate
 							placeholder="End date"
 							name="endDate"
-							[(ngModel)]="range.end"
+							[(ngModel)]="range().end"
 							(dateInput)="onDateChange()"
 						/>
 					</mat-date-range-input>
@@ -102,10 +102,12 @@
 						name="event"
 					/>
 					<mat-autocomplete #eventsAuto="matAutocomplete" name="eventsOptions">
-						@for (event of filteredLogEvents; track $index) {
+						@for (event of filteredLogEvents(); track $index) {
 							<mat-option
 								[value]="event"
-								(click)="selectedEvent = event; onEventOptionClick(eventsAuto)"
+								(click)="
+									selectedEvent.set(event); onEventOptionClick(eventsAuto)
+								"
 							>
 								{{ event | snakeCaseParser }}
 							</mat-option>
@@ -219,7 +221,7 @@
 				(action)="onAction($event)"
 				#logTable
 			>
-				@if (isFetching) {
+				@if (isFetching()) {
 					<div class="grid place-items-center spinner">
 						<mat-spinner />
 					</div>

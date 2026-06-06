@@ -75,23 +75,23 @@ export class LogComponent implements OnInit {
 	protected logTable = viewChild.required<LogTableComponent>('logTable');
 	protected logs: Log[] = [];
 
-	protected range: { start: Date | null; end: Date | null } = {
+	protected range = signal<{ start: Date | null; end: Date | null }>({
 		start: null,
 		end: null,
-	};
-	protected quickDateFiltes: QuickDateFilter[] = ['Today', '1 week', '1 month'];
-	protected moreFilters: QuickDateFilter[] = [
+	});
+	protected quickDateFiltes = signal<QuickDateFilter[]>(['Today', '1 week', '1 month']);
+	protected moreFilters = signal<QuickDateFilter[]>([
 		'This week',
 		'This month',
 		'This year',
-	];
-	protected selectedDateFilter: QuickDateFilter | undefined = undefined;
+	]);
+	protected selectedDateFilter = signal<QuickDateFilter | undefined>(undefined);
 
-	protected selectedEvent: string = '';
+	protected selectedEvent = signal<string>('');
 	protected searchEvent: string = '';
 	private lastSelectedEvent: string = '';
 	protected allLogEvents: string[] = [];
-	protected filteredLogEvents: string[] = [];
+	protected filteredLogEvents = signal<string[]>([]);
 
 	protected selectedUserId: string | undefined;
 	private lastSelectedUserId: string | undefined;
@@ -111,7 +111,7 @@ export class LogComponent implements OnInit {
 	protected allCategories = computed(() => this.categoryStore.categories());
 	protected filteredCategories = signal<Category[]>([]);
 
-	protected isFetching: boolean = false;
+	protected isFetching = signal(false);
 	protected stopScrolling: boolean = false;
 	private itemsPerPage: number = 50;
 
@@ -142,8 +142,8 @@ export class LogComponent implements OnInit {
 			pageSize: this.itemsPerPage,
 		};
 
-		if (this.selectedEvent) {
-			body.event = this.selectedEvent;
+		if (this.selectedEvent()) {
+			body.event = this.selectedEvent();
 		}
 
 		if (this.selectedUserId) {
@@ -158,15 +158,15 @@ export class LogComponent implements OnInit {
 			body.category = this.selectedCategoryId;
 		}
 
-		if (this.range.start && this.range.end) {
-			body.startDate = this.range.start;
-			body.endDate = this.range.end;
+		if (this.range().start && this.range().end) {
+			body.startDate = this.range().start as Date;
+			body.endDate = this.range().end as Date;
 		}
 
 		this.logService.getLogs(body).subscribe({
 			next: (logs: Log[]) => {
 				this.loaderService.setLoading(false);
-				this.isFetching = false;
+				this.isFetching.set(false);
 				if (logs.length < this.itemsPerPage) {
 					this.stopScrolling = true;
 				}
@@ -175,7 +175,7 @@ export class LogComponent implements OnInit {
 			},
 			error: () => {
 				this.loaderService.setLoading(false);
-				this.isFetching = false;
+				this.isFetching.set(false);
 				this.cdr.markForCheck();
 			},
 		});
@@ -184,7 +184,7 @@ export class LogComponent implements OnInit {
 	private getEvents(): void {
 		this.logService.getLogEvents().subscribe((types: string[]) => {
 			this.allLogEvents = types;
-			this.filteredLogEvents = types;
+			this.filteredLogEvents.set(types);
 			this.cdr.markForCheck();
 		});
 	}
@@ -214,20 +214,20 @@ export class LogComponent implements OnInit {
 	protected onEventOptionClick(auto: MatAutocomplete): void {
 		if (
 			this.lastSelectedEvent &&
-			this.selectedEvent === this.lastSelectedEvent
+			this.selectedEvent() === this.lastSelectedEvent
 		) {
-			this.selectedEvent = '';
+			this.selectedEvent.set('');
 			this.lastSelectedEvent = '';
 			this.searchEvent = '';
-			this.filteredLogEvents = this.allLogEvents;
+			this.filteredLogEvents.set(this.allLogEvents);
 			auto.options.forEach((o: MatOption) => o.deselect());
 			this.resetPaging();
 			this.getLogs(true);
 			return;
 		}
 
-		this.lastSelectedEvent = this.selectedEvent;
-		this.searchEvent = this.snakeCasePipe.transform(this.selectedEvent);
+		this.lastSelectedEvent = this.selectedEvent();
+		this.searchEvent = this.snakeCasePipe.transform(this.selectedEvent());
 		this.resetPaging();
 		this.getLogs(true);
 	}
@@ -294,57 +294,57 @@ export class LogComponent implements OnInit {
 
 	protected onDateFilterChange(): void {
 		this.resetPaging();
-		switch (this.selectedDateFilter) {
+		switch (this.selectedDateFilter()) {
 			case 'Today':
-				this.range.start = new Date();
-				this.range.start.setHours(0, 0, 0, 0);
-				this.range.end = new Date();
+				this.range().start = new Date();
+				this.range().start?.setHours(0, 0, 0, 0);
+				this.range().end = new Date();
 				break;
 			case '1 week':
-				this.range.start = new Date();
-				this.range.start.setDate(this.range.start.getDate() - 6);
-				this.range.end = new Date();
+				this.range().start = new Date();
+				this.range().start?.setDate(this.range().start?.getDate() as number - 6);
+				this.range().end = new Date();
 				break;
 			case '1 month':
-				this.range.start = new Date();
-				this.range.start.setMonth(this.range.start.getMonth() - 1);
-				this.range.end = new Date();
+				this.range().start = new Date();
+				this.range().start?.setMonth(this.range().start?.getMonth() as number - 1);
+				this.range().end = new Date();
 				break;
 			case 'This week':
-				this.range.start = new Date();
-				this.range.start.setDate(
-					this.range.start.getDate() - this.range.start.getDay(),
+				this.range().start = new Date();
+				this.range().start?.setDate(
+					(this.range().start?.getDate() as number) - (this.range().start?.getDay() as number),
 				);
-				this.range.end = new Date();
+				this.range().end = new Date();
 				break;
 			case 'This month':
-				this.range.start = new Date();
-				this.range.start.setDate(1);
-				this.range.end = new Date();
+				this.range().start = new Date();
+				this.range().start?.setDate(1);
+				this.range().end = new Date();
 				break;
 			case 'This year':
-				this.range.start = new Date();
-				this.range.start.setMonth(0);
-				this.range.start.setDate(1);
-				this.range.end = new Date();
+				this.range().start = new Date();
+				this.range().start?.setMonth(0);
+				this.range().start?.setDate(1);
+				this.range().end = new Date();
 				break;
 			default:
-				this.range.start = null;
-				this.range.end = null;
+				this.range().start = null;
+				this.range().end = null;
 				break;
 		}
 
 		this.getLogs(true);
 	}
 
-	protected switchPlaces(filter: QuickDateFilter, index: number): void {
-		const firstFilter = this.quickDateFiltes[0];
-		this.quickDateFiltes[0] = filter;
-		this.moreFilters[index] = firstFilter;
+	protected switchQuickFilterPlaces(filter: QuickDateFilter, index: number): void {
+		const firstFilter = this.quickDateFiltes()[0];
+		this.quickDateFiltes()[0] = filter;
+		this.moreFilters()[index] = firstFilter;
 	}
 
 	protected onDateChange(): void {
-		if (this.range.start && this.range.end) {
+		if (this.range().start && this.range().end) {
 			this.resetPaging();
 			this.getLogs(true);
 		}
@@ -353,35 +353,45 @@ export class LogComponent implements OnInit {
 	protected filterAutocomplete(
 		type: 'events' | 'users' | 'products' | 'categories',
 		value: string | undefined,
-	): any {
+	): void {
 		if (value) {
 			const filterValue = value.toLowerCase();
 
 			if (type === 'events') {
-				return this.allLogEvents.filter((event) =>
+				this.filteredLogEvents.set(this.allLogEvents.filter((event) =>
 					this.snakeCasePipe
 						.transform(event)
 						.toLowerCase()
 						.includes(filterValue),
-				);
+				));
 			}
 
 			if (type === 'users') {
-				return this.allUsers().filter((user) =>
+				this.filteredUsers.set(this.allUsers().filter((user) =>
 					user.email.toLowerCase().includes(filterValue),
-				);
+				));
 			}
 
 			if (type === 'products') {
-				return this.allProducts.filter((product) =>
+				this.filteredProducts = this.allProducts.filter((product) =>
 					product.name.toLowerCase().includes(filterValue),
 				);
 			}
 
 			if (type === 'categories') {
-				return this.allCategories().filter((category) =>
+				this.filteredCategories.set(this.allCategories().filter((category) =>
 					category.name.toLowerCase().includes(filterValue),
-				);
+				));
+			}
+		} else {
+			if (type === 'events') {
+				this.filteredLogEvents.set(this.allLogEvents);
+			} else if (type === 'users') {
+				this.filteredUsers.set(this.allUsers());
+			} else if (type === 'products') {
+				this.filteredProducts = this.allProducts;
+			} else if (type === 'categories') {
+				this.filteredCategories.set(this.allCategories());
 			}
 		}
 	}
@@ -394,10 +404,10 @@ export class LogComponent implements OnInit {
 		eventsAuto.options.forEach((o: MatOption) => o.deselect());
 		this.resetPaging();
 		this.stopScrolling = false;
-		this.range.start = null;
-		this.range.end = null;
-		this.selectedDateFilter = undefined;
-		this.selectedEvent = '';
+		this.range().start = null;
+		this.range().end = null;
+		this.selectedDateFilter.set(undefined);
+		this.selectedEvent.set('');
 		this.searchEvent = '';
 		this.lastSelectedEvent = '';
 
@@ -416,11 +426,11 @@ export class LogComponent implements OnInit {
 	}
 
 	protected onScroll(): void {
-		if (this.isFetching || this.stopScrolling) {
+		if (this.isFetching() || this.stopScrolling) {
 			return;
 		}
 		this.itemsPerPage += 50;
-		this.isFetching = true;
+		this.isFetching.set(true);
 		this.getLogs();
 	}
 
