@@ -3,15 +3,7 @@
 		<div class="main-filters min-w-[450px] pr-4 overflow-y-auto h-full">
 			<div class="flex items-center upper-part py-[8.5px]">
 				<div class="font-bold text-xl">Filters</div>
-				@if (
-					selectedEvent() ||
-					selectedUserId ||
-					selectedProductId ||
-					selectedCategoryId ||
-					range().start ||
-					range().end ||
-					selectedDateFilter()
-				) {
+				@if (isLogFiltered()) {
 					<div
 						class="!text-[#009DDC] ml-auto cursor-pointer flex items-center"
 						(click)="clearFilters(eventsAuto)"
@@ -136,7 +128,7 @@
 							<mat-option
 								[value]="user.email"
 								(click)="
-									this.selectedUserId = user.id;
+									this.selectedUserId.set(user.id);
 									searchUser = user.email;
 									onUsersClick(usersAuto)
 								"
@@ -168,7 +160,7 @@
 							<mat-option
 								[value]="product.id"
 								(click)="
-									this.selectedProductId = product.id;
+									this.selectedProductId.set(product.id);
 									searchProduct = product.name;
 									onProductClick(productsAuto)
 								"
@@ -200,7 +192,7 @@
 							<mat-option
 								[value]="category.id"
 								(click)="
-									this.selectedCategoryId = category.id;
+									this.selectedCategoryId.set(category.id);
 									searchCategory = category.name;
 									onCategoryClick(categoriesAuto)
 								"
@@ -218,7 +210,6 @@
 				[headings]="['Date', 'Event', 'Data', 'Details']"
 				[data]="logs"
 				(scrolled)="onScroll()"
-				(action)="onAction($event)"
 				#logTable
 			>
 				@if (isFetching()) {

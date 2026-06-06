@@ -93,24 +93,33 @@ export class LogComponent implements OnInit {
 	protected allLogEvents: string[] = [];
 	protected filteredLogEvents = signal<string[]>([]);
 
-	protected selectedUserId: string | undefined;
+	protected selectedUserId = signal<string | undefined>(undefined);
 	private lastSelectedUserId: string | undefined;
 	protected searchUser: string | undefined;
 	protected allUsers = computed(() => this.usersStore.users());
 	protected filteredUsers = signal<User[]>([]);
 
-	protected selectedProductId: string | undefined;
+	protected selectedProductId = signal<string | undefined>(undefined);
 	private lastSelectedProductId: string | undefined;
 	protected searchProduct: string | undefined;
 	protected allProducts: Product[] = [];
 	protected filteredProducts: Product[] = [];
 
-	protected selectedCategoryId: string | undefined;
+	protected selectedCategoryId = signal<string | undefined>(undefined);
 	private lastSelectedCategorytId: string | undefined;
 	protected searchCategory: string | undefined;
 	protected allCategories = computed(() => this.categoryStore.categories());
 	protected filteredCategories = signal<Category[]>([]);
 
+	protected isLogFiltered = computed(() =>
+		Boolean(this.selectedEvent()) ||
+		Boolean(this.selectedUserId()) ||
+		Boolean(this.selectedProductId()) ||
+		Boolean(this.selectedCategoryId()) ||
+		Boolean(this.range().start) ||
+		Boolean(this.range().end) ||
+		Boolean(this.selectedDateFilter()),
+	);
 	protected isFetching = signal(false);
 	protected stopScrolling: boolean = false;
 	private itemsPerPage: number = 50;
@@ -147,15 +156,15 @@ export class LogComponent implements OnInit {
 		}
 
 		if (this.selectedUserId) {
-			body.user = this.selectedUserId;
+			body.user = this.selectedUserId();
 		}
 
-		if (this.selectedProductId) {
-			body.product = this.selectedProductId;
+		if (this.selectedProductId()) {
+			body.product = this.selectedProductId();
 		}
 
-		if (this.selectedCategoryId) {
-			body.category = this.selectedCategoryId;
+		if (this.selectedCategoryId()) {
+			body.category = this.selectedCategoryId();
 		}
 
 		if (this.range().start && this.range().end) {
@@ -185,14 +194,12 @@ export class LogComponent implements OnInit {
 		this.logService.getLogEvents().subscribe((types: string[]) => {
 			this.allLogEvents = types;
 			this.filteredLogEvents.set(types);
-			this.cdr.markForCheck();
 		});
 	}
 
 	private async setUsers(): Promise<void> {
 		await this.usersStore.load();
 		this.filteredUsers.set(this.allUsers());
-		console.log('users', this.allUsers());
 	}
 
 	private getProducts(): void {
@@ -200,7 +207,6 @@ export class LogComponent implements OnInit {
 			if (products) {
 				this.allProducts = products;
 				this.filteredProducts = products;
-				this.cdr.markForCheck();
 			}
 		});
 	}
@@ -208,14 +214,10 @@ export class LogComponent implements OnInit {
 	private async setCategories(): Promise<void> {
 		await this.categoryStore.load();
 		this.filteredCategories.set(this.allCategories());
-		console.log('categories', this.allCategories());
 	}
 
 	protected onEventOptionClick(auto: MatAutocomplete): void {
-		if (
-			this.lastSelectedEvent &&
-			this.selectedEvent() === this.lastSelectedEvent
-		) {
+		if (this.lastSelectedEvent && this.selectedEvent() === this.lastSelectedEvent) {
 			this.selectedEvent.set('');
 			this.lastSelectedEvent = '';
 			this.searchEvent = '';
@@ -233,11 +235,8 @@ export class LogComponent implements OnInit {
 	}
 
 	protected onUsersClick(auto: MatAutocomplete): void {
-		if (
-			this.lastSelectedUserId &&
-			this.selectedUserId === this.lastSelectedUserId
-		) {
-			this.selectedUserId = '';
+		if (this.lastSelectedUserId && this.selectedUserId() === this.lastSelectedUserId) {
+			this.selectedUserId.set('');
 			this.lastSelectedUserId = '';
 			this.searchUser = '';
 			this.filteredUsers.set(this.allUsers());
@@ -247,17 +246,14 @@ export class LogComponent implements OnInit {
 			return;
 		}
 
-		this.lastSelectedUserId = this.selectedUserId;
+		this.lastSelectedUserId = this.selectedUserId();
 		this.resetPaging();
 		this.getLogs(true);
 	}
 
 	protected onProductClick(auto: MatAutocomplete): void {
-		if (
-			this.lastSelectedProductId &&
-			this.selectedProductId === this.lastSelectedProductId
-		) {
-			this.selectedProductId = '';
+		if (this.lastSelectedProductId && this.selectedProductId() === this.lastSelectedProductId) {
+			this.selectedProductId.set('');
 			this.lastSelectedProductId = '';
 			this.searchProduct = '';
 			this.filteredProducts = this.allProducts;
@@ -267,17 +263,14 @@ export class LogComponent implements OnInit {
 			return;
 		}
 
-		this.lastSelectedProductId = this.selectedProductId;
+		this.lastSelectedProductId = this.selectedProductId();
 		this.resetPaging();
 		this.getLogs(true);
 	}
 
 	protected onCategoryClick(auto: MatAutocomplete): void {
-		if (
-			this.lastSelectedCategorytId &&
-			this.selectedCategoryId === this.lastSelectedCategorytId
-		) {
-			this.selectedCategoryId = '';
+		if (this.lastSelectedCategorytId && this.selectedCategoryId() === this.lastSelectedCategorytId) {
+			this.selectedCategoryId.set('');
 			this.lastSelectedCategorytId = '';
 			this.searchCategory = '';
 			this.filteredCategories.set(this.allCategories());
@@ -287,7 +280,7 @@ export class LogComponent implements OnInit {
 			return;
 		}
 
-		this.lastSelectedCategorytId = this.selectedCategoryId;
+		this.lastSelectedCategorytId = this.selectedCategoryId();
 		this.resetPaging();
 		this.getLogs(true);
 	}
@@ -295,60 +288,71 @@ export class LogComponent implements OnInit {
 	protected onDateFilterChange(): void {
 		this.resetPaging();
 		switch (this.selectedDateFilter()) {
-			case 'Today':
-				this.range().start = new Date();
-				this.range().start?.setHours(0, 0, 0, 0);
-				this.range().end = new Date();
+			case 'Today': {
+				const start = new Date();
+				start.setHours(0, 0, 0, 0);
+				this.range.set({ start, end: new Date() });
 				break;
-			case '1 week':
-				this.range().start = new Date();
-				this.range().start?.setDate(this.range().start?.getDate() as number - 6);
-				this.range().end = new Date();
+			}
+			case '1 week': {
+				const start = new Date();
+				start.setDate(start.getDate() - 6);
+				this.range.set({ start, end: new Date() });
 				break;
-			case '1 month':
-				this.range().start = new Date();
-				this.range().start?.setMonth(this.range().start?.getMonth() as number - 1);
-				this.range().end = new Date();
+			}
+			case '1 month': {
+				const start = new Date();
+				start.setMonth(start.getMonth() - 1);
+				this.range.set({ start, end: new Date() });
 				break;
-			case 'This week':
-				this.range().start = new Date();
-				this.range().start?.setDate(
-					(this.range().start?.getDate() as number) - (this.range().start?.getDay() as number),
-				);
-				this.range().end = new Date();
+			}
+			case 'This week': {
+				const start = new Date();
+				start.setDate(start.getDate() - start.getDay());
+				this.range.set({ start, end: new Date() });
 				break;
-			case 'This month':
-				this.range().start = new Date();
-				this.range().start?.setDate(1);
-				this.range().end = new Date();
+			}
+			case 'This month': {
+				const start = new Date();
+				start.setDate(1);
+				this.range.set({ start, end: new Date() });
 				break;
-			case 'This year':
-				this.range().start = new Date();
-				this.range().start?.setMonth(0);
-				this.range().start?.setDate(1);
-				this.range().end = new Date();
+			}
+			case 'This year': {
+				const start = new Date();
+				start.setMonth(0);
+				start.setDate(1);
+				this.range.set({ start, end: new Date() });
 				break;
+			}
 			default:
-				this.range().start = null;
-				this.range().end = null;
+				this.range.set({ start: null, end: null });
 				break;
 		}
-
 		this.getLogs(true);
 	}
 
 	protected switchQuickFilterPlaces(filter: QuickDateFilter, index: number): void {
-		const firstFilter = this.quickDateFiltes()[0];
-		this.quickDateFiltes()[0] = filter;
-		this.moreFilters()[index] = firstFilter;
-	}
+		const first = this.quickDateFiltes()[0];
+		this.quickDateFiltes.update(q => {
+			const copy = [...q];
+			copy[0] = filter;
+			return copy;
+		});
+		this.moreFilters.update(m => {
+			const copy = [...m];
+			copy[index] = first;
+			return copy;
+		});
+}
 
 	protected onDateChange(): void {
 		if (this.range().start && this.range().end) {
+			this.range.set({ start: this.range().start, end: this.range().end });
 			this.resetPaging();
 			this.getLogs(true);
 		}
-	}
+}
 
 	protected filterAutocomplete(
 		type: 'events' | 'users' | 'products' | 'categories',
@@ -396,31 +400,26 @@ export class LogComponent implements OnInit {
 		}
 	}
 
-	protected onAction(event: any): void {
-		console.log('action', event);
-	}
-
 	protected clearFilters(eventsAuto: MatAutocomplete): void {
 		eventsAuto.options.forEach((o: MatOption) => o.deselect());
 		this.resetPaging();
 		this.stopScrolling = false;
-		this.range().start = null;
-		this.range().end = null;
+		this.range.set({ start: null, end: null });
 		this.selectedDateFilter.set(undefined);
 		this.selectedEvent.set('');
 		this.searchEvent = '';
 		this.lastSelectedEvent = '';
 
 		this.lastSelectedUserId = undefined;
-		this.selectedUserId = undefined;
+		this.selectedUserId.set(undefined);
 		this.searchUser = undefined;
 
 		this.lastSelectedProductId = undefined;
-		this.selectedProductId = undefined;
+		this.selectedProductId.set(undefined);
 		this.searchProduct = undefined;
 
 		this.lastSelectedCategorytId = undefined;
-		this.selectedCategoryId = undefined;
+		this.selectedCategoryId.set(undefined);
 		this.searchCategory = undefined;
 		this.getLogs(true);
 	}
