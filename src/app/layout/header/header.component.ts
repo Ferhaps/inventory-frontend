@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { AuthService } from '../../services/auth.service';
 import { CustomMatIconModule } from '../../shared/custom-icons.module';
@@ -22,6 +22,7 @@ import { ThemeService } from '../../services/theme.service';
 		RouterModule,
 		MatSlideToggleModule,
 	],
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HeaderComponent {
 	private authService = inject(AuthService);

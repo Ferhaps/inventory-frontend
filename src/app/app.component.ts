@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NavigationStart, Router, RouterOutlet } from '@angular/router';
 import {
 	ErrorHandlerComponent,
@@ -11,6 +11,7 @@ import { ThemeService } from './services/theme.service';
 	imports: [RouterOutlet, ErrorHandlerComponent, GlobalLoaderComponent],
 	templateUrl: './app.component.html',
 	styleUrl: './app.component.scss',
+	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
 	private themeService = inject(ThemeService);
