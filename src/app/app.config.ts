@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
 import {
 	provideRouter,
 	withComponentInputBinding,
@@ -16,7 +16,7 @@ import { authInterceptor } from './services/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
 	providers: [
-		provideZoneChangeDetection({ eventCoalescing: true }),
+		provideZonelessChangeDetection(),
 		provideHttpClient(
 			withInterceptors([globalError, authInterceptor]),
 			withFetch(),
