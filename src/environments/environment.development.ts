@@ -1,5 +1,5 @@
 export const environment = {
 	production: false,
 	// backendUrl: 'https://localhost:7041/api', //dotnet
-	backendUrl: 'http://localhost:8080/api', //express
+	backendUrl: 'http://localhost:8080/api', //node.js
 };
