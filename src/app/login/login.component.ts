@@ -10,6 +10,7 @@ import { TOKEN_KEY } from '../shared/utils';
 import { MatIconModule } from '@angular/material/icon';
 import { LoggedUserInfo } from '../shared/types';
 import { PasswordValidatorDirective } from '@ferhaps/easy-ui-lib';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
 	selector: 'app-login',
@@ -33,6 +34,7 @@ export class LoginComponent {
 	};
 	protected isLoading = signal(false);
 	protected hidePass = signal(true);
+	protected loginErrorMessage = signal<string | null>(null);
 
 	private authService = inject(AuthService);
 	private router = inject(Router);
@@ -51,6 +53,7 @@ export class LoginComponent {
 
 	protected onLoginSubmit(f: NgForm): void {
 		if (f.valid) {
+			this.loginErrorMessage.set(null);
 			this.isLoading.set(true);
 			this.authService.login(this.loginModel).subscribe({
 				next: (userInfo: LoggedUserInfo) => {
@@ -58,10 +61,12 @@ export class LoginComponent {
 						localStorage.setItem(TOKEN_KEY, JSON.stringify(userInfo));
 						this.router.navigateByUrl('dashboard');
 					} else {
+						this.loginErrorMessage.set('Login failed. Please verify your credentials and try again.');
 						this.isLoading.set(false);
 					}
 				},
-				error: () => {
+				error: (e: HttpErrorResponse) => {
+					this.loginErrorMessage.set(e.error?.message || 'Invalid email or password. Please try again.');
 					this.isLoading.set(false);
 				},
 			});
