@@ -31,7 +31,7 @@ export const CategoriesStore = signalStore(
 	},
 
 		addOne(category: Category): void {
-			patchState(store, { categories: [...store.categories(), category] });
+			patchState(store, { categories: [ category, ...store.categories()] });
 		},
 
 		removeOne(id: string): void {
