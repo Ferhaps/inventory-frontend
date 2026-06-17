@@ -23,6 +23,12 @@ export type Product = {
 	updatedAt: string;
 };
 
+export type CreateProductBody = {
+	name: string;
+	categoryId: string;
+	quantity: number;
+};
+
 export type Category = {
 	id: string;
 	name: string;

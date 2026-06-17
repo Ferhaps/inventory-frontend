@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { JSON_HTTP_OPTIONS } from '../../../shared/utils';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
-import { Product } from '../../../shared/types';
+import { CreateProductBody, Product } from '../../../shared/types';
 
 @Injectable({
 	providedIn: 'root',
@@ -17,12 +17,8 @@ export class ProductService {
 		return this.http.get<Product[]>(this.productsUrl, JSON_HTTP_OPTIONS);
 	}
 
-	public addProduct(name: string, category: string, quantity: number): Observable<Product> {
-		return this.http.post<Product>(
-			this.productsUrl + `?name=${name}&categoryId=${category}&quantity=${quantity}`,
-			{},
-			JSON_HTTP_OPTIONS,
-		);
+	public addProduct(body: CreateProductBody): Observable<Product> {
+		return this.http.post<Product>(this.productsUrl, body, JSON_HTTP_OPTIONS);
 	}
 
 	public updateProductQuantity(

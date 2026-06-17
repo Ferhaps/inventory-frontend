@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, Inject, inject } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Category, PopupState, Product } from '../../../shared/types';
+import { Category, CreateProductBody, PopupState, Product } from '../../../shared/types';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProductService } from '../data-access/product.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -47,10 +47,15 @@ export class AddProductPopupComponent {
 	private ref = inject(MatDialogRef);
 
 	protected onSubmit(form: NgForm): void {
-		if (form.valid) {
+		if (form.valid && this.model.categoryId) {
 			this.state = 'loading';
+			const body: CreateProductBody = {
+				name: this.model.name,
+				categoryId: this.model.categoryId,
+				quantity: this.model.quantity,
+			};
 			this.productService
-				.addProduct(this.model.name, this.model.categoryId as string, this.model.quantity)
+				.addProduct(body)
 				.subscribe({
 					next: (product: Product) => {
 						this.ref.close(product);
