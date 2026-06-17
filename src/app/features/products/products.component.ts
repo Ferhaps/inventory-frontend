@@ -151,7 +151,7 @@ export class ProductsComponent {
 
 		popup.afterClosed().subscribe((product: Product | undefined) => {
 			if (product) {
-				this.allProducts.push(product);
+				this.allProducts.unshift(product);
 				this.setCurrentProducts();
 			}
 		});
