@@ -31,7 +31,7 @@ export const UsersStore = signalStore(
 	},
 
 		addOne(user: User): void {
-			patchState(store, { users: [...store.users(), user] });
+			patchState(store, { users: [user, ...store.users()] });
 		},
 
 		removeOne(id: string): void {
