@@ -12,6 +12,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { DefaultDeletePopupComponent } from '../../shared/default-delete-popup/default-delete-popup.component';
 import { MatButtonModule } from '@angular/material/button';
 import { UsersStore } from './store/users.store';
+import { DatePipe } from '@angular/common';
 
 @Component({
 	selector: 'app-users',
@@ -22,6 +23,7 @@ import { UsersStore } from './store/users.store';
 		MatIconModule,
 		MatMenuModule,
 		MatButtonModule,
+		DatePipe,
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	templateUrl: './users.component.html',
@@ -38,7 +40,7 @@ export class UsersComponent {
 					: [],
 		})),
 	);
-	protected displayedColumns: string[] = ['email', 'role'];
+	protected displayedColumns: string[] = ['email', 'role', 'createdAt', 'updatedAt'];
 	protected loggedUser: LoggedUserInfo;
 
 	private loadingService = inject(LoaderService);
