@@ -19,14 +19,7 @@ Angular 21 SPA with zoneless change detection (`provideZonelessChangeDetection()
 
 **Routing** — Hash-based (`withHashLocation`). All authenticated routes are lazy-loaded children of `LayoutComponent`, protected by `authGuard`. The layout wraps everything except `/login`. Add new feature routes as lazy-loaded children in [src/app/routing/app.routes.ts](src/app/routing/app.routes.ts).
 
-**Feature structure** — Features live under `src/app/features/<feature-name>/` with this layout:
-```
-features/<feature-name>/
-  <feature-name>.component.ts/.html/.scss/.spec.ts
-  data-access/<feature-name>.service.ts
-  add-<feature-name>-popup/        # optional create dialog
-  store/<feature-name>.store.ts    # optional NgRx Signals store
-```
+**Feature structure** — Features live under `src/app/features/<feature-name>/`. Use `/new-feature` to scaffold a complete feature (component, service, store, route).
 
 **State management** — Two patterns coexist:
 - `@ngrx/signals` `signalStore` for shared/cached entity lists (categories, users). Stores are `providedIn: 'root'`, load once (`if (store.status() !== 'idle') return`), and expose `addOne`/`removeOne` for optimistic updates.
