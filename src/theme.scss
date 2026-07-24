@@ -95,6 +95,22 @@ $dark-theme: mat.m2-define-dark-theme(
 	--border-color: #e0e0e0;
 	--surface-color: #f5f5f5;
 	--hover-color: #eeeeee;
+	--mat-sys-primary: #{$mainColor};
+	--mat-sys-surface: #ffffff;
+	--mat-sys-on-surface: #333333;
+	--mat-sys-on-surface-variant: #5f5f5f;
+	--mat-sys-outline: #a4a4a4;
+	--mat-sys-outline-variant: #e0e0e0;
+	--mat-sys-surface-container: #f5f5f5;
+	--mat-sys-surface-container-high: #ececec;
+	--mat-sys-surface-container-highest: #e6e6e6;
+	--mat-sys-secondary-container: #d7ecff;
+	--mat-sys-on-secondary-container: #0b3a5c;
+	--mat-sys-error: #ba1a1a;
+	--mat-sys-on-error: #ffffff;
+	--mat-sys-error-container: #ffdad6;
+	--mat-sys-on-error-container: #410002;
+	--mat-sys-scrim: #000000;
 }
 
 // Dark theme variables
@@ -104,6 +120,24 @@ $dark-theme: mat.m2-define-dark-theme(
 	--border-color: #404040 !important;
 	--surface-color: #1e1e1e !important;
 	--hover-color: #2d2d2d !important;
+
+	// Dark counterparts of the M3 system variables declared on :root.
+	--mat-sys-primary: #29b6f6;
+	--mat-sys-surface: #1e1e1e;
+	--mat-sys-on-surface: #f2f2f2;
+	--mat-sys-on-surface-variant: #c4c4c4;
+	--mat-sys-outline: #8f8f8f;
+	--mat-sys-outline-variant: #404040;
+	--mat-sys-surface-container: #2a2a2a;
+	--mat-sys-surface-container-high: #333333;
+	--mat-sys-surface-container-highest: #3d3d3d;
+	--mat-sys-secondary-container: #1f4257;
+	--mat-sys-on-secondary-container: #cfe6f7;
+	--mat-sys-error: #ffb4ab;
+	--mat-sys-on-error: #690005;
+	--mat-sys-error-container: #93000a;
+	--mat-sys-on-error-container: #ffdad6;
+	--mat-sys-scrim: #000000;
 }
 
 @include mat.all-component-themes($light-theme);
