@@ -5,7 +5,7 @@
 			+ add
 		</div>
 
-		<lib-search-bar [for]="'products'" [(ngModel)]="searchTerm" (search)="onSearch($event)" />
+		<eui-search-bar [for]="'products'" [(ngModel)]="searchTerm" (search)="onSearch($event)" />
 
 		<mat-chip-listbox (change)="showProductsForCategory($event)">
 			@for (category of categories(); track category.id) {
