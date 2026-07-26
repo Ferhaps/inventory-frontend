@@ -1,5 +1,11 @@
 import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	computed,
+	effect,
+	inject,
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
@@ -10,8 +16,7 @@ import { AddCategoryPopupComponent } from './add-category-popup/add-category-pop
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../services/auth.service';
-import { DefaultDeletePopupComponent } from '../../shared/default-delete-popup/default-delete-popup.component';
-import { LoaderService } from '@ferhaps/easy-ui-lib';
+import { ConfirmDialogService, LoaderService } from '@ferhaps/easy-ui-lib';
 import { CategoriesStore } from './store/categories.store';
 
 @Component({
@@ -30,10 +35,13 @@ import { CategoriesStore } from './store/categories.store';
 	styleUrl: './categories.component.scss',
 })
 export class CategoriesComponent {
-	protected categories = computed(() => this.store.categories().map((c) => ({ ...c, actions: ['Delete'] })));
+	protected categories = computed(() =>
+		this.store.categories().map((c) => ({ ...c, actions: ['Delete'] })),
+	);
 	protected displayedColumns: string[] = ['name', 'dateCreated', 'dateUpdated'];
 
 	private categoryService = inject(CategoryService);
+	private confirmDialog = inject(ConfirmDialogService);
 	private loadingService = inject(LoaderService);
 	private authService = inject(AuthService);
 	private dialog = inject(MatDialog);
@@ -64,21 +72,20 @@ export class CategoriesComponent {
 		});
 	}
 
-	private openDeleteCategoryPopup(category: Category): void {
-		const ref = this.dialog.open(DefaultDeletePopupComponent, {
-			width: '350px',
-			data: `category: ${category.name}. Keep in mind that all the products that belong to this category will be deleted as well`,
-			autoFocus: false,
-			scrollStrategy: new NoopScrollStrategy(),
+	private async openDeleteCategoryPopup(category: Category): Promise<void> {
+		const confirmed = await this.confirmDialog.confirm({
+			title: `Delete category "${category.name}"?`,
+			message:
+				'All the products that belong to this category will be deleted as well. This action cannot be undone.',
+			confirmText: 'Delete',
+			danger: true,
 		});
 
-		ref.afterClosed().subscribe((result: boolean) => {
-			if (result) {
-				this.categoryService.deleteCategory(category.id).subscribe({
-					next: () => this.store.removeOne(category.id)
-				});
-			}
-		});
+		if (confirmed) {
+			this.categoryService.deleteCategory(category.id).subscribe({
+				next: () => this.store.removeOne(category.id),
+			});
+		}
 	}
 
 	protected selectOption(category: Category, action: string): void {

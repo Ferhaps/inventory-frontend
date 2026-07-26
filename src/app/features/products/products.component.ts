@@ -1,10 +1,13 @@
 import { CategoriesStore } from './../categories/store/categories.store';
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import {
-	LoggedUserInfo,
-	Product,
-	TableDataSource,
-} from '../../shared/types';
+	ChangeDetectionStrategy,
+	Component,
+	computed,
+	effect,
+	inject,
+	signal,
+} from '@angular/core';
+import { LoggedUserInfo, Product, TableDataSource } from '../../shared/types';
 import { ProductService } from './data-access/product.service';
 import { MatChipListboxChange, MatChipsModule } from '@angular/material/chips';
 import { MatTableModule } from '@angular/material/table';
@@ -20,8 +23,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { AddProductPopupComponent } from './add-product-popup/add-product-popup.component';
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import { AuthService } from '../../services/auth.service';
-import { DefaultDeletePopupComponent } from '../../shared/default-delete-popup/default-delete-popup.component';
-import { LoaderService, SearchBarComponent } from '@ferhaps/easy-ui-lib';
+import {
+	ConfirmDialogService,
+	LoaderService,
+	SearchBarComponent,
+} from '@ferhaps/easy-ui-lib';
 
 @Component({
 	selector: 'app-products',
@@ -58,6 +64,7 @@ export class ProductsComponent {
 	private productActions: string[] = [];
 
 	private readonly categoriesStore = inject(CategoriesStore);
+	private confirmDialog = inject(ConfirmDialogService);
 	private productService = inject(ProductService);
 	private loadingService = inject(LoaderService);
 	private authService = inject(AuthService);
@@ -110,10 +117,10 @@ export class ProductsComponent {
 		const term = this.searchTerm().toLowerCase();
 		const sorted = term
 			? [...products].sort((a, b) => {
-				const aMatch = a.name.toLowerCase().includes(term) ? 0 : 1;
-				const bMatch = b.name.toLowerCase().includes(term) ? 0 : 1;
-				return aMatch - bMatch;
-			})
+					const aMatch = a.name.toLowerCase().includes(term) ? 0 : 1;
+					const bMatch = b.name.toLowerCase().includes(term) ? 0 : 1;
+					return aMatch - bMatch;
+				})
 			: products;
 		this.tableDataSource.set(
 			sorted.map((product) => ({
@@ -157,26 +164,24 @@ export class ProductsComponent {
 		});
 	}
 
-	private openDeleteProductPopup(product: Product): void {
-		const ref = this.dialog.open(DefaultDeletePopupComponent, {
-			width: '350px',
-			data: `product: ${product.name}`,
-			autoFocus: false,
-			scrollStrategy: new NoopScrollStrategy(),
+	private async openDeleteProductPopup(product: Product): Promise<void> {
+		const confirmed = await this.confirmDialog.confirm({
+			title: `Delete product "${product.name}"?`,
+			message: 'This action cannot be undone.',
+			confirmText: 'Delete',
+			danger: true,
 		});
 
-		ref.afterClosed().subscribe((result: boolean) => {
-			if (result) {
-				this.productService.deleteProduct(product.id).subscribe({
-					next: () => {
-						this.allProducts = this.allProducts.filter(
-							(p) => p.id !== product.id,
-						);
-						this.setCurrentProducts();
-					},
-				});
-			}
-		});
+		if (confirmed) {
+			this.productService.deleteProduct(product.id).subscribe({
+				next: () => {
+					this.allProducts = this.allProducts.filter(
+						(p) => p.id !== product.id,
+					);
+					this.setCurrentProducts();
+				},
+			});
+		}
 	}
 
 	protected selectOption(product: Product, action: string): void {
