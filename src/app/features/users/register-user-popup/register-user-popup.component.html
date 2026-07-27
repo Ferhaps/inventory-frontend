@@ -1,4 +1,4 @@
-<lib-default-dialog [dialogTitle]="'Add user'">
+<eui-default-dialog [dialogTitle]="'Add user'">
 	<form
 		novalidate
 		autocomplete="off"
@@ -43,26 +43,22 @@
 			<input
 				matInput
 				required
-				libPasswordValidator
+				euiPasswordValidator
 				[(ngModel)]="model.password"
 				#passwordField="ngModel"
 				name="password"
 				type="password"
 			/>
-			@if (passwordField.invalid) {
-				<mat-error
-					>Requires 1 uppercase, 1 lowercase letter, 1 symbol, 1 number, 8
-					characters</mat-error
-				>
-			}
 		</mat-form-field>
+
+		<eui-password-strength class="w-full" [value]="model.password" />
 
 		<mat-form-field class="w-full">
 			<mat-label>Repeat password</mat-label>
 			<input
 				matInput
 				required
-				libFieldsMatchValidator
+				euiFieldsMatchValidator
 				fieldToMatch="password"
 				[(ngModel)]="model.passwordRepeat"
 				#repeatPassField="ngModel"
@@ -91,4 +87,4 @@
 			</button>
 		</div>
 	</form>
-</lib-default-dialog>
+</eui-default-dialog>

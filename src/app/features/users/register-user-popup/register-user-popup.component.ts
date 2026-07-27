@@ -11,6 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import {
 	DefaultDialogComponent,
 	FieldsMatchValidatorDirective,
+	PasswordStrengthComponent,
 	PasswordValidatorDirective,
 } from '@ferhaps/easy-ui-lib';
 
@@ -31,6 +32,7 @@ export type RegisterUserModel = {
 		MatProgressSpinnerModule,
 		MatInputModule,
 		PasswordValidatorDirective,
+		PasswordStrengthComponent,
 		FieldsMatchValidatorDirective,
 		MatButtonModule,
 	],
