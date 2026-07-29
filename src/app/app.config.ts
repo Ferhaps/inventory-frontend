@@ -1,4 +1,7 @@
-import { ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
+import {
+	ApplicationConfig,
+	provideZonelessChangeDetection,
+} from '@angular/core';
 import {
 	provideRouter,
 	withComponentInputBinding,
@@ -6,21 +9,14 @@ import {
 	withViewTransitions,
 } from '@angular/router';
 import { routes } from './routing/app.routes';
-import {
-	provideHttpClient,
-	withFetch,
-	withInterceptors,
-} from '@angular/common/http';
-import { globalError } from './services/globalError.interceptor';
+import { provideEasyUiLib } from '@ferhaps/easy-ui-lib';
+import { authErrorInterceptor } from './services/authError.interceptor';
 import { authInterceptor } from './services/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
 	providers: [
 		provideZonelessChangeDetection(),
-		provideHttpClient(
-			withInterceptors([globalError, authInterceptor]),
-			withFetch(),
-		),
+		provideEasyUiLib([authInterceptor, authErrorInterceptor]),
 		provideRouter(
 			routes,
 			withComponentInputBinding(),

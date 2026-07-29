@@ -15,7 +15,6 @@ import { ProductService } from '../products/data-access/product.service';
 import { CategoryService } from '../categories/data-access/category.service';
 import { Log, User, Product, Category } from '../../shared/types';
 import { FormsModule } from '@angular/forms';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('LogComponent', () => {
 	let component: LogComponent;

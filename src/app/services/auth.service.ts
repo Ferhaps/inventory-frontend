@@ -1,7 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { JSON_HTTP_OPTIONS, TOKEN_KEY } from '../shared/utils';
+import {
+	JSON_HTTP_OPTIONS,
+	SKIP_ERROR_OPTIONS,
+	TOKEN_KEY,
+} from '../shared/utils';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { LoggedUserInfo, User, UserRole } from '../shared/types';
@@ -22,7 +26,7 @@ export class AuthService {
 		return this.http.post<LoggedUserInfo>(
 			this.authUrl + '/login',
 			body,
-			JSON_HTTP_OPTIONS,
+			SKIP_ERROR_OPTIONS,
 		);
 	}
 
