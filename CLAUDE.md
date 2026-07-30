@@ -25,7 +25,9 @@ Angular 21 SPA with zoneless change detection (`provideZonelessChangeDetection()
 - `@ngrx/signals` `signalStore` for shared/cached entity lists (categories, users). Stores are `providedIn: 'root'`, load once (`if (store.status() !== 'idle') return`), and expose `addOne`/`removeOne` for optimistic updates.
 - Component-local `signal()` for ephemeral UI state (loading, selected item, etc.).
 
-**HTTP** — Services inject `HttpClient` and build URLs from `environment.backendUrl`. Always use the shared option constants from [src/app/shared/utils.ts](src/app/shared/utils.ts): `JSON_HTTP_OPTIONS`, `STRING_HTTP_OPTIONS`, `BLOB_HTTP_OPTIONS`. Query params are appended as string interpolation — do not use `HttpParams`. Services return raw `Observable<T>`; error handling is global via `globalError.interceptor.ts`.
+**HTTP** — Services inject `HttpClient` and build URLs from `environment.backendUrl`. Always use the shared option constants from [src/app/shared/utils.ts](src/app/shared/utils.ts), which wrap the `@ferhaps/easy-ui-lib` presets with the app's `Accept-Language` via `withAcceptLanguage()`: `JSON_HTTP_OPTIONS`, `STRING_HTTP_OPTIONS`, `BLOB_HTTP_OPTIONS`, plus `SKIP_ERROR_OPTIONS` (suppress the global error popup when the caller renders its own message) and `JSON_OPTIONS_WITH_GLOBAL_LOADER` (drive the global loader for the request's lifetime). Never import the presets straight from the library — the locale would be lost. Query params are appended as string interpolation — do not use `HttpParams`. Services return raw `Observable<T>`; error handling is global.
+
+**Interceptors** — `provideEasyUiLib([authInterceptor, authErrorInterceptor])` in [src/app/app.config.ts](src/app/app.config.ts) sets up `HttpClient` and registers the chain in this order: `easyUiLibInterceptor` (from the library — drives the global loader and surfaces failures through `ErrorService`), then `authInterceptor` (attaches the JWT), then `authErrorInterceptor` (innermost, so it sees errors first). That order is load-bearing: `authErrorInterceptor` turns a 401 *raised while a token is held* into a silent logout and completes the stream, so no error popup fires over the redirect to /login; a 401 without a token is a rejected sign-in and is rethrown for the login form to display inline. Don't add `provideHttpClient` alongside this — `provideEasyUiLib` already calls it, and a second call would fight over `HttpBackend`.
 
 **Auth** — `authInterceptor` attaches the JWT token on each request. Use `AuthService` to read/write the token and get the logged user — never access `localStorage` directly. Token stored under `TOKEN_KEY = 'INVENTORY_TOKEN'`.
 
@@ -60,7 +62,7 @@ export class ExampleComponent {
 - Forms: template-driven (`NgForm` + `[(ngModel)]`). Use ReactiveFormsModule only for complex scenarios.
 - Unsubscribe via `takeUntilDestroyed()` or `DestroyRef`; always pass `{ next, error }` to `.subscribe()`
 - Use `LoaderService` (from `@ferhaps/easy-ui-lib`) for global loading spinners; reset it in the `error` callback
-- Use `DefaultDeletePopupComponent` (from `@ferhaps/easy-ui-lib`) for delete confirmations — don't create new ones
+- Use `ConfirmDialogService` (from `@ferhaps/easy-ui-lib`) for delete confirmations — `await confirmDialog.confirm({ title, message, confirmText: 'Delete', danger: true })` resolves `true` only on confirm. Don't build bespoke confirmation dialogs
 - Dialog components accept data via `MAT_DIALOG_DATA` and track state with `PopupState = 'default' | 'loading'`
 
 ## Styling

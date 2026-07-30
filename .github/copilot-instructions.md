@@ -122,7 +122,7 @@ protected state: PopupState = 'default';
 ### Loading & Errors
 
 - Use `LoaderService` from `@ferhaps/easy-ui-ui` for global loading spinners
-- Error handling is done globally via `globalError.interceptor` — components should only reset loading state in the `error` callback of subscriptions
+- Error handling is done globally via `easyUiLibInterceptor` — components should only reset loading state in the `error` callback of subscriptions
 
 ```typescript
 this.service.getItems().subscribe({
@@ -172,6 +172,10 @@ Always use the shared HTTP option constants from `src/app/shared/utils.ts`:
 | `JSON_HTTP_OPTIONS` | Default for JSON requests/responses |
 | `STRING_HTTP_OPTIONS` | When the response is plain text |
 | `BLOB_HTTP_OPTIONS` | When the response is a file/binary |
+| `SKIP_ERROR_OPTIONS` | When the caller renders its own inline error (suppresses the global popup) |
+| `JSON_OPTIONS_WITH_GLOBAL_LOADER` | When the request should drive the global loader for its lifetime |
+
+These wrap the `@ferhaps/easy-ui-lib` presets with the app's `Accept-Language` header via `withAcceptLanguage()`. Never import the presets directly from the library — the locale would be lost.
 
 ```typescript
 import { JSON_HTTP_OPTIONS } from '../../shared/utils';
@@ -206,7 +210,7 @@ getFiltered(categoryId: number): Observable<Product[]> {
 
 ### Error Handling
 
-Do not add error handling inside services. Errors are handled globally by `globalError.interceptor.ts`. Services only return the raw observable.
+Do not add error handling inside services. Errors are handled globally by `easyUiLibInterceptor`. Services only return the raw observable.
 
 ---
 
@@ -251,7 +255,7 @@ Domain models for the feature belong in `src/app/shared/types.ts`. Add interface
 
 ### Popups
 
-Create/edit/delete dialogs are standalone components opened via `MatDialog`. Use the shared `DefaultDeletePopupComponent` (from `@ferhaps/easy-ui-lib`) for delete confirmations instead of creating a new one.
+Create/edit dialogs are standalone components opened via `MatDialog`. For delete confirmations use `ConfirmDialogService` (from `@ferhaps/easy-ui-lib`) instead of creating a dialog component: `await this.confirmDialog.confirm({ title, message, confirmText: 'Delete', danger: true })` resolves `true` only when confirmed.
 
 ### Naming
 

@@ -55,9 +55,10 @@ export class FeatureNameService {
 }
 ```
 
-- Use `JSON_HTTP_OPTIONS` / `STRING_HTTP_OPTIONS` / `BLOB_HTTP_OPTIONS` from `src/app/shared/utils.ts`
+- Use `JSON_HTTP_OPTIONS` / `STRING_HTTP_OPTIONS` / `BLOB_HTTP_OPTIONS` from `src/app/shared/utils.ts` — these wrap the `@ferhaps/easy-ui-lib` presets with the app's `Accept-Language`, so never import them straight from the library
+- Reach for `SKIP_ERROR_OPTIONS` when the caller shows its own inline error, and `JSON_OPTIONS_WITH_GLOBAL_LOADER` to drive the global loader for a request's lifetime
 - Append query params via string interpolation — never use `HttpParams`
-- No error handling in services — it's global via `globalError.interceptor.ts`
+- No error handling in services — it's global via `easyUiLibInterceptor`
 
 ## Step 4 — Create the NgRx Signals store (if needed)
 
@@ -131,7 +132,7 @@ export class FeatureNameComponent {
 
 - `protected` for anything the template accesses; `private` for everything else
 - Use `LoaderService` from `@ferhaps/easy-ui-lib` for the global spinner
-- Use `DefaultDeletePopupComponent` from `@ferhaps/easy-ui-lib` for delete confirmations
+- Use `ConfirmDialogService` from `@ferhaps/easy-ui-lib` for delete confirmations: `await this.confirmDialog.confirm({ title, message, confirmText: 'Delete', danger: true })`
 - Dialog components use `MAT_DIALOG_DATA` for input and `PopupState = 'default' | 'loading'` for state
 - Check `AuthService.getLoggedUserInfo().user.role === 'ADMIN'` before showing admin-only actions
 
