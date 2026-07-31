@@ -6,10 +6,15 @@ import {
 	effect,
 	inject,
 	signal,
+	viewChild,
 } from '@angular/core';
 import { LoggedUserInfo, Product, TableDataSource } from '../../shared/types';
 import { ProductService } from './data-access/product.service';
-import { MatChipListboxChange, MatChipsModule } from '@angular/material/chips';
+import {
+	MatChipListbox,
+	MatChipListboxChange,
+	MatChipsModule,
+} from '@angular/material/chips';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
@@ -60,6 +65,7 @@ export class ProductsComponent {
 		'dateCreated',
 		'dateUpdated',
 	];
+	private categoryChips = viewChild.required(MatChipListbox);
 	private allProducts: Product[] = [];
 	private productActions: string[] = [];
 
@@ -100,7 +106,13 @@ export class ProductsComponent {
 	}
 
 	protected showProductsForCategory(event: MatChipListboxChange): void {
-		this.currentCategoryId.set(event.value);
+		const categoryId: string | undefined = event.value;
+		if (!categoryId) {
+			this.categoryChips().value = this.currentCategoryId();
+			return;
+		}
+
+		this.currentCategoryId.set(categoryId);
 		this.searchTerm.set('');
 		this.setCurrentProducts();
 	}
