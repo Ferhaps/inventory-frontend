@@ -1,245 +1,252 @@
+import {
+	beforeEach,
+	describe,
+	expect,
+	it,
+	type MockedObject,
+	vi,
+} from 'vitest';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CategoriesComponent } from './categories.component';
 import { MatDialog } from '@angular/material/dialog';
 import { CategoryService } from './data-access/category.service';
 import { AuthService } from '../../services/auth.service';
-import { LoaderService } from '@ferhaps/easy-ui-lib';
-import { Category, LoggedUserInfo, TableDataSource } from '../../shared/types';
+import { ConfirmDialogService, LoaderService } from '@ferhaps/easy-ui-lib';
+import { Category, LoggedUserInfo } from '../../shared/types';
 import { of } from 'rxjs';
 
 describe('CategoriesComponent', () => {
 	let component: CategoriesComponent;
 	let fixture: ComponentFixture<CategoriesComponent>;
-	let categoryService: jasmine.SpyObj<CategoryService>;
-	let authService: jasmine.SpyObj<AuthService>;
-	let loaderService: jasmine.SpyObj<LoaderService>;
-	let dialog: MatDialog;
+	let categoryService: MockedObject<CategoryService>;
+	let authService: MockedObject<AuthService>;
+	let loaderService: MockedObject<LoaderService>;
+	let confirmDialog: MockedObject<ConfirmDialogService>;
+	let dialog: MockedObject<MatDialog>;
 
-	const mockCategories: TableDataSource<Category>[] = [
-		{ id: 'cat1', name: 'Category 1', actions: ['Delete'] },
-		{ id: 'cat2', name: 'Category 2', actions: ['Delete'] },
+	const mockCategories: Category[] = [
+		{
+			id: 'cat1',
+			name: 'Category 1',
+			createdAt: '2024-01-01T00:00:00.000Z',
+			updatedAt: '2024-01-01T00:00:00.000Z',
+		},
+		{
+			id: 'cat2',
+			name: 'Category 2',
+			createdAt: '2024-01-02T00:00:00.000Z',
+			updatedAt: '2024-01-02T00:00:00.000Z',
+		},
 	];
 
 	const mockAdminUser: LoggedUserInfo = {
 		token: 'mock-token',
-		user: { id: 'user1', email: 'admin@test.com', role: 'ADMIN' },
+		user: {
+			id: 'user1',
+			email: 'admin@test.com',
+			role: 'ADMIN',
+			createdAt: '2024-01-01T00:00:00.000Z',
+			updatedAt: '2024-01-01T00:00:00.000Z',
+		},
 	};
 
 	const mockRegularUser: LoggedUserInfo = {
 		token: 'mock-token',
-		user: { id: 'user2', email: 'user@test.com', role: 'OPERATOR' },
+		user: {
+			id: 'user2',
+			email: 'user@test.com',
+			role: 'OPERATOR',
+			createdAt: '2024-01-01T00:00:00.000Z',
+			updatedAt: '2024-01-01T00:00:00.000Z',
+		},
 	};
 
-	beforeEach(async () => {
-		const categoryServiceSpy = jasmine.createSpyObj('CategoryService', [
-			'getCategories',
-			'addCategory',
-			'deleteCategory',
-		]);
-		const authServiceSpy = jasmine.createSpyObj('AuthService', [
-			'getLoggedUserInfo',
-		]);
-		const loaderServiceSpy = jasmine.createSpyObj('LoaderService', [
-			'setLoading',
-		]);
+	/**
+	 * Creates the component and settles the store's async load. The first
+	 * detectChanges runs the loading effect while the store is still 'loading';
+	 * the second runs it again once the promise has resolved.
+	 */
+	const createComponent = async (): Promise<void> => {
+		fixture = TestBed.createComponent(CategoriesComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+		await fixture.whenStable();
+		fixture.detectChanges();
+	};
 
-		await TestBed.configureTestingModule({
+	beforeEach(() => {
+		TestBed.configureTestingModule({
 			imports: [CategoriesComponent],
 			providers: [
-				{ provide: CategoryService, useValue: categoryServiceSpy },
-				{ provide: AuthService, useValue: authServiceSpy },
-				{ provide: LoaderService, useValue: loaderServiceSpy },
-			],
-		})
-			.overrideProvider(MatDialog, {
-				useValue: {
-					open: jasmine
-						.createSpy('open')
-						.and.returnValue({ afterClosed: () => of(undefined) }),
+				provideZonelessChangeDetection(),
+				{
+					provide: CategoryService,
+					useValue: {
+						getCategories: vi.fn(),
+						addCategory: vi.fn(),
+						deleteCategory: vi.fn(),
+					},
 				},
-			})
-			.compileComponents();
+				{ provide: AuthService, useValue: { getLoggedUserInfo: vi.fn() } },
+				{ provide: LoaderService, useValue: { setLoading: vi.fn() } },
+				{ provide: ConfirmDialogService, useValue: { confirm: vi.fn() } },
+			],
+			// MatDialogModule is imported by the component itself, so a plain
+			// provider would lose to it — override replaces it everywhere.
+		}).overrideProvider(MatDialog, { useValue: { open: vi.fn() } });
 
 		categoryService = TestBed.inject(
 			CategoryService,
-		) as jasmine.SpyObj<CategoryService>;
-		authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
+		) as MockedObject<CategoryService>;
+		authService = TestBed.inject(AuthService) as MockedObject<AuthService>;
 		loaderService = TestBed.inject(
 			LoaderService,
-		) as jasmine.SpyObj<LoaderService>;
-		authService.getLoggedUserInfo.and.returnValue(mockRegularUser);
-		dialog = TestBed.inject(MatDialog);
+		) as MockedObject<LoaderService>;
+		confirmDialog = TestBed.inject(
+			ConfirmDialogService,
+		) as MockedObject<ConfirmDialogService>;
+		dialog = TestBed.inject(MatDialog) as MockedObject<MatDialog>;
+
+		authService.getLoggedUserInfo.mockReturnValue(mockRegularUser);
+		categoryService.getCategories.mockResolvedValue(mockCategories);
+		dialog.open.mockReturnValue({ afterClosed: () => of(undefined) } as never);
 	});
 
 	describe('Component Initialization', () => {
-		it('should create the component', () => {
-			categoryService.getCategories.and.returnValue(of([]));
+		it('should create the component', async () => {
+			categoryService.getCategories.mockResolvedValue([]);
 
-			fixture = TestBed.createComponent(CategoriesComponent);
-			component = fixture.componentInstance;
+			await createComponent();
 
 			expect(component).toBeTruthy();
 		});
 
-		it('should add actions column for ADMIN users', () => {
-			authService.getLoggedUserInfo.and.returnValue(mockAdminUser);
-			categoryService.getCategories.and.returnValue(of(mockCategories));
+		it('should add actions column for ADMIN users', async () => {
+			authService.getLoggedUserInfo.mockReturnValue(mockAdminUser);
 
-			fixture = TestBed.createComponent(CategoriesComponent);
-			component = fixture.componentInstance;
+			await createComponent();
 
 			expect(component['displayedColumns']).toContain('actions');
 		});
 
-		it('should not add actions column for non-ADMIN users', () => {
-			categoryService.getCategories.and.returnValue(of(mockCategories));
-
-			fixture = TestBed.createComponent(CategoriesComponent);
-			component = fixture.componentInstance;
+		it('should not add actions column for non-ADMIN users', async () => {
+			await createComponent();
 
 			expect(component['displayedColumns']).not.toContain('actions');
 		});
 
-		it('should load categories on init', () => {
-			categoryService.getCategories.and.returnValue(of(mockCategories));
-
-			fixture = TestBed.createComponent(CategoriesComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+		it('should load categories on init', async () => {
+			await createComponent();
 
 			expect(categoryService.getCategories).toHaveBeenCalled();
-			expect(component['categories']()).toEqual(mockCategories);
+			expect(component['categories']()).toEqual(
+				mockCategories.map((c) => ({ ...c, actions: ['Delete'] })),
+			);
 		});
 
-		it('should set loading state correctly', () => {
-			categoryService.getCategories.and.returnValue(of(mockCategories));
-
-			fixture = TestBed.createComponent(CategoriesComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+		it('should set loading state correctly', async () => {
+			await createComponent();
 
 			expect(loaderService.setLoading).toHaveBeenCalledWith(true);
 			expect(loaderService.setLoading).toHaveBeenCalledWith(false);
 		});
+
+		it('should leave the list empty when loading fails', async () => {
+			categoryService.getCategories.mockRejectedValue(new Error('Load failed'));
+
+			await createComponent();
+
+			expect(component['categories']()).toEqual([]);
+		});
 	});
 
 	describe('Add Category', () => {
-		beforeEach(() => {
-			categoryService.getCategories.and.returnValue(of(mockCategories));
-			fixture = TestBed.createComponent(CategoriesComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+		beforeEach(async () => {
+			await createComponent();
 		});
 
-		it('should add new category to list when dialog returns category', (done) => {
-			const newCategory: TableDataSource<Category> = {
+		it('should add new category to list when dialog returns category', async () => {
+			const newCategory: Category = {
 				id: 'cat4',
 				name: 'New Category',
-				actions: ['Delete'],
+				createdAt: '2024-01-04T00:00:00.000Z',
+				updatedAt: '2024-01-04T00:00:00.000Z',
 			};
-
-			categoryService.addCategory.and.returnValue(of(newCategory));
-			(dialog.open as jasmine.Spy).and.returnValue({
+			dialog.open.mockReturnValue({
 				afterClosed: () => of(newCategory),
-			} as any);
-
+			} as never);
 			const initialLength = component['categories']().length;
 
 			component['openAddCategoryPopup']();
+			await fixture.whenStable();
 
-			(dialog.open as jasmine.Spy).calls
-				.mostRecent()
-				.returnValue.afterClosed()
-				.subscribe({
-					next: () => {
-						expect(component['categories']().length).toBe(initialLength + 1);
-						expect(component['categories']()).toContain(newCategory);
-						done();
-					},
-				});
+			expect(component['categories']().length).toBe(initialLength + 1);
+			expect(component['categories']()[0]).toEqual({
+				...newCategory,
+				actions: ['Delete'],
+			});
 		});
 
-		it('should not add category when dialog is cancelled', (done) => {
+		it('should not add category when dialog is cancelled', async () => {
 			const initialLength = component['categories']().length;
-			(dialog.open as jasmine.Spy).and.returnValue({
-				afterClosed: () => of(undefined),
-			} as any);
 
 			component['openAddCategoryPopup']();
+			await fixture.whenStable();
 
-			(dialog.open as jasmine.Spy).calls
-				.mostRecent()
-				.returnValue.afterClosed()
-				.subscribe(() => {
-					expect(categoryService.addCategory).not.toHaveBeenCalled();
-					expect(component['categories']().length).toBe(initialLength);
-					done();
-				});
+			expect(categoryService.addCategory).not.toHaveBeenCalled();
+			expect(component['categories']().length).toBe(initialLength);
 		});
 	});
 
 	describe('Delete Category', () => {
-		beforeEach(() => {
-			categoryService.getCategories.and.returnValue(of(mockCategories));
-			fixture = TestBed.createComponent(CategoriesComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+		beforeEach(async () => {
+			categoryService.deleteCategory.mockReturnValue(of({}));
+			await createComponent();
 		});
 
-		it('should open delete confirmation dialog', (done) => {
-			(dialog.open as jasmine.Spy).and.returnValue({
-				afterClosed: () => of(false),
-			} as any);
+		it('should open delete confirmation dialog', async () => {
+			confirmDialog.confirm.mockResolvedValue(false);
 
 			component['selectOption'](mockCategories[0], 'Delete');
-			expect(dialog.open).toHaveBeenCalled();
+			await fixture.whenStable();
 
-			(dialog.open as jasmine.Spy).calls
-				.mostRecent()
-				.returnValue.afterClosed()
-				.subscribe(() => {
-					done();
-				});
+			expect(confirmDialog.confirm).toHaveBeenCalledWith(
+				expect.objectContaining({ confirmText: 'Delete', danger: true }),
+			);
 		});
 
-		it('should delete category when confirmed', (done) => {
-			categoryService.deleteCategory.and.returnValue(of({}));
-			(dialog.open as jasmine.Spy).and.returnValue({
-				afterClosed: () => of(true),
-			} as any);
+		it('should delete category when confirmed', async () => {
+			confirmDialog.confirm.mockResolvedValue(true);
 			const initialLength = component['categories']().length;
 
 			component['selectOption'](mockCategories[0], 'Delete');
+			await fixture.whenStable();
 
-			(dialog.open as jasmine.Spy).calls
-				.mostRecent()
-				.returnValue.afterClosed()
-				.subscribe(() => {
-					expect(categoryService.deleteCategory).toHaveBeenCalledWith('cat1');
-					expect(component['categories']().length).toBe(initialLength - 1);
-					expect(
-						component['categories']().find((c) => c.id === 'cat1'),
-					).toBeUndefined();
-					done();
-				});
+			expect(categoryService.deleteCategory).toHaveBeenCalledWith('cat1');
+			expect(component['categories']().length).toBe(initialLength - 1);
+			expect(
+				component['categories']().find((c) => c.id === 'cat1'),
+			).toBeUndefined();
 		});
 
-		it('should not delete category when cancelled', (done) => {
-			(dialog.open as jasmine.Spy).and.returnValue({
-				afterClosed: () => of(false),
-			} as any);
+		it('should not delete category when cancelled', async () => {
+			confirmDialog.confirm.mockResolvedValue(false);
 			const initialLength = component['categories']().length;
 
 			component['selectOption'](mockCategories[0], 'Delete');
+			await fixture.whenStable();
 
-			(dialog.open as jasmine.Spy).calls
-				.mostRecent()
-				.returnValue.afterClosed()
-				.subscribe(() => {
-					expect(categoryService.deleteCategory).not.toHaveBeenCalled();
-					expect(component['categories']().length).toBe(initialLength);
-					done();
-				});
+			expect(categoryService.deleteCategory).not.toHaveBeenCalled();
+			expect(component['categories']().length).toBe(initialLength);
+		});
+
+		it('should ignore unknown actions', async () => {
+			component['selectOption'](mockCategories[0], 'Edit');
+			await fixture.whenStable();
+
+			expect(confirmDialog.confirm).not.toHaveBeenCalled();
+			expect(categoryService.deleteCategory).not.toHaveBeenCalled();
 		});
 	});
 });
