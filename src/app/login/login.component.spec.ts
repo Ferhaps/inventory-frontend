@@ -1,13 +1,19 @@
 import {
-	ComponentFixture,
-	TestBed,
-	fakeAsync,
-	tick,
-} from '@angular/core/testing';
+	beforeEach,
+	describe,
+	expect,
+	it,
+	type MockedObject,
+	vi,
+} from 'vitest';
+import { provideZonelessChangeDetection } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
+import { NgForm } from '@angular/forms';
 import { of, throwError } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 import { LoggedUserInfo } from '../shared/types';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
@@ -16,8 +22,8 @@ import { TOKEN_KEY } from '../shared/utils';
 describe('LoginComponent', () => {
 	let component: LoginComponent;
 	let fixture: ComponentFixture<LoginComponent>;
-	let authService: jasmine.SpyObj<AuthService>;
-	let router: jasmine.SpyObj<Router>;
+	let authService: MockedObject<AuthService>;
+	let router: MockedObject<Router>;
 
 	const mockUserInfo: LoggedUserInfo = {
 		token: 'mock-token-123',
@@ -25,61 +31,64 @@ describe('LoginComponent', () => {
 			id: 'user-1',
 			email: 'test@example.com',
 			role: 'ADMIN',
+			createdAt: '2024-01-01T00:00:00.000Z',
+			updatedAt: '2024-01-01T00:00:00.000Z',
 		},
 	};
 
-	beforeEach(async () => {
-		const authServiceSpy = jasmine.createSpyObj('AuthService', [
-			'login',
-			'getLoggedUserInfo',
-		]);
-		const routerSpy = jasmine.createSpyObj('Router', ['navigateByUrl']);
+	/** NgForm stand-in — the component only reads `valid`. */
+	const form = (valid: boolean): NgForm => ({ valid }) as NgForm;
 
-		await TestBed.configureTestingModule({
+	const createComponent = (): void => {
+		fixture = TestBed.createComponent(LoginComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+	};
+
+	beforeEach(() => {
+		TestBed.configureTestingModule({
 			imports: [LoginComponent, NoopAnimationsModule, FormsModule],
 			providers: [
-				{ provide: AuthService, useValue: authServiceSpy },
-				{ provide: Router, useValue: routerSpy },
+				provideZonelessChangeDetection(),
+				{
+					provide: AuthService,
+					useValue: { login: vi.fn(), getLoggedUserInfo: vi.fn() },
+				},
+				{ provide: Router, useValue: { navigateByUrl: vi.fn() } },
 			],
-		}).compileComponents();
+		});
 
-		authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
-		router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
+		authService = TestBed.inject(AuthService) as MockedObject<AuthService>;
+		router = TestBed.inject(Router) as MockedObject<Router>;
+
+		authService.getLoggedUserInfo.mockReturnValue(
+			null as unknown as LoggedUserInfo,
+		);
 	});
 
 	describe('Component Initialization', () => {
 		it('should create the component', () => {
-			authService.getLoggedUserInfo.and.returnValue(null as any);
-
-			fixture = TestBed.createComponent(LoginComponent);
-			component = fixture.componentInstance;
+			createComponent();
 
 			expect(component).toBeTruthy();
 		});
 
-		it('should redirect to products if user is already logged in', () => {
-			authService.getLoggedUserInfo.and.returnValue(mockUserInfo);
+		it('should redirect to dashboard if user is already logged in', () => {
+			authService.getLoggedUserInfo.mockReturnValue(mockUserInfo);
 
-			fixture = TestBed.createComponent(LoginComponent);
-			component = fixture.componentInstance;
+			createComponent();
 
-			expect(router.navigateByUrl).toHaveBeenCalledWith('products');
+			expect(router.navigateByUrl).toHaveBeenCalledWith('dashboard');
 		});
 
 		it('should not redirect if user is not logged in', () => {
-			authService.getLoggedUserInfo.and.returnValue(null as any);
-
-			fixture = TestBed.createComponent(LoginComponent);
-			component = fixture.componentInstance;
+			createComponent();
 
 			expect(router.navigateByUrl).not.toHaveBeenCalled();
 		});
 
 		it('should initialize loginModel with empty email and password', () => {
-			authService.getLoggedUserInfo.and.returnValue(null as any);
-
-			fixture = TestBed.createComponent(LoginComponent);
-			component = fixture.componentInstance;
+			createComponent();
 
 			expect(component['loginModel'].email).toBe('');
 			expect(component['loginModel'].password).toBe('');
@@ -88,15 +97,12 @@ describe('LoginComponent', () => {
 
 	describe('Password Visibility Toggle', () => {
 		beforeEach(() => {
-			authService.getLoggedUserInfo.and.returnValue(null as any);
-			fixture = TestBed.createComponent(LoginComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+			createComponent();
 		});
 
 		it('should toggle password visibility', () => {
 			const event = new MouseEvent('click');
-			spyOn(event, 'preventDefault');
+			vi.spyOn(event, 'preventDefault').mockReturnValue(undefined);
 
 			const initialState = component['hidePass']();
 			component['onPassEyeClick'](event);
@@ -107,112 +113,127 @@ describe('LoginComponent', () => {
 	});
 
 	describe('Login Submission', () => {
+		const credentials = {
+			email: 'test@example.com',
+			password: 'Password123!',
+		};
+
 		beforeEach(() => {
-			authService.getLoggedUserInfo.and.returnValue(null as any);
-			fixture = TestBed.createComponent(LoginComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+			createComponent();
+			component['loginModel'] = { ...credentials };
 		});
 
 		it('should not submit if form is invalid', () => {
-			const mockForm: any = { valid: false };
-
-			component['onLoginSubmit'](mockForm);
+			component['onLoginSubmit'](form(false));
 
 			expect(authService.login).not.toHaveBeenCalled();
 			expect(component['isLoading']()).toBe(false);
 		});
 
-		it('should call authService.login with correct credentials', fakeAsync(() => {
-			const mockForm: any = { valid: true };
-			const credentials = {
-				email: 'test@example.com',
-				password: 'Password123!',
-			};
-			component['loginModel'] = credentials;
-			authService.login.and.returnValue(of(mockUserInfo));
+		it('should call authService.login with correct credentials', () => {
+			authService.login.mockReturnValue(of(mockUserInfo));
 
-			component['onLoginSubmit'](mockForm);
-			tick();
+			component['onLoginSubmit'](form(true));
 
 			expect(authService.login).toHaveBeenCalledWith(credentials);
-		}));
+		});
 
-		it('should save token to localStorage on successful login', fakeAsync(() => {
-			const mockForm: any = { valid: true };
-			component['loginModel'] = {
-				email: 'test@example.com',
-				password: 'Password123!',
-			};
-			authService.login.and.returnValue(of(mockUserInfo));
-			spyOn(localStorage, 'setItem');
+		it('should save token to localStorage on successful login', () => {
+			authService.login.mockReturnValue(of(mockUserInfo));
+			const setItem = vi
+				.spyOn(Storage.prototype, 'setItem')
+				.mockReturnValue(undefined);
 
-			component['onLoginSubmit'](mockForm);
-			tick();
+			component['onLoginSubmit'](form(true));
 
-			expect(localStorage.setItem).toHaveBeenCalledWith(
+			expect(setItem).toHaveBeenCalledWith(
 				TOKEN_KEY,
 				JSON.stringify(mockUserInfo),
 			);
-		}));
+			setItem.mockRestore();
+		});
 
-		it('should navigate to products on successful login', fakeAsync(() => {
-			const mockForm: any = { valid: true };
-			component['loginModel'] = {
-				email: 'test@example.com',
-				password: 'Password123!',
-			};
-			authService.login.and.returnValue(of(mockUserInfo));
+		it('should navigate to dashboard on successful login', () => {
+			authService.login.mockReturnValue(of(mockUserInfo));
 
-			component['onLoginSubmit'](mockForm);
-			tick();
+			component['onLoginSubmit'](form(true));
 
-			expect(router.navigateByUrl).toHaveBeenCalledWith('products');
-		}));
+			expect(router.navigateByUrl).toHaveBeenCalledWith('dashboard');
+		});
 
-		it('should set isLoading to false if login returns no token', fakeAsync(() => {
-			const mockForm: any = { valid: true };
-			const invalidUserInfo: LoggedUserInfo = {
-				token: '',
-				user: mockUserInfo.user,
-			};
-			component['loginModel'] = {
-				email: 'test@example.com',
-				password: 'Password123!',
-			};
-			authService.login.and.returnValue(of(invalidUserInfo));
+		it('should set isLoading to false if login returns no token', () => {
+			authService.login.mockReturnValue(
+				of({ token: '', user: mockUserInfo.user }),
+			);
 
-			component['onLoginSubmit'](mockForm);
-			tick();
+			component['onLoginSubmit'](form(true));
 
 			expect(component['isLoading']()).toBe(false);
 			expect(router.navigateByUrl).not.toHaveBeenCalled();
-		}));
+			expect(component['loginErrorMessage']()).toBeTruthy();
+		});
 
-		it('should not save to localStorage on login error', fakeAsync(() => {
-			const mockForm: any = { valid: true };
-			component['loginModel'] = {
-				email: 'test@example.com',
-				password: 'WrongPassword!',
-			};
-			authService.login.and.returnValue(
+		it('should not save to localStorage on login error', () => {
+			authService.login.mockReturnValue(
 				throwError(() => new Error('Login failed')),
 			);
-			spyOn(localStorage, 'setItem');
+			const setItem = vi
+				.spyOn(Storage.prototype, 'setItem')
+				.mockReturnValue(undefined);
 
-			component['onLoginSubmit'](mockForm);
-			tick();
+			component['onLoginSubmit'](form(true));
 
-			expect(localStorage.setItem).not.toHaveBeenCalled();
-		}));
+			expect(setItem).not.toHaveBeenCalled();
+			expect(component['isLoading']()).toBe(false);
+			setItem.mockRestore();
+		});
+
+		it('should surface the server error message when there is one', () => {
+			authService.login.mockReturnValue(
+				throwError(
+					() =>
+						new HttpErrorResponse({
+							error: { message: 'Account locked' },
+							status: 401,
+						}),
+				),
+			);
+
+			component['onLoginSubmit'](form(true));
+
+			expect(component['loginErrorMessage']()).toBe('Account locked');
+		});
+
+		it('should fall back to a generic message when the error has none', () => {
+			authService.login.mockReturnValue(
+				throwError(() => new HttpErrorResponse({ status: 401 })),
+			);
+
+			component['onLoginSubmit'](form(true));
+
+			expect(component['loginErrorMessage']()).toBe(
+				'Invalid email or password. Please try again.',
+			);
+		});
+
+		it('should clear a previous error message on resubmit', () => {
+			authService.login.mockReturnValue(
+				throwError(() => new HttpErrorResponse({ status: 401 })),
+			);
+			component['onLoginSubmit'](form(true));
+			expect(component['loginErrorMessage']()).toBeTruthy();
+
+			authService.login.mockReturnValue(of(mockUserInfo));
+			vi.spyOn(Storage.prototype, 'setItem').mockReturnValue(undefined);
+			component['onLoginSubmit'](form(true));
+
+			expect(component['loginErrorMessage']()).toBeNull();
+		});
 	});
 
 	describe('Form Integration', () => {
 		beforeEach(() => {
-			authService.getLoggedUserInfo.and.returnValue(null as any);
-			fixture = TestBed.createComponent(LoginComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+			createComponent();
 		});
 
 		it('should bind email input to loginModel', async () => {
@@ -221,8 +242,9 @@ describe('LoginComponent', () => {
 			await fixture.whenStable();
 			fixture.detectChanges();
 
-			const compiled = fixture.nativeElement;
-			const emailInput = compiled.querySelector('input[name="email"]');
+			const emailInput = fixture.nativeElement.querySelector(
+				'input[name="email"]',
+			) as HTMLInputElement;
 
 			expect(emailInput.value).toBe('newtest@example.com');
 		});
@@ -233,8 +255,9 @@ describe('LoginComponent', () => {
 			await fixture.whenStable();
 			fixture.detectChanges();
 
-			const compiled = fixture.nativeElement;
-			const passwordInput = compiled.querySelector('input[name="password"]');
+			const passwordInput = fixture.nativeElement.querySelector(
+				'input[name="password"]',
+			) as HTMLInputElement;
 
 			expect(passwordInput.value).toBe('NewPassword123!');
 		});
@@ -243,18 +266,16 @@ describe('LoginComponent', () => {
 			component['isLoading'].set(true);
 			fixture.detectChanges();
 
-			const compiled = fixture.nativeElement;
-			const spinner = compiled.querySelector('mat-spinner');
-
-			expect(spinner).toBeTruthy();
+			expect(fixture.nativeElement.querySelector('mat-spinner')).toBeTruthy();
 		});
 
 		it('should enable submit button when not loading', () => {
 			component['isLoading'].set(false);
 			fixture.detectChanges();
 
-			const compiled = fixture.nativeElement;
-			const button = compiled.querySelector('button.main-btn');
+			const button = fixture.nativeElement.querySelector(
+				'button.main-btn',
+			) as HTMLButtonElement;
 
 			expect(button.disabled).toBe(false);
 		});
