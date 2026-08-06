@@ -1,11 +1,15 @@
 import {
-	ComponentFixture,
-	TestBed,
-	fakeAsync,
-	tick,
-} from '@angular/core/testing';
-import { MatDialog } from '@angular/material/dialog';
-import { AuthService } from '../../services/auth.service';
+	beforeEach,
+	describe,
+	expect,
+	it,
+	type MockedObject,
+	vi,
+} from 'vitest';
+import { provideZonelessChangeDetection } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { LoaderService } from '@ferhaps/easy-ui-lib';
 import { of, throwError } from 'rxjs';
 import { LogComponent } from './log.component';
@@ -15,17 +19,16 @@ import { ProductService } from '../products/data-access/product.service';
 import { CategoryService } from '../categories/data-access/category.service';
 import { Log, User, Product, Category } from '../../shared/types';
 import { FormsModule } from '@angular/forms';
+import { MatAutocomplete } from '@angular/material/autocomplete';
 
 describe('LogComponent', () => {
 	let component: LogComponent;
 	let fixture: ComponentFixture<LogComponent>;
-	let logService: jasmine.SpyObj<LogService>;
-	let userService: jasmine.SpyObj<UserService>;
-	let productService: jasmine.SpyObj<ProductService>;
-	let categoryService: jasmine.SpyObj<CategoryService>;
-	let authService: jasmine.SpyObj<AuthService>;
-	let loaderService: jasmine.SpyObj<LoaderService>;
-	let dialog: jasmine.SpyObj<MatDialog>;
+	let logService: MockedObject<LogService>;
+	let userService: MockedObject<UserService>;
+	let productService: MockedObject<ProductService>;
+	let categoryService: MockedObject<CategoryService>;
+	let loaderService: MockedObject<LoaderService>;
 
 	const mockLogs: Log[] = [
 		{
@@ -46,8 +49,20 @@ describe('LogComponent', () => {
 	];
 
 	const mockUsers: User[] = [
-		{ id: 'user1', email: 'user1@test.com', role: 'ADMIN' },
-		{ id: 'user2', email: 'user2@test.com', role: 'OPERATOR' },
+		{
+			id: 'user1',
+			email: 'user1@test.com',
+			role: 'ADMIN',
+			createdAt: '2024-01-01T00:00:00.000Z',
+			updatedAt: '2024-01-01T00:00:00.000Z',
+		},
+		{
+			id: 'user2',
+			email: 'user2@test.com',
+			role: 'OPERATOR',
+			createdAt: '2024-01-02T00:00:00.000Z',
+			updatedAt: '2024-01-02T00:00:00.000Z',
+		},
 	];
 
 	const mockProducts: Product[] = [
@@ -72,8 +87,18 @@ describe('LogComponent', () => {
 	];
 
 	const mockCategories: Category[] = [
-		{ id: 'cat1', name: 'Category 1' },
-		{ id: 'cat2', name: 'Category 2' },
+		{
+			id: 'cat1',
+			name: 'Category 1',
+			createdAt: '2024-01-01T00:00:00.000Z',
+			updatedAt: '2024-01-01T00:00:00.000Z',
+		},
+		{
+			id: 'cat2',
+			name: 'Category 2',
+			createdAt: '2024-01-02T00:00:00.000Z',
+			updatedAt: '2024-01-02T00:00:00.000Z',
+		},
 	];
 
 	const mockLogEvents: string[] = [
@@ -83,73 +108,64 @@ describe('LogComponent', () => {
 		'USER_LOGOUT',
 	];
 
-	beforeEach(async () => {
-		const logServiceSpy = jasmine.createSpyObj('LogService', [
-			'getLogs',
-			'getLogEvents',
-		]);
-		const userServiceSpy = jasmine.createSpyObj('UserService', ['getUsers']);
-		const productServiceSpy = jasmine.createSpyObj('ProductService', [
-			'getProducts',
-		]);
-		const categoryServiceSpy = jasmine.createSpyObj('CategoryService', [
-			'getCategories',
-		]);
-		const authServiceSpy = jasmine.createSpyObj('AuthService', [
-			'getLoggedUserInfo',
-		]);
-		const loaderServiceSpy = jasmine.createSpyObj('LoaderService', [
-			'setLoading',
-		]);
-		const dialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
+	/** MatAutocomplete stand-in — only `options.forEach` is ever touched. */
+	const autoStub = (): MatAutocomplete =>
+		({ options: { forEach: vi.fn() } }) as unknown as MatAutocomplete;
 
-		await TestBed.configureTestingModule({
-			imports: [LogComponent, FormsModule],
+	/** Creates the component, runs ngOnInit, and settles the stores' promises. */
+	const createComponent = async (): Promise<void> => {
+		fixture = TestBed.createComponent(LogComponent);
+		component = fixture.componentInstance;
+		fixture.detectChanges();
+		await fixture.whenStable();
+		fixture.detectChanges();
+	};
+
+	beforeEach(() => {
+		TestBed.configureTestingModule({
+			imports: [LogComponent, FormsModule, NoopAnimationsModule],
 			providers: [
-				{ provide: LogService, useValue: logServiceSpy },
-				{ provide: UserService, useValue: userServiceSpy },
-				{ provide: ProductService, useValue: productServiceSpy },
-				{ provide: CategoryService, useValue: categoryServiceSpy },
-				{ provide: AuthService, useValue: authServiceSpy },
-				{ provide: LoaderService, useValue: loaderServiceSpy },
-				{ provide: MatDialog, useValue: dialogSpy },
+				provideZonelessChangeDetection(),
+				provideRouter([]),
+				{
+					provide: LogService,
+					useValue: { getLogs: vi.fn(), getLogEvents: vi.fn() },
+				},
+				{ provide: UserService, useValue: { getUsers: vi.fn() } },
+				{ provide: ProductService, useValue: { getProducts: vi.fn() } },
+				{ provide: CategoryService, useValue: { getCategories: vi.fn() } },
+				{ provide: LoaderService, useValue: { setLoading: vi.fn() } },
 			],
-		}).compileComponents();
+		});
 
-		logService = TestBed.inject(LogService) as jasmine.SpyObj<LogService>;
-		userService = TestBed.inject(UserService) as jasmine.SpyObj<UserService>;
+		logService = TestBed.inject(LogService) as MockedObject<LogService>;
+		userService = TestBed.inject(UserService) as MockedObject<UserService>;
 		productService = TestBed.inject(
 			ProductService,
-		) as jasmine.SpyObj<ProductService>;
+		) as MockedObject<ProductService>;
 		categoryService = TestBed.inject(
 			CategoryService,
-		) as jasmine.SpyObj<CategoryService>;
-		authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
+		) as MockedObject<CategoryService>;
 		loaderService = TestBed.inject(
 			LoaderService,
-		) as jasmine.SpyObj<LoaderService>;
-		dialog = TestBed.inject(MatDialog) as jasmine.SpyObj<MatDialog>;
+		) as MockedObject<LoaderService>;
 
-		// Default mock returns
-		logService.getLogs.and.returnValue(of(mockLogs));
-		logService.getLogEvents.and.returnValue(of(mockLogEvents));
-		userService.getUsers.and.returnValue(of(mockUsers));
-		productService.getProducts.and.returnValue(of(mockProducts));
-		categoryService.getCategories.and.returnValue(of(mockCategories));
+		logService.getLogs.mockReturnValue(of(mockLogs));
+		logService.getLogEvents.mockReturnValue(of(mockLogEvents));
+		userService.getUsers.mockResolvedValue(mockUsers);
+		productService.getProducts.mockReturnValue(of(mockProducts));
+		categoryService.getCategories.mockResolvedValue(mockCategories);
 	});
 
 	describe('Component Initialization', () => {
-		it('should create the component', () => {
-			fixture = TestBed.createComponent(LogComponent);
-			component = fixture.componentInstance;
+		it('should create the component', async () => {
+			await createComponent();
 
 			expect(component).toBeTruthy();
 		});
 
-		it('should load initial data on init', () => {
-			fixture = TestBed.createComponent(LogComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+		it('should load initial data on init', async () => {
+			await createComponent();
 
 			expect(logService.getLogs).toHaveBeenCalled();
 			expect(logService.getLogEvents).toHaveBeenCalled();
@@ -158,108 +174,125 @@ describe('LogComponent', () => {
 			expect(categoryService.getCategories).toHaveBeenCalled();
 		});
 
-		it('should populate logs array with data', () => {
-			fixture = TestBed.createComponent(LogComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+		it('should populate logs array with data', async () => {
+			await createComponent();
 
 			expect(component['logs']?.length).toBe(2);
 			expect(component['logs']).toEqual(mockLogs);
 		});
 
-		it('should populate filter options', () => {
-			fixture = TestBed.createComponent(LogComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+		it('should populate filter options', async () => {
+			await createComponent();
 
-			expect(component['filteredLogEvents']).toEqual(mockLogEvents);
-			expect(component['filteredUsers']).toEqual(mockUsers);
+			expect(component['filteredLogEvents']()).toEqual(mockLogEvents);
+			expect(component['filteredUsers']()).toEqual(mockUsers);
 			expect(component['filteredProducts']).toEqual(mockProducts);
-			expect(component['filteredCategories']).toEqual(mockCategories);
+			expect(component['filteredCategories']()).toEqual(mockCategories);
 		});
 
-		it('should set loading state correctly', () => {
-			fixture = TestBed.createComponent(LogComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+		it('should set loading state correctly', async () => {
+			await createComponent();
 
 			expect(loaderService.setLoading).toHaveBeenCalledWith(true);
 			expect(loaderService.setLoading).toHaveBeenCalledWith(false);
 		});
+
+		it('should report no active filters on a fresh load', async () => {
+			await createComponent();
+
+			expect(component['isLogFiltered']()).toBe(false);
+		});
 	});
 
 	describe('Date Filters', () => {
-		beforeEach(() => {
-			fixture = TestBed.createComponent(LogComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+		beforeEach(async () => {
+			await createComponent();
 		});
 
-		it('should filter logs by date range', () => {
+		it('should filter logs by date range', async () => {
 			const startDate = new Date('2024-01-01');
 			const endDate = new Date('2024-01-02');
 
-			component['range'] = { start: startDate, end: endDate };
+			component['range'].set({ start: startDate, end: endDate });
 			component['onDateChange']();
 
 			expect(logService.getLogs).toHaveBeenCalledWith(
-				jasmine.objectContaining({
-					startDate,
-					endDate,
-				}),
+				expect.objectContaining({ startDate, endDate }),
 			);
 		});
 
-		it('should apply quick date filter', () => {
-			component['selectedDateFilter'] = 'Today';
+		it('should apply quick date filter', async () => {
+			component['selectedDateFilter'].set('Today');
 			component['onDateFilterChange']();
 
 			expect(logService.getLogs).toHaveBeenCalled();
-			expect(component['range'].start).toBeDefined();
-			expect(component['range'].end).toBeDefined();
+			expect(component['range']().start).toBeDefined();
+			expect(component['range']().end).toBeDefined();
 		});
 
-		it('should set date range when quick filter is selected', () => {
-			component['selectedDateFilter'] = 'This week';
+		it('should set date range when quick filter is selected', async () => {
+			component['selectedDateFilter'].set('This week');
 			component['onDateFilterChange']();
 
-			expect(component['range'].start).toBeDefined();
-			expect(component['range'].end).toBeDefined();
+			expect(component['range']().start).toBeDefined();
+			expect(component['range']().end).toBeDefined();
+		});
+
+		it('should clear the range when no quick filter is selected', async () => {
+			component['selectedDateFilter'].set('Today');
+			component['onDateFilterChange']();
+
+			component['selectedDateFilter'].set(undefined);
+			component['onDateFilterChange']();
+
+			expect(component['range']().start).toBeNull();
+			expect(component['range']().end).toBeNull();
+		});
+
+		it('should promote a "more" filter into the quick filter slot', async () => {
+			const firstQuick = component['quickDateFiltes']()[0];
+			const promoted = component['moreFilters']()[1];
+
+			component['switchQuickFilterPlaces'](promoted, 1);
+
+			expect(component['quickDateFiltes']()[0]).toBe(promoted);
+			expect(component['moreFilters']()[1]).toBe(firstQuick);
 		});
 	});
 
 	describe('Event Filter', () => {
-		beforeEach(() => {
-			fixture = TestBed.createComponent(LogComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+		beforeEach(async () => {
+			await createComponent();
 		});
 
-		it('should filter logs by event type', () => {
-			logService.getLogs.calls.reset();
-			component['selectedEvent'] = 'PRODUCT_CREATED';
-			component['onEventOptionClick'](null as any);
+		it('should filter logs by event type', async () => {
+			logService.getLogs.mockClear();
+			component['selectedEvent'].set('PRODUCT_CREATED');
+			component['onEventOptionClick'](autoStub());
 
 			expect(logService.getLogs).toHaveBeenCalledWith(
-				jasmine.objectContaining({
-					event: 'PRODUCT_CREATED',
-				}),
+				expect.objectContaining({ event: 'PRODUCT_CREATED' }),
 			);
 		});
 
-		it('should filter event autocomplete options', () => {
-			component['searchEvent'] = 'PRODUCT';
-			component['filteredLogEvents'] = component['filterAutocomplete'](
-				'events',
-				'PRODUCT',
-			);
+		it('should clear the event when the same option is clicked twice', async () => {
+			component['selectedEvent'].set('PRODUCT_CREATED');
+			component['onEventOptionClick'](autoStub());
 
-			expect(component['filteredLogEvents']).toBeDefined();
-			expect(component['filteredLogEvents'].length).toBeLessThanOrEqual(
-				mockLogEvents.length,
-			);
+			component['onEventOptionClick'](autoStub());
+
+			expect(component['selectedEvent']()).toBe('');
+			expect(component['filteredLogEvents']()).toEqual(mockLogEvents);
+		});
+
+		it('should filter event autocomplete options', async () => {
+			component['filterAutocomplete']('events', 'PRODUCT');
+
 			expect(
-				component['filteredLogEvents'].every((e: string) =>
+				component['filteredLogEvents']().length,
+			).toBeLessThanOrEqual(mockLogEvents.length);
+			expect(
+				component['filteredLogEvents']().every((e: string) =>
 					component['snakeCasePipe']
 						.transform(e)
 						.toLowerCase()
@@ -267,41 +300,49 @@ describe('LogComponent', () => {
 				),
 			).toBe(true);
 		});
+
+		it('should restore all events when the search term is cleared', async () => {
+			component['filterAutocomplete']('events', 'PRODUCT');
+			component['filterAutocomplete']('events', undefined);
+
+			expect(component['filteredLogEvents']()).toEqual(mockLogEvents);
+		});
 	});
 
 	describe('User Filter', () => {
-		beforeEach(() => {
-			fixture = TestBed.createComponent(LogComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+		beforeEach(async () => {
+			await createComponent();
 		});
 
-		it('should filter logs by user', () => {
-			logService.getLogs.calls.reset();
-			component['selectedUserId'] = 'user1';
+		it('should filter logs by user', async () => {
+			logService.getLogs.mockClear();
+			component['selectedUserId'].set('user1');
 			component['searchUser'] = 'user1@test.com';
-			component['onUsersClick'](null as any);
+			component['onUsersClick'](autoStub());
 
 			expect(logService.getLogs).toHaveBeenCalledWith(
-				jasmine.objectContaining({
-					user: 'user1',
-				}),
+				expect.objectContaining({ user: 'user1' }),
 			);
 		});
 
-		it('should filter user autocomplete options', () => {
-			component['searchUser'] = 'user1';
-			component['filteredUsers'] = component['filterAutocomplete'](
-				'users',
-				'user1',
-			);
+		it('should clear the user when the same option is clicked twice', async () => {
+			component['selectedUserId'].set('user1');
+			component['onUsersClick'](autoStub());
 
-			expect(component['filteredUsers']).toBeDefined();
-			expect(component['filteredUsers'].length).toBeLessThanOrEqual(
+			component['onUsersClick'](autoStub());
+
+			expect(component['selectedUserId']()).toBe('');
+			expect(component['filteredUsers']()).toEqual(mockUsers);
+		});
+
+		it('should filter user autocomplete options', async () => {
+			component['filterAutocomplete']('users', 'user1');
+
+			expect(component['filteredUsers']().length).toBeLessThanOrEqual(
 				mockUsers.length,
 			);
 			expect(
-				component['filteredUsers'].every((u: User) =>
+				component['filteredUsers']().every((u: User) =>
 					u.email.toLowerCase().includes('user1'),
 				),
 			).toBe(true);
@@ -309,33 +350,24 @@ describe('LogComponent', () => {
 	});
 
 	describe('Product Filter', () => {
-		beforeEach(() => {
-			fixture = TestBed.createComponent(LogComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+		beforeEach(async () => {
+			await createComponent();
 		});
 
-		it('should filter logs by product', () => {
-			logService.getLogs.calls.reset();
-			component['selectedProductId'] = 'product1';
+		it('should filter logs by product', async () => {
+			logService.getLogs.mockClear();
+			component['selectedProductId'].set('product1');
 			component['searchProduct'] = 'Product 1';
-			component['onProductClick'](null as any);
+			component['onProductClick'](autoStub());
 
 			expect(logService.getLogs).toHaveBeenCalledWith(
-				jasmine.objectContaining({
-					product: 'product1',
-				}),
+				expect.objectContaining({ product: 'product1' }),
 			);
 		});
 
-		it('should filter product autocomplete options', () => {
-			component['searchProduct'] = 'Product 1';
-			component['filteredProducts'] = component['filterAutocomplete'](
-				'products',
-				'Product 1',
-			);
+		it('should filter product autocomplete options', async () => {
+			component['filterAutocomplete']('products', 'Product 1');
 
-			expect(component['filteredProducts']).toBeDefined();
 			expect(component['filteredProducts'].length).toBeLessThanOrEqual(
 				mockProducts.length,
 			);
@@ -348,38 +380,29 @@ describe('LogComponent', () => {
 	});
 
 	describe('Category Filter', () => {
-		beforeEach(() => {
-			fixture = TestBed.createComponent(LogComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+		beforeEach(async () => {
+			await createComponent();
 		});
 
-		it('should filter logs by category', () => {
-			logService.getLogs.calls.reset();
-			component['selectedCategoryId'] = 'cat1';
+		it('should filter logs by category', async () => {
+			logService.getLogs.mockClear();
+			component['selectedCategoryId'].set('cat1');
 			component['searchCategory'] = 'Category 1';
-			component['onCategoryClick'](null as any);
+			component['onCategoryClick'](autoStub());
 
 			expect(logService.getLogs).toHaveBeenCalledWith(
-				jasmine.objectContaining({
-					category: 'cat1',
-				}),
+				expect.objectContaining({ category: 'cat1' }),
 			);
 		});
 
-		it('should filter category autocomplete options', () => {
-			component['searchCategory'] = 'Category 1';
-			component['filteredCategories'] = component['filterAutocomplete'](
-				'categories',
-				'Category 1',
-			);
+		it('should filter category autocomplete options', async () => {
+			component['filterAutocomplete']('categories', 'Category 1');
 
-			expect(component['filteredCategories']).toBeDefined();
-			expect(component['filteredCategories'].length).toBeLessThanOrEqual(
+			expect(component['filteredCategories']().length).toBeLessThanOrEqual(
 				mockCategories.length,
 			);
 			expect(
-				component['filteredCategories'].every((c: Category) =>
+				component['filteredCategories']().every((c: Category) =>
 					c.name.toLowerCase().includes('category 1'),
 				),
 			).toBe(true);
@@ -387,81 +410,66 @@ describe('LogComponent', () => {
 	});
 
 	describe('Clear Filters', () => {
-		beforeEach(() => {
-			fixture = TestBed.createComponent(LogComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+		beforeEach(async () => {
+			await createComponent();
 		});
 
-		it('should clear all filters', () => {
-			component['selectedEvent'] = 'PRODUCT_CREATED';
-			component['selectedUserId'] = 'user1';
-			component['selectedProductId'] = 'product1';
-			component['selectedCategoryId'] = 'cat1';
-			component['selectedDateFilter'] = 'Today';
-			component['range'] = { start: new Date(), end: new Date() };
+		it('should clear all filters', async () => {
+			component['selectedEvent'].set('PRODUCT_CREATED');
+			component['selectedUserId'].set('user1');
+			component['selectedProductId'].set('product1');
+			component['selectedCategoryId'].set('cat1');
+			component['selectedDateFilter'].set('Today');
+			component['range'].set({ start: new Date(), end: new Date() });
 
-			const mockAutoComplete = {
-				options: {
-					forEach: jasmine.createSpy('forEach'),
-				},
-			} as any;
+			component['clearFilters'](autoStub());
 
-			component['clearFilters'](mockAutoComplete);
-
-			expect(component['selectedEvent']).toBe('');
-			expect(component['selectedUserId']).toBeUndefined();
-			expect(component['selectedProductId']).toBeUndefined();
-			expect(component['selectedCategoryId']).toBeUndefined();
-			expect(component['selectedDateFilter']).toBeUndefined();
-			expect(component['range'].start).toBeNull();
-			expect(component['range'].end).toBeNull();
+			expect(component['selectedEvent']()).toBe('');
+			expect(component['selectedUserId']()).toBeUndefined();
+			expect(component['selectedProductId']()).toBeUndefined();
+			expect(component['selectedCategoryId']()).toBeUndefined();
+			expect(component['selectedDateFilter']()).toBeUndefined();
+			expect(component['range']().start).toBeNull();
+			expect(component['range']().end).toBeNull();
+			expect(component['isLogFiltered']()).toBe(false);
 		});
 
-		it('should reload logs after clearing filters', () => {
-			component['selectedEvent'] = 'PRODUCT_CREATED';
-			logService.getLogs.calls.reset();
+		it('should reload logs after clearing filters', async () => {
+			component['selectedEvent'].set('PRODUCT_CREATED');
+			logService.getLogs.mockClear();
 
-			const mockAutoComplete = {
-				options: {
-					forEach: jasmine.createSpy('forEach'),
-				},
-			} as any;
+			component['clearFilters'](autoStub());
 
-			component['clearFilters'](mockAutoComplete);
-
-			expect(logService.getLogs.calls.count()).toBe(1);
+			expect(logService.getLogs.mock.calls.length).toBe(1);
 		});
 	});
 
 	describe('Infinite Scroll', () => {
-		beforeEach(() => {
-			fixture = TestBed.createComponent(LogComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+		beforeEach(async () => {
+			await createComponent();
 		});
 
-		it('should load more logs on scroll', fakeAsync(() => {
+		it('should load more logs on scroll', async () => {
 			component['stopScrolling'] = false;
-			logService.getLogs.calls.reset();
-			logService.getLogs.and.returnValue(of([...mockLogs]));
+			logService.getLogs.mockClear();
+			logService.getLogs.mockReturnValue(of([...mockLogs]));
 
 			component['onScroll']();
-			tick();
+			await fixture.whenStable();
 
-			expect(logService.getLogs.calls.count()).toBe(1);
-		}));
-
-		it('should not load more logs if already fetching', () => {
-			logService.getLogs.calls.reset();
-			component['isFetching'] = true;
-
-			component['onScroll']();
-
-			expect(logService.getLogs.calls.count()).toBe(0);
+			expect(logService.getLogs.mock.calls.length).toBe(1);
 		});
 
-		it('should set logs to new response', fakeAsync(() => {
+		it('should not load more logs if already fetching', async () => {
+			logService.getLogs.mockClear();
+			component['isFetching'].set(true);
+
+			component['onScroll']();
+
+			expect(logService.getLogs.mock.calls.length).toBe(0);
+		});
+
+		it('should set logs to new response', async () => {
 			const newLogs: Log[] = [
 				{
 					id: 'log3',
@@ -482,110 +490,83 @@ describe('LogComponent', () => {
 			];
 
 			component['stopScrolling'] = false;
-			logService.getLogs.calls.reset();
-			logService.getLogs.and.returnValue(of(newLogs));
+			logService.getLogs.mockClear();
+			logService.getLogs.mockReturnValue(of(newLogs));
 
 			component['onScroll']();
-			tick();
+			await fixture.whenStable();
 
 			expect(component['logs']).toEqual(newLogs);
-		}));
+		});
 
-		it('should increase items per page on scroll', fakeAsync(() => {
+		it('should increase items per page on scroll', async () => {
 			component['stopScrolling'] = false;
-			logService.getLogs.calls.reset();
-			logService.getLogs.and.returnValue(of([...mockLogs]));
+			logService.getLogs.mockClear();
+			logService.getLogs.mockReturnValue(of([...mockLogs]));
 			const initialItemsPerPage = component['itemsPerPage'];
 
 			component['onScroll']();
-			tick();
+			await fixture.whenStable();
 
 			expect(component['itemsPerPage']).toBe(initialItemsPerPage + 50);
-		}));
+		});
 
-		it('should stop scrolling if fewer items returned than page size', () => {
-			const fewLogs: Log[] = [mockLogs[0]];
-			logService.getLogs.calls.reset();
-			logService.getLogs.and.returnValue(of(fewLogs));
+		it('should stop scrolling if fewer items returned than page size', async () => {
+			logService.getLogs.mockClear();
+			logService.getLogs.mockReturnValue(of([mockLogs[0]]));
 
 			component['onScroll']();
+			await fixture.whenStable();
 
 			expect(component['stopScrolling']).toBe(true);
 		});
 
-		it('should not load more logs if stopScrolling is true', () => {
-			logService.getLogs.calls.reset();
+		it('should not load more logs if stopScrolling is true', async () => {
+			logService.getLogs.mockClear();
 			component['stopScrolling'] = true;
 
 			component['onScroll']();
 
-			expect(logService.getLogs.calls.count()).toBe(0);
+			expect(logService.getLogs.mock.calls.length).toBe(0);
 		});
 
-		it('should set isFetching to true then false after loading', fakeAsync(() => {
+		it('should set isFetching to true then false after loading', async () => {
 			let isFetchingDuringCall = false;
 			component['stopScrolling'] = false;
-			logService.getLogs.calls.reset();
-			logService.getLogs.and.callFake(() => {
-				isFetchingDuringCall = component['isFetching'];
+			logService.getLogs.mockClear();
+			logService.getLogs.mockImplementation(() => {
+				isFetchingDuringCall = component['isFetching']();
 				return of([...mockLogs]);
 			});
 
 			component['onScroll']();
-			tick();
+			await fixture.whenStable();
 
 			expect(isFetchingDuringCall).toBe(true);
-			expect(component['isFetching']).toBe(false);
-		}));
-	});
-
-	describe('Action Handling', () => {
-		beforeEach(() => {
-			fixture = TestBed.createComponent(LogComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
-		});
-
-		it('should handle action event', () => {
-			spyOn(console, 'log');
-			const action = { action: 'details', data: mockLogs[0] };
-
-			component['onAction'](action);
-
-			expect(console.log).toHaveBeenCalledWith('action', action);
+			expect(component['isFetching']()).toBe(false);
 		});
 	});
 
 	describe('Error Handling', () => {
-		it('should handle errors when loading logs', () => {
-			logService.getLogs.and.returnValue(
+		it('should handle errors when loading logs', async () => {
+			logService.getLogs.mockReturnValue(
 				throwError(() => new Error('Error loading logs')),
 			);
-			logService.getLogEvents.and.returnValue(of(mockLogEvents));
-			userService.getUsers.and.returnValue(of(mockUsers));
-			productService.getProducts.and.returnValue(of(mockProducts));
-			categoryService.getCategories.and.returnValue(of(mockCategories));
 
-			fixture = TestBed.createComponent(LogComponent);
-			component = fixture.componentInstance;
-			fixture.detectChanges();
+			await createComponent();
 
 			expect(loaderService.setLoading).toHaveBeenCalledWith(false);
+			expect(component['isFetching']()).toBe(false);
 		});
 
-		it('should handle errors when loading users', () => {
-			logService.getLogs.and.returnValue(of(mockLogs));
-			logService.getLogEvents.and.returnValue(of(mockLogEvents));
-			userService.getUsers.and.returnValue(
-				throwError(() => new Error('Error loading users')),
+		it('should handle errors when loading users', async () => {
+			userService.getUsers.mockRejectedValue(
+				new Error('Error loading users'),
 			);
-			productService.getProducts.and.returnValue(of(mockProducts));
-			categoryService.getCategories.and.returnValue(of(mockCategories));
 
-			fixture = TestBed.createComponent(LogComponent);
-			component = fixture.componentInstance;
+			await createComponent();
 
-			expect(() => fixture.detectChanges()).not.toThrow();
+			expect(component['filteredUsers']()).toEqual([]);
 		});
 	});
 });
