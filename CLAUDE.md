@@ -8,10 +8,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm start          # dev server (ng serve)
 npm run build      # production build
 npm run watch      # dev build with watch mode
-npm test           # run tests (Karma + Jasmine)
+npm test           # run tests (Vitest + jsdom, via @angular/build:unit-test)
 ```
 
-To run a single test file: `npx ng test --include='**/products.component.spec.ts'`
+To run a single test file: `npx ng test --include='**/products.component.spec.ts'`. Note the builder typechecks *every* spec regardless of `--include`, so a type error in an unrelated spec blocks the run.
+
+## Testing
+
+Vitest with the `jsdom` environment. There is no zone.js in this project, which shapes how specs must be written:
+
+- `fakeAsync` / `tick` / `waitForAsync` are **unavailable**. Await `fixture.whenStable()` instead.
+- Every spec must provide `provideZonelessChangeDetection()` in `TestBed.configureTestingModule`.
+- Components backed by a store that loads asynchronously need `detectChanges()` → `await whenStable()` → `detectChanges()`. The first pass runs the loading effect while status is still `'loading'`, the second after the promise resolves; collapsing it to one pass silently loses the `setLoading(true)` transition.
+- Mocks for services a component pulls in through an Angular Material module (`MatDialog` via `MatDialogModule`) must go through `.overrideProvider()` — a plain entry in `providers` loses to the component's own imports.
+- [src/test-setup.ts](src/test-setup.ts) stubs `scrollTo`/`scrollIntoView`, which jsdom does not implement. Register new global test shims there.
 
 ## Architecture
 
