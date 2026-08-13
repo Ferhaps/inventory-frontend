@@ -3,7 +3,10 @@ import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
 import { Category } from '../../../shared/types';
-import { JSON_HTTP_OPTIONS } from '../../../shared/utils';
+import {
+	JSON_HTTP_OPTIONS,
+	JSON_OPTIONS_WITH_GLOBAL_LOADER,
+} from '../../../shared/utils';
 
 @Injectable({
 	providedIn: 'root',
@@ -14,7 +17,12 @@ export class CategoryService {
 	private http = inject(HttpClient);
 
 	public getCategories(): Promise<Category[]> {
-		return firstValueFrom(this.http.get<Category[]>(this.categoryUrl, JSON_HTTP_OPTIONS));
+		return firstValueFrom(
+			this.http.get<Category[]>(
+				this.categoryUrl,
+				JSON_OPTIONS_WITH_GLOBAL_LOADER,
+			),
+		);
 	}
 
 	public addCategory(name: string): Observable<Category> {

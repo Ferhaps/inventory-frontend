@@ -12,7 +12,7 @@ import { CategoriesComponent } from './categories.component';
 import { MatDialog } from '@angular/material/dialog';
 import { CategoryService } from './data-access/category.service';
 import { AuthService } from '../../services/auth.service';
-import { ConfirmDialogService, LoaderService } from '@ferhaps/easy-ui-lib';
+import { ConfirmDialogService } from '@ferhaps/easy-ui-lib';
 import { Category, LoggedUserInfo } from '../../shared/types';
 import { of } from 'rxjs';
 
@@ -21,7 +21,6 @@ describe('CategoriesComponent', () => {
 	let fixture: ComponentFixture<CategoriesComponent>;
 	let categoryService: MockedObject<CategoryService>;
 	let authService: MockedObject<AuthService>;
-	let loaderService: MockedObject<LoaderService>;
 	let confirmDialog: MockedObject<ConfirmDialogService>;
 	let dialog: MockedObject<MatDialog>;
 
@@ -63,9 +62,8 @@ describe('CategoriesComponent', () => {
 	};
 
 	/**
-	 * Creates the component and settles the store's async load. The first
-	 * detectChanges runs the loading effect while the store is still 'loading';
-	 * the second runs it again once the promise has resolved.
+	 * Creates the component and settles the store's async load — the second
+	 * detectChanges runs once the store's promise has resolved.
 	 */
 	const createComponent = async (): Promise<void> => {
 		fixture = TestBed.createComponent(CategoriesComponent);
@@ -89,7 +87,6 @@ describe('CategoriesComponent', () => {
 					},
 				},
 				{ provide: AuthService, useValue: { getLoggedUserInfo: vi.fn() } },
-				{ provide: LoaderService, useValue: { setLoading: vi.fn() } },
 				{ provide: ConfirmDialogService, useValue: { confirm: vi.fn() } },
 			],
 			// MatDialogModule is imported by the component itself, so a plain
@@ -100,9 +97,6 @@ describe('CategoriesComponent', () => {
 			CategoryService,
 		) as MockedObject<CategoryService>;
 		authService = TestBed.inject(AuthService) as MockedObject<AuthService>;
-		loaderService = TestBed.inject(
-			LoaderService,
-		) as MockedObject<LoaderService>;
 		confirmDialog = TestBed.inject(
 			ConfirmDialogService,
 		) as MockedObject<ConfirmDialogService>;
@@ -143,13 +137,6 @@ describe('CategoriesComponent', () => {
 			expect(component['categories']()).toEqual(
 				mockCategories.map((c) => ({ ...c, actions: ['Delete'] })),
 			);
-		});
-
-		it('should set loading state correctly', async () => {
-			await createComponent();
-
-			expect(loaderService.setLoading).toHaveBeenCalledWith(true);
-			expect(loaderService.setLoading).toHaveBeenCalledWith(false);
 		});
 
 		it('should leave the list empty when loading fails', async () => {

@@ -8,8 +8,8 @@ import {
 	signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { forkJoin } from 'rxjs';
-import { LoaderService } from '@ferhaps/easy-ui-lib';
+import { catchError, EMPTY, forkJoin } from 'rxjs';
+import { LoadingService } from '@ferhaps/easy-ui-lib';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivityFeedComponent } from './activity-feed/activity-feed.component';
 import { CategoryChartComponent } from './category-chart/category-chart.component';
@@ -24,11 +24,7 @@ const LOW_STOCK_THRESHOLD = 20;
 @Component({
 	selector: 'app-dashboard',
 	host: { class: 'w-full h-full' },
-	imports: [
-		MatIconModule,
-		ActivityFeedComponent,
-		CategoryChartComponent
-	],
+	imports: [MatIconModule, ActivityFeedComponent, CategoryChartComponent],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	templateUrl: './dashboard.component.html',
 	styleUrl: './dashboard.component.scss',
@@ -48,11 +44,10 @@ export class DashboardComponent implements OnInit {
 	private readonly usersStore = inject(UsersStore);
 	private productService = inject(ProductService);
 	private logService = inject(LogService);
-	private loaderService = inject(LoaderService);
+	private loading = inject(LoadingService);
 	private destroyRef = inject(DestroyRef);
 
 	public ngOnInit(): void {
-		this.loaderService.setLoading(true);
 		this.categoriesStore.load();
 		this.usersStore.load();
 
@@ -60,21 +55,20 @@ export class DashboardComponent implements OnInit {
 			products: this.productService.getProducts(),
 			logs: this.logService.getLogs({ pageSize: 10 }),
 		})
-			.pipe(takeUntilDestroyed(this.destroyRef))
-			.subscribe({
-				next: ({ products, logs }) => {
-					this.products = products;
+			.pipe(
+				this.loading.withLoading(),
+				catchError(() => EMPTY),
+				takeUntilDestroyed(this.destroyRef),
+			)
+			.subscribe(({ products, logs }) => {
+				this.products = products;
 
-					this.totalProducts.set(products.length);
-					this.lowStockCount.set(
-						products.filter((p) => p.quantity < LOW_STOCK_THRESHOLD).length,
-					);
-					this.recentLogs.set(logs);
-					this.isLoaded.set(true);
-
-					this.loaderService.setLoading(false);
-				},
-				error: () => this.loaderService.setLoading(false),
+				this.totalProducts.set(products.length);
+				this.lowStockCount.set(
+					products.filter((p) => p.quantity < LOW_STOCK_THRESHOLD).length,
+				);
+				this.recentLogs.set(logs);
+				this.isLoaded.set(true);
 			});
 	}
 }

@@ -3,7 +3,6 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	computed,
-	effect,
 	inject,
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,7 +15,7 @@ import { AddCategoryPopupComponent } from './add-category-popup/add-category-pop
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../services/auth.service';
-import { ConfirmDialogService, LoaderService } from '@ferhaps/easy-ui-lib';
+import { ConfirmDialogService } from '@ferhaps/easy-ui-lib';
 import { CategoriesStore } from './store/categories.store';
 
 @Component({
@@ -36,16 +35,17 @@ import { CategoriesStore } from './store/categories.store';
 })
 export class CategoriesComponent {
 	protected categories = computed(() =>
-		this.store.categories().map((c) => ({ ...c, actions: ['Delete'] })),
+		this.categoriesStore
+			.categories()
+			.map((c) => ({ ...c, actions: ['Delete'] })),
 	);
 	protected displayedColumns: string[] = ['name', 'dateCreated', 'dateUpdated'];
 
 	private categoryService = inject(CategoryService);
 	private confirmDialog = inject(ConfirmDialogService);
-	private loadingService = inject(LoaderService);
 	private authService = inject(AuthService);
 	private dialog = inject(MatDialog);
-	private readonly store = inject(CategoriesStore);
+	private readonly categoriesStore = inject(CategoriesStore);
 
 	constructor() {
 		const loggedUser: LoggedUserInfo = this.authService.getLoggedUserInfo();
@@ -53,10 +53,7 @@ export class CategoriesComponent {
 			this.displayedColumns.push('actions');
 		}
 
-		effect(() => {
-			this.loadingService.setLoading(this.store.status() === 'loading');
-		});
-		this.store.load();
+		this.categoriesStore.load();
 	}
 
 	protected openAddCategoryPopup(): void {
@@ -67,7 +64,7 @@ export class CategoriesComponent {
 
 		popup.afterClosed().subscribe((category: Category | undefined) => {
 			if (category) {
-				this.store.addOne(category);
+				this.categoriesStore.addOne(category);
 			}
 		});
 	}
@@ -82,9 +79,9 @@ export class CategoriesComponent {
 		});
 
 		if (confirmed) {
-			this.categoryService.deleteCategory(category.id).subscribe({
-				next: () => this.store.removeOne(category.id),
-			});
+			this.categoryService
+				.deleteCategory(category.id)
+				.subscribe(() => this.categoriesStore.removeOne(category.id));
 		}
 	}
 
