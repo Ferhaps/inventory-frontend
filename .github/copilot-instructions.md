@@ -42,7 +42,7 @@ Never use `any`. Prefer union types and generics for flexibility.
 ### RxJS
 
 - Subscribe to observables directly in components (no `async` pipe required since components use signals)
-- Always provide `{ next, error }` callbacks in `.subscribe()` — never ignore the `error` case
+- Pass a plain `next` callback to `.subscribe()`. Only use the `{ next, error }` object form when the `error` branch actually does something — errors are surfaced globally by `easyUiLibInterceptor`
 - Unsubscribe via `takeUntilDestroyed()` or `DestroyRef` to prevent memory leaks
 
 ### Authentication
@@ -74,7 +74,7 @@ Use `inject()` function — never constructor injection.
 ```typescript
 private exampleService = inject(ExampleService);
 private dialog = inject(MatDialog);
-private loadingService = inject(LoaderService);
+private loading = inject(LoadingService);
 ```
 
 ### State Management
@@ -121,18 +121,16 @@ protected state: PopupState = 'default';
 
 ### Loading & Errors
 
-- Use `LoaderService` from `@ferhaps/easy-ui-ui` for global loading spinners
-- Error handling is done globally via `easyUiLibInterceptor` — components should only reset loading state in the `error` callback of subscriptions
+- Use `LoadingService` from `@ferhaps/easy-ui-lib` for global loading spinners. Pipe `withLoading()` onto the observable — it claims the overlay on subscribe and releases it on complete, error and unsubscribe, so there is nothing to turn off by hand. Overlapping work is counted, so parallel requests can't hide the spinner early
+- Error handling is done globally via `easyUiLibInterceptor`, so most subscriptions need no `error` callback at all
 
 ```typescript
-this.service.getItems().subscribe({
-  next: (items) => {
-    this.items.set(items);
-    this.loadingService.setLoading(false);
-  },
-  error: () => this.loadingService.setLoading(false),
-});
+this.service.getItems()
+  .pipe(this.loading.withLoading())
+  .subscribe((items) => this.items.set(items));
 ```
+
+When there is no observable to pipe onto — a `Promise`-based service method or `httpResource` — use `JSON_OPTIONS_WITH_GLOBAL_LOADER` (or the raw `X-Global-Loader` header) instead. Both paths feed the same claim count, so mixing them is safe.
 
 ### Role-Based UI
 

@@ -109,29 +109,25 @@ export const FeatureNameStore = signalStore(
 })
 export class FeatureNameComponent {
   private service = inject(FeatureNameService);
-  private loader = inject(LoaderService);
+  private loading = inject(LoadingService);
   private dialog = inject(MatDialog);
   private destroyRef = inject(DestroyRef);
 
   protected items = signal<TableDataSource<FeatureName>[]>([]);
 
   ngOnInit(): void {
-    this.loader.setLoading(true);
     this.service.getAll()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (data) => {
-          this.items.set(data.map((i) => ({ ...i, actions: [] })));
-          this.loader.setLoading(false);
-        },
-        error: () => this.loader.setLoading(false),
+      .pipe(this.loading.withLoading(), takeUntilDestroyed(this.destroyRef))
+      .subscribe((data) => {
+        this.items.set(data.map((i) => ({ ...i, actions: [] })));
       });
   }
 }
 ```
 
 - `protected` for anything the template accesses; `private` for everything else
-- Use `LoaderService` from `@ferhaps/easy-ui-lib` for the global spinner
+- Use `LoadingService` from `@ferhaps/easy-ui-lib` for the global spinner — pipe `withLoading()` onto the observable rather than toggling by hand; it releases on complete, error and unsubscribe. With no observable to pipe (a `Promise`-based service), use `JSON_OPTIONS_WITH_GLOBAL_LOADER` instead
+- Pass a plain `next` callback to `.subscribe()`; reach for the `{ next, error }` object form only when the `error` branch has real work to do, since errors are surfaced globally by `easyUiLibInterceptor`
 - Use `ConfirmDialogService` from `@ferhaps/easy-ui-lib` for delete confirmations: `await this.confirmDialog.confirm({ title, message, confirmText: 'Delete', danger: true })`
 - Dialog components use `MAT_DIALOG_DATA` for input and `PopupState = 'default' | 'loading'` for state
 - Check `AuthService.getLoggedUserInfo().user.role === 'ADMIN'` before showing admin-only actions

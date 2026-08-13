@@ -19,7 +19,8 @@ Vitest with the `jsdom` environment. There is no zone.js in this project, which 
 
 - `fakeAsync` / `tick` / `waitForAsync` are **unavailable**. Await `fixture.whenStable()` instead.
 - Every spec must provide `provideZonelessChangeDetection()` in `TestBed.configureTestingModule`.
-- Components backed by a store that loads asynchronously need `detectChanges()` → `await whenStable()` → `detectChanges()`. The first pass runs the loading effect while status is still `'loading'`, the second after the promise resolves; collapsing it to one pass silently loses the `setLoading(true)` transition.
+- Components backed by a store that loads asynchronously need `detectChanges()` → `await whenStable()` → `detectChanges()`. The first pass runs while the store status is still `'loading'`, the second after the promise resolves; collapsing it to one pass silently loses the intermediate state.
+- `LoadingService` is root-provided, dependency-free signal state, so specs should inject the **real** one rather than mocking it — `withLoading()` then genuinely claims and releases, and `loading.loading()` can be asserted directly.
 - Mocks for services a component pulls in through an Angular Material module (`MatDialog` via `MatDialogModule`) must go through `.overrideProvider()` — a plain entry in `providers` loses to the component's own imports.
 - [src/test-setup.ts](src/test-setup.ts) stubs `scrollTo`/`scrollIntoView`, which jsdom does not implement. Register new global test shims there.
 
@@ -70,8 +71,8 @@ export class ExampleComponent {
 
 - `protected` for members accessed in the template; `private` for internals; avoid `public`
 - Forms: template-driven (`NgForm` + `[(ngModel)]`). Use ReactiveFormsModule only for complex scenarios.
-- Unsubscribe via `takeUntilDestroyed()` or `DestroyRef`; always pass `{ next, error }` to `.subscribe()`
-- Use `LoaderService` (from `@ferhaps/easy-ui-lib`) for global loading spinners; reset it in the `error` callback
+- Unsubscribe via `takeUntilDestroyed()` or `DestroyRef`. Pass a plain `next` callback to `.subscribe()`; only use the `{ next, error }` object form when the `error` branch has real work to do (rolling back local state, clearing an inline spinner) — errors are surfaced globally by `easyUiLibInterceptor`
+- Use `LoadingService` (from `@ferhaps/easy-ui-lib`) for the global spinner. Prefer piping `this.loading.withLoading()` onto the observable — it claims on subscribe and releases on complete/error/unsubscribe, so there is nothing to reset by hand. When there is no observable (a `Promise`-based service, `httpResource`), use `JSON_OPTIONS_WITH_GLOBAL_LOADER` instead; both feed the same claim count. `showLoading()`/`hideLoading()` are the last resort and must be paired in a `finally`
 - Use `ConfirmDialogService` (from `@ferhaps/easy-ui-lib`) for delete confirmations — `await confirmDialog.confirm({ title, message, confirmText: 'Delete', danger: true })` resolves `true` only on confirm. Don't build bespoke confirmation dialogs
 - Dialog components accept data via `MAT_DIALOG_DATA` and track state with `PopupState = 'default' | 'loading'`
 
