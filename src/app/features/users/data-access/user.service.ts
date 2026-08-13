@@ -2,7 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom, Observable } from 'rxjs';
-import { JSON_HTTP_OPTIONS } from '../../../shared/utils';
+import {
+	JSON_HTTP_OPTIONS,
+	JSON_OPTIONS_WITH_GLOBAL_LOADER,
+} from '../../../shared/utils';
 import { User } from '../../../shared/types';
 
 @Injectable({
@@ -14,7 +17,9 @@ export class UserService {
 	private http = inject(HttpClient);
 
 	public getUsers(): Promise<User[]> {
-		return firstValueFrom(this.http.get<User[]>(this.usersUrl, JSON_HTTP_OPTIONS));
+		return firstValueFrom(
+			this.http.get<User[]>(this.usersUrl, JSON_OPTIONS_WITH_GLOBAL_LOADER),
+		);
 	}
 
 	public deleteUser(id: string): Observable<any> {

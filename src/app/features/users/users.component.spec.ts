@@ -10,7 +10,7 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { AuthService } from '../../services/auth.service';
-import { ConfirmDialogService, LoaderService } from '@ferhaps/easy-ui-lib';
+import { ConfirmDialogService } from '@ferhaps/easy-ui-lib';
 import { LoggedUserInfo, User } from '../../shared/types';
 import { of } from 'rxjs';
 import { UsersComponent } from './users.component';
@@ -21,7 +21,6 @@ describe('UsersComponent', () => {
 	let fixture: ComponentFixture<UsersComponent>;
 	let userService: MockedObject<UserService>;
 	let authService: MockedObject<AuthService>;
-	let loaderService: MockedObject<LoaderService>;
 	let confirmDialog: MockedObject<ConfirmDialogService>;
 	let dialog: MockedObject<MatDialog>;
 
@@ -65,9 +64,8 @@ describe('UsersComponent', () => {
 	};
 
 	/**
-	 * Creates the component and settles the store's async load. The first
-	 * detectChanges runs the loading effect while the store is still 'loading';
-	 * the second runs it again once the promise has resolved.
+	 * Creates the component and settles the store's async load — the second
+	 * detectChanges runs once the store's promise has resolved.
 	 */
 	const createComponent = async (): Promise<void> => {
 		fixture = TestBed.createComponent(UsersComponent);
@@ -87,7 +85,6 @@ describe('UsersComponent', () => {
 					useValue: { getUsers: vi.fn(), deleteUser: vi.fn() },
 				},
 				{ provide: AuthService, useValue: { getLoggedUserInfo: vi.fn() } },
-				{ provide: LoaderService, useValue: { setLoading: vi.fn() } },
 				{ provide: ConfirmDialogService, useValue: { confirm: vi.fn() } },
 			],
 			// MatDialogModule is imported by the component itself, so a plain
@@ -96,9 +93,6 @@ describe('UsersComponent', () => {
 
 		userService = TestBed.inject(UserService) as MockedObject<UserService>;
 		authService = TestBed.inject(AuthService) as MockedObject<AuthService>;
-		loaderService = TestBed.inject(
-			LoaderService,
-		) as MockedObject<LoaderService>;
 		confirmDialog = TestBed.inject(
 			ConfirmDialogService,
 		) as MockedObject<ConfirmDialogService>;
@@ -161,13 +155,6 @@ describe('UsersComponent', () => {
 			expect(component['users']().every((u) => u.actions.length === 0)).toBe(
 				true,
 			);
-		});
-
-		it('should set loading state correctly', async () => {
-			await createComponent();
-
-			expect(loaderService.setLoading).toHaveBeenCalledWith(true);
-			expect(loaderService.setLoading).toHaveBeenCalledWith(false);
 		});
 	});
 
@@ -235,7 +222,9 @@ describe('UsersComponent', () => {
 
 			expect(userService.deleteUser).toHaveBeenCalledWith('user1');
 			expect(component['users']().length).toBe(initialLength - 1);
-			expect(component['users']().find((u) => u.id === 'user1')).toBeUndefined();
+			expect(
+				component['users']().find((u) => u.id === 'user1'),
+			).toBeUndefined();
 		});
 
 		it('should not delete user when cancelled', async () => {
