@@ -10,8 +10,8 @@ import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { LoaderService } from '@ferhaps/easy-ui-lib';
-import { of, throwError } from 'rxjs';
+import { LoadingService } from '@ferhaps/easy-ui-lib';
+import { of, Subject, throwError } from 'rxjs';
 import { LogComponent } from './log.component';
 import { LogService } from './data-access/log.service';
 import { UserService } from '../users/data-access/user.service';
@@ -28,7 +28,9 @@ describe('LogComponent', () => {
 	let userService: MockedObject<UserService>;
 	let productService: MockedObject<ProductService>;
 	let categoryService: MockedObject<CategoryService>;
-	let loaderService: MockedObject<LoaderService>;
+	// The real service — it is root-provided, dependency-free signal state, so
+	// `withLoading()` genuinely claims and releases here.
+	let loading: LoadingService;
 
 	const mockLogs: Log[] = [
 		{
@@ -134,7 +136,6 @@ describe('LogComponent', () => {
 				{ provide: UserService, useValue: { getUsers: vi.fn() } },
 				{ provide: ProductService, useValue: { getProducts: vi.fn() } },
 				{ provide: CategoryService, useValue: { getCategories: vi.fn() } },
-				{ provide: LoaderService, useValue: { setLoading: vi.fn() } },
 			],
 		});
 
@@ -146,9 +147,7 @@ describe('LogComponent', () => {
 		categoryService = TestBed.inject(
 			CategoryService,
 		) as MockedObject<CategoryService>;
-		loaderService = TestBed.inject(
-			LoaderService,
-		) as MockedObject<LoaderService>;
+		loading = TestBed.inject(LoadingService);
 
 		logService.getLogs.mockReturnValue(of(mockLogs));
 		logService.getLogEvents.mockReturnValue(of(mockLogEvents));
@@ -190,11 +189,22 @@ describe('LogComponent', () => {
 			expect(component['filteredCategories']()).toEqual(mockCategories);
 		});
 
-		it('should set loading state correctly', async () => {
+		it('should release the loading claim once logs arrive', async () => {
 			await createComponent();
 
-			expect(loaderService.setLoading).toHaveBeenCalledWith(true);
-			expect(loaderService.setLoading).toHaveBeenCalledWith(false);
+			expect(loading.loading()).toBe(false);
+		});
+
+		it('should hold the loading claim while the initial logs are in flight', async () => {
+			const logs$ = new Subject<Log[]>();
+			logService.getLogs.mockReturnValue(logs$);
+
+			await createComponent();
+			expect(loading.loading()).toBe(true);
+
+			logs$.next(mockLogs);
+			logs$.complete();
+			expect(loading.loading()).toBe(false);
 		});
 
 		it('should report no active filters on a fresh load', async () => {
@@ -288,9 +298,9 @@ describe('LogComponent', () => {
 		it('should filter event autocomplete options', async () => {
 			component['filterAutocomplete']('events', 'PRODUCT');
 
-			expect(
-				component['filteredLogEvents']().length,
-			).toBeLessThanOrEqual(mockLogEvents.length);
+			expect(component['filteredLogEvents']().length).toBeLessThanOrEqual(
+				mockLogEvents.length,
+			);
 			expect(
 				component['filteredLogEvents']().every((e: string) =>
 					component['snakeCasePipe']
@@ -555,14 +565,12 @@ describe('LogComponent', () => {
 
 			await createComponent();
 
-			expect(loaderService.setLoading).toHaveBeenCalledWith(false);
+			expect(loading.loading()).toBe(false);
 			expect(component['isFetching']()).toBe(false);
 		});
 
 		it('should handle errors when loading users', async () => {
-			userService.getUsers.mockRejectedValue(
-				new Error('Error loading users'),
-			);
+			userService.getUsers.mockRejectedValue(new Error('Error loading users'));
 
 			await createComponent();
 
