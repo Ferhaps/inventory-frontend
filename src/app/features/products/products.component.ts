@@ -27,10 +27,11 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AddProductPopupComponent } from './add-product-popup/add-product-popup.component';
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
+import { catchError, of } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import {
 	ConfirmDialogService,
-	LoaderService,
+	LoadingService,
 	SearchBarComponent,
 } from '@ferhaps/easy-ui-lib';
 
@@ -72,7 +73,7 @@ export class ProductsComponent {
 	private readonly categoriesStore = inject(CategoriesStore);
 	private confirmDialog = inject(ConfirmDialogService);
 	private productService = inject(ProductService);
-	private loadingService = inject(LoaderService);
+	private loading = inject(LoadingService);
 	private authService = inject(AuthService);
 	private dialog = inject(MatDialog);
 	private snackBar = inject(MatSnackBar);
@@ -93,16 +94,17 @@ export class ProductsComponent {
 	}
 
 	private getProducts(): void {
-		this.productService.getProducts().subscribe({
-			next: (products: Product[]) => {
+		this.productService
+			.getProducts()
+			.pipe(
+				this.loading.withLoading(),
+				catchError(() => of<Product[]>([])),
+			)
+			.subscribe((products: Product[]) => {
 				this.allProducts = products;
 				this.currentCategoryId.set(this.categories()[0]?.id);
 				this.setCurrentProducts();
-				this.loadingService.setLoading(false);
-				console.log('products: ', products);
-			},
-			error: () => this.loadingService.setLoading(false),
-		});
+			});
 	}
 
 	protected showProductsForCategory(event: MatChipListboxChange): void {
@@ -185,13 +187,9 @@ export class ProductsComponent {
 		});
 
 		if (confirmed) {
-			this.productService.deleteProduct(product.id).subscribe({
-				next: () => {
-					this.allProducts = this.allProducts.filter(
-						(p) => p.id !== product.id,
-					);
-					this.setCurrentProducts();
-				},
+			this.productService.deleteProduct(product.id).subscribe(() => {
+				this.allProducts = this.allProducts.filter((p) => p.id !== product.id);
+				this.setCurrentProducts();
 			});
 		}
 	}

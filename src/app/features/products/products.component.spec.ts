@@ -15,8 +15,8 @@ import { CategoryService } from '../categories/data-access/category.service';
 import { AuthService } from '../../services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ConfirmDialogService, LoaderService } from '@ferhaps/easy-ui-lib';
-import { of, throwError } from 'rxjs';
+import { ConfirmDialogService, LoadingService } from '@ferhaps/easy-ui-lib';
+import { of, Subject, throwError } from 'rxjs';
 import { Category, Product, LoggedUserInfo } from '../../shared/types';
 import { MatChipListboxChange } from '@angular/material/chips';
 
@@ -26,7 +26,9 @@ describe('ProductsComponent', () => {
 	let productService: MockedObject<ProductService>;
 	let categoryService: MockedObject<CategoryService>;
 	let authService: MockedObject<AuthService>;
-	let loaderService: MockedObject<LoaderService>;
+	// The real service — it is root-provided, dependency-free signal state, so
+	// `withLoading()` genuinely claims and releases here.
+	let loading: LoadingService;
 	let confirmDialog: MockedObject<ConfirmDialogService>;
 	let snackBar: MockedObject<MatSnackBar>;
 	let dialog: MockedObject<MatDialog>;
@@ -130,7 +132,6 @@ describe('ProductsComponent', () => {
 				},
 				{ provide: CategoryService, useValue: { getCategories: vi.fn() } },
 				{ provide: AuthService, useValue: { getLoggedUserInfo: vi.fn() } },
-				{ provide: LoaderService, useValue: { setLoading: vi.fn() } },
 				{ provide: ConfirmDialogService, useValue: { confirm: vi.fn() } },
 				{ provide: MatSnackBar, useValue: { open: vi.fn() } },
 			],
@@ -145,9 +146,7 @@ describe('ProductsComponent', () => {
 			CategoryService,
 		) as MockedObject<CategoryService>;
 		authService = TestBed.inject(AuthService) as MockedObject<AuthService>;
-		loaderService = TestBed.inject(
-			LoaderService,
-		) as MockedObject<LoaderService>;
+		loading = TestBed.inject(LoadingService);
 		confirmDialog = TestBed.inject(
 			ConfirmDialogService,
 		) as MockedObject<ConfirmDialogService>;
@@ -199,10 +198,22 @@ describe('ProductsComponent', () => {
 			expect(component['tableDataSource']().length).toBe(2);
 		});
 
-		it('should clear the loading state once products arrive', async () => {
+		it('should release the loading claim once products arrive', async () => {
 			await createComponent();
 
-			expect(loaderService.setLoading).toHaveBeenCalledWith(false);
+			expect(loading.loading()).toBe(false);
+		});
+
+		it('should hold the loading claim while products are in flight', async () => {
+			const products$ = new Subject<Product[]>();
+			productService.getProducts.mockReturnValue(products$);
+
+			await createComponent();
+			expect(loading.loading()).toBe(true);
+
+			products$.next(mockProducts);
+			products$.complete();
+			expect(loading.loading()).toBe(false);
 		});
 
 		it('should handle empty categories gracefully', async () => {
@@ -227,7 +238,9 @@ describe('ProductsComponent', () => {
 
 			const displayedProducts = component['tableDataSource']();
 			expect(displayedProducts.length).toBe(2);
-			expect(displayedProducts.every((p) => p.categoryId === 'cat1')).toBe(true);
+			expect(displayedProducts.every((p) => p.categoryId === 'cat1')).toBe(
+				true,
+			);
 		});
 
 		it('should update displayed products when category changes', async () => {
@@ -445,7 +458,7 @@ describe('ProductsComponent', () => {
 
 			await createComponent();
 
-			expect(loaderService.setLoading).toHaveBeenCalledWith(false);
+			expect(loading.loading()).toBe(false);
 			expect(component['tableDataSource']()).toEqual([]);
 		});
 	});
