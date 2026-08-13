@@ -187,10 +187,15 @@ export class ProductsComponent {
 		});
 
 		if (confirmed) {
-			this.productService.deleteProduct(product.id).subscribe(() => {
-				this.allProducts = this.allProducts.filter((p) => p.id !== product.id);
-				this.setCurrentProducts();
-			});
+			this.productService
+				.deleteProduct(product.id)
+				.pipe(this.loading.withLoading())
+				.subscribe(() => {
+					this.allProducts = this.allProducts.filter(
+						(p) => p.id !== product.id,
+					);
+					this.setCurrentProducts();
+				});
 		}
 	}
 

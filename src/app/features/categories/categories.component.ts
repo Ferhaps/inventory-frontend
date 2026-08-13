@@ -15,7 +15,7 @@ import { AddCategoryPopupComponent } from './add-category-popup/add-category-pop
 import { NoopScrollStrategy } from '@angular/cdk/overlay';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../services/auth.service';
-import { ConfirmDialogService } from '@ferhaps/easy-ui-lib';
+import { ConfirmDialogService, LoadingService } from '@ferhaps/easy-ui-lib';
 import { CategoriesStore } from './store/categories.store';
 
 @Component({
@@ -43,6 +43,7 @@ export class CategoriesComponent {
 
 	private categoryService = inject(CategoryService);
 	private confirmDialog = inject(ConfirmDialogService);
+	private loading = inject(LoadingService);
 	private authService = inject(AuthService);
 	private dialog = inject(MatDialog);
 	private readonly categoriesStore = inject(CategoriesStore);
@@ -81,6 +82,7 @@ export class CategoriesComponent {
 		if (confirmed) {
 			this.categoryService
 				.deleteCategory(category.id)
+				.pipe(this.loading.withLoading())
 				.subscribe(() => this.categoriesStore.removeOne(category.id));
 		}
 	}

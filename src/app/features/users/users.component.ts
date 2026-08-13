@@ -11,7 +11,7 @@ import { UserService } from './data-access/user.service';
 import { RegisterUserPopupComponent } from './register-user-popup/register-user-popup.component';
 import { LoggedUserInfo, TableDataSource, User } from '../../shared/types';
 import { AuthService } from '../../services/auth.service';
-import { ConfirmDialogService } from '@ferhaps/easy-ui-lib';
+import { ConfirmDialogService, LoadingService } from '@ferhaps/easy-ui-lib';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
@@ -53,6 +53,7 @@ export class UsersComponent {
 	protected loggedUser: LoggedUserInfo;
 
 	private confirmDialog = inject(ConfirmDialogService);
+	private loading = inject(LoadingService);
 	private readonly usersStore = inject(UsersStore);
 	private userService = inject(UserService);
 	private authService = inject(AuthService);
@@ -93,9 +94,12 @@ export class UsersComponent {
 		});
 
 		if (confirmed) {
-			this.userService.deleteUser(user.id).subscribe(() => {
-				this.usersStore.removeOne(user.id);
-			});
+			this.userService
+				.deleteUser(user.id)
+				.pipe(this.loading.withLoading())
+				.subscribe(() => {
+					this.usersStore.removeOne(user.id);
+				});
 		}
 	}
 
