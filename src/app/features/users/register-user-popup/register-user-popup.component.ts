@@ -58,10 +58,8 @@ export class RegisterUserPopupComponent {
 			const body: any = { ...this.model };
 			delete body.passwordRepeat;
 
-			this.authService.register(body).subscribe({
-				next: (user: User) => {
-					this.ref.close(user);
-				},
+			this.authService.register(body).subscribe((user: User) => {
+				this.ref.close(user);
 			});
 		}
 	}

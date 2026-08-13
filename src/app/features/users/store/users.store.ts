@@ -1,7 +1,7 @@
-import { inject } from "@angular/core";
-import { User } from "../../../shared/types";
-import { patchState, signalStore, withMethods, withState } from "@ngrx/signals";
-import { UserService } from "../data-access/user.service";
+import { inject } from '@angular/core';
+import { User } from '../../../shared/types';
+import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { UserService } from '../data-access/user.service';
 
 type UsersStatus = 'idle' | 'loading' | 'loaded' | 'error';
 
@@ -28,14 +28,16 @@ export const UsersStore = signalStore(
 			} catch {
 				patchState(store, { status: 'error' });
 			}
-	},
+		},
 
 		addOne(user: User): void {
 			patchState(store, { users: [user, ...store.users()] });
 		},
 
 		removeOne(id: string): void {
-			patchState(store, { users: store.users().filter((u: User) => u.id !== id) });
-		}
-	}))
+			patchState(store, {
+				users: store.users().filter((u: User) => u.id !== id),
+			});
+		},
+	})),
 );

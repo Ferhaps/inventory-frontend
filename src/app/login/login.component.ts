@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	inject,
+	signal,
+} from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -61,12 +66,16 @@ export class LoginComponent {
 						localStorage.setItem(TOKEN_KEY, JSON.stringify(userInfo));
 						this.router.navigateByUrl('dashboard');
 					} else {
-						this.loginErrorMessage.set('Login failed. Please verify your credentials and try again.');
+						this.loginErrorMessage.set(
+							'Login failed. Please verify your credentials and try again.',
+						);
 						this.isLoading.set(false);
 					}
 				},
 				error: (e: HttpErrorResponse) => {
-					this.loginErrorMessage.set(e.error?.message || 'Invalid email or password. Please try again.');
+					this.loginErrorMessage.set(
+						e.error?.message || 'Invalid email or password. Please try again.',
+					);
 					this.isLoading.set(false);
 				},
 			});

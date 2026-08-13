@@ -6,10 +6,7 @@ import { Log } from '../../../shared/types';
 @Component({
 	selector: 'app-activity-feed',
 	host: { class: 'block overflow-y-auto h-full' },
-	imports: [
-		DatePipe,
-		SnakeCaseParserPipe
-	],
+	imports: [DatePipe, SnakeCaseParserPipe],
 	templateUrl: './activity-feed.component.html',
 	styleUrl: './activity-feed.component.scss',
 	changeDetection: ChangeDetectionStrategy.OnPush,

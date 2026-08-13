@@ -1,6 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, Inject, inject } from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	computed,
+	inject,
+} from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { Category, CreateProductBody, PopupState, Product } from '../../../shared/types';
+import { CreateProductBody, PopupState, Product } from '../../../shared/types';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ProductService } from '../data-access/product.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -54,13 +59,9 @@ export class AddProductPopupComponent {
 				categoryId: this.model.categoryId,
 				quantity: this.model.quantity,
 			};
-			this.productService
-				.addProduct(body)
-				.subscribe({
-					next: (product: Product) => {
-						this.ref.close(product);
-					},
-				});
+			this.productService.addProduct(body).subscribe((product: Product) => {
+				this.ref.close(product);
+			});
 		}
 	}
 }

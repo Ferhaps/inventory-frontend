@@ -33,11 +33,11 @@ export class AddCategoryPopupComponent {
 	protected onSubmit(form: NgForm): void {
 		if (form.valid) {
 			this.state = 'loading';
-			this.categoryService.addCategory(this.name).subscribe({
-				next: (category: Category) => {
+			this.categoryService
+				.addCategory(this.name)
+				.subscribe((category: Category) => {
 					this.ref.close(category);
-				},
-			});
+				});
 		}
 	}
 }

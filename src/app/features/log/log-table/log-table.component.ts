@@ -33,7 +33,8 @@ export class LogTableComponent {
 	protected action = output<any>();
 	protected scrolled = output<void>();
 
-	public scrollContainer = viewChild.required<ElementRef<HTMLDivElement>>('scrollContainer');
+	public scrollContainer =
+		viewChild.required<ElementRef<HTMLDivElement>>('scrollContainer');
 
 	private router = inject(Router);
 

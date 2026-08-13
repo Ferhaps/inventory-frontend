@@ -36,7 +36,8 @@ export class CategoryChartComponent implements AfterViewInit {
 	products = input.required<Product[]>();
 	categories = input.required<Category[]>();
 
-	private chartCanvas = viewChild.required<ElementRef<HTMLCanvasElement>>('chartCanvas');
+	private chartCanvas =
+		viewChild.required<ElementRef<HTMLCanvasElement>>('chartCanvas');
 	private chart: Chart | null = null;
 	private destroyRef = inject(DestroyRef);
 

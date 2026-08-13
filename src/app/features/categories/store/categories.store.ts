@@ -1,7 +1,7 @@
-import { inject } from "@angular/core";
-import { Category } from "../../../shared/types";
-import { patchState, signalStore, withMethods, withState } from "@ngrx/signals";
-import { CategoryService } from "../data-access/category.service";
+import { inject } from '@angular/core';
+import { Category } from '../../../shared/types';
+import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { CategoryService } from '../data-access/category.service';
 
 type CategoriesStatus = 'idle' | 'loading' | 'loaded' | 'error';
 
@@ -28,14 +28,16 @@ export const CategoriesStore = signalStore(
 			} catch {
 				patchState(store, { status: 'error' });
 			}
-	},
+		},
 
 		addOne(category: Category): void {
-			patchState(store, { categories: [ category, ...store.categories()] });
+			patchState(store, { categories: [category, ...store.categories()] });
 		},
 
 		removeOne(id: string): void {
-			patchState(store, { categories: store.categories().filter((c: Category) => c.id !== id) });
-		}
-	}))
+			patchState(store, {
+				categories: store.categories().filter((c: Category) => c.id !== id),
+			});
+		},
+	})),
 );
