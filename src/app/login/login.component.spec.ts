@@ -11,12 +11,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
-import { NgForm } from '@angular/forms';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { LoggedUserInfo } from '../shared/types';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
 import { TOKEN_KEY } from '../shared/utils';
 
 describe('LoginComponent', () => {
@@ -36,8 +34,10 @@ describe('LoginComponent', () => {
 		},
 	};
 
-	/** NgForm stand-in — the component only reads `valid`. */
-	const form = (valid: boolean): NgForm => ({ valid }) as NgForm;
+	const credentials = {
+		email: 'test@example.com',
+		password: 'Password123!',
+	};
 
 	const createComponent = (): void => {
 		fixture = TestBed.createComponent(LoginComponent);
@@ -45,9 +45,13 @@ describe('LoginComponent', () => {
 		fixture.detectChanges();
 	};
 
+	/** Inputs are rendered in template order: email first, password second. */
+	const inputs = (): HTMLInputElement[] =>
+		Array.from(fixture.nativeElement.querySelectorAll('input'));
+
 	beforeEach(() => {
 		TestBed.configureTestingModule({
-			imports: [LoginComponent, NoopAnimationsModule, FormsModule],
+			imports: [LoginComponent, NoopAnimationsModule],
 			providers: [
 				provideZonelessChangeDetection(),
 				{
@@ -90,8 +94,41 @@ describe('LoginComponent', () => {
 		it('should initialize loginModel with empty email and password', () => {
 			createComponent();
 
-			expect(component['loginModel'].email).toBe('');
-			expect(component['loginModel'].password).toBe('');
+			expect(component['loginModel']()).toEqual({ email: '', password: '' });
+		});
+	});
+
+	describe('Validation', () => {
+		beforeEach(() => {
+			createComponent();
+		});
+
+		it('should start invalid with an empty model', () => {
+			expect(component['loginForm']().invalid()).toBe(true);
+		});
+
+		it('should reject a malformed email', () => {
+			component['loginModel'].set({ ...credentials, email: 'not-an-email' });
+
+			expect(component['loginForm'].email().invalid()).toBe(true);
+			expect(component['loginForm'].email().errors()[0].message).toBe(
+				'Invalid email',
+			);
+		});
+
+		it('should reject a password that fails the strength rules', () => {
+			component['loginModel'].set({ ...credentials, password: 'weak' });
+
+			expect(component['loginForm'].password().invalid()).toBe(true);
+			expect(component['loginForm'].password().errors()[0].message).toContain(
+				'1 uppercase',
+			);
+		});
+
+		it('should accept valid credentials', () => {
+			component['loginModel'].set(credentials);
+
+			expect(component['loginForm']().valid()).toBe(true);
 		});
 	});
 
@@ -113,38 +150,35 @@ describe('LoginComponent', () => {
 	});
 
 	describe('Login Submission', () => {
-		const credentials = {
-			email: 'test@example.com',
-			password: 'Password123!',
-		};
-
 		beforeEach(() => {
 			createComponent();
-			component['loginModel'] = { ...credentials };
+			component['loginModel'].set({ ...credentials });
 		});
 
-		it('should not submit if form is invalid', () => {
-			component['onLoginSubmit'](form(false));
+		it('should not submit if form is invalid', async () => {
+			component['loginModel'].set({ email: '', password: '' });
+
+			await component['onLoginSubmit']();
 
 			expect(authService.login).not.toHaveBeenCalled();
-			expect(component['isLoading']()).toBe(false);
+			expect(component['loginForm']().submitting()).toBe(false);
 		});
 
-		it('should call authService.login with correct credentials', () => {
+		it('should call authService.login with correct credentials', async () => {
 			authService.login.mockReturnValue(of(mockUserInfo));
 
-			component['onLoginSubmit'](form(true));
+			await component['onLoginSubmit']();
 
 			expect(authService.login).toHaveBeenCalledWith(credentials);
 		});
 
-		it('should save token to localStorage on successful login', () => {
+		it('should save token to localStorage on successful login', async () => {
 			authService.login.mockReturnValue(of(mockUserInfo));
 			const setItem = vi
 				.spyOn(Storage.prototype, 'setItem')
 				.mockReturnValue(undefined);
 
-			component['onLoginSubmit'](form(true));
+			await component['onLoginSubmit']();
 
 			expect(setItem).toHaveBeenCalledWith(
 				TOKEN_KEY,
@@ -153,27 +187,27 @@ describe('LoginComponent', () => {
 			setItem.mockRestore();
 		});
 
-		it('should navigate to dashboard on successful login', () => {
+		it('should navigate to dashboard on successful login', async () => {
 			authService.login.mockReturnValue(of(mockUserInfo));
 
-			component['onLoginSubmit'](form(true));
+			await component['onLoginSubmit']();
 
 			expect(router.navigateByUrl).toHaveBeenCalledWith('dashboard');
 		});
 
-		it('should set isLoading to false if login returns no token', () => {
+		it('should surface an error if login returns no token', async () => {
 			authService.login.mockReturnValue(
 				of({ token: '', user: mockUserInfo.user }),
 			);
 
-			component['onLoginSubmit'](form(true));
+			await component['onLoginSubmit']();
 
-			expect(component['isLoading']()).toBe(false);
+			expect(component['loginForm']().submitting()).toBe(false);
 			expect(router.navigateByUrl).not.toHaveBeenCalled();
 			expect(component['loginErrorMessage']()).toBeTruthy();
 		});
 
-		it('should not save to localStorage on login error', () => {
+		it('should not save to localStorage on login error', async () => {
 			authService.login.mockReturnValue(
 				throwError(() => new Error('Login failed')),
 			);
@@ -181,14 +215,14 @@ describe('LoginComponent', () => {
 				.spyOn(Storage.prototype, 'setItem')
 				.mockReturnValue(undefined);
 
-			component['onLoginSubmit'](form(true));
+			await component['onLoginSubmit']();
 
 			expect(setItem).not.toHaveBeenCalled();
-			expect(component['isLoading']()).toBe(false);
+			expect(component['loginForm']().submitting()).toBe(false);
 			setItem.mockRestore();
 		});
 
-		it('should surface the server error message when there is one', () => {
+		it('should surface the server error message when there is one', async () => {
 			authService.login.mockReturnValue(
 				throwError(
 					() =>
@@ -199,80 +233,94 @@ describe('LoginComponent', () => {
 				),
 			);
 
-			component['onLoginSubmit'](form(true));
+			await component['onLoginSubmit']();
 
 			expect(component['loginErrorMessage']()).toBe('Account locked');
 		});
 
-		it('should fall back to a generic message when the error has none', () => {
+		it('should fall back to a generic message when the error has none', async () => {
 			authService.login.mockReturnValue(
 				throwError(() => new HttpErrorResponse({ status: 401 })),
 			);
 
-			component['onLoginSubmit'](form(true));
+			await component['onLoginSubmit']();
 
 			expect(component['loginErrorMessage']()).toBe(
 				'Invalid email or password. Please try again.',
 			);
 		});
 
-		it('should clear a previous error message on resubmit', () => {
+		it('should clear a previous error message on resubmit', async () => {
 			authService.login.mockReturnValue(
 				throwError(() => new HttpErrorResponse({ status: 401 })),
 			);
-			component['onLoginSubmit'](form(true));
+			await component['onLoginSubmit']();
 			expect(component['loginErrorMessage']()).toBeTruthy();
 
 			authService.login.mockReturnValue(of(mockUserInfo));
 			vi.spyOn(Storage.prototype, 'setItem').mockReturnValue(undefined);
-			component['onLoginSubmit'](form(true));
+			await component['onLoginSubmit']();
 
 			expect(component['loginErrorMessage']()).toBeNull();
 		});
 	});
 
 	describe('Form Integration', () => {
-		beforeEach(() => {
+		beforeEach(async () => {
 			createComponent();
+			await fixture.whenStable();
+			fixture.detectChanges();
 		});
 
 		it('should bind email input to loginModel', async () => {
-			component['loginModel'].email = 'newtest@example.com';
+			component['loginModel'].set({ ...credentials, email: 'new@example.com' });
 			fixture.detectChanges();
 			await fixture.whenStable();
 			fixture.detectChanges();
 
-			const emailInput = fixture.nativeElement.querySelector(
-				'input[name="email"]',
-			) as HTMLInputElement;
-
-			expect(emailInput.value).toBe('newtest@example.com');
+			expect(inputs()[0].value).toBe('new@example.com');
 		});
 
 		it('should bind password input to loginModel', async () => {
-			component['loginModel'].password = 'NewPassword123!';
+			component['loginModel'].set({
+				...credentials,
+				password: 'NewPassword123!',
+			});
 			fixture.detectChanges();
 			await fixture.whenStable();
 			fixture.detectChanges();
 
-			const passwordInput = fixture.nativeElement.querySelector(
-				'input[name="password"]',
-			) as HTMLInputElement;
-
-			expect(passwordInput.value).toBe('NewPassword123!');
+			expect(inputs()[1].value).toBe('NewPassword123!');
 		});
 
-		it('should display spinner when loading', () => {
-			component['isLoading'].set(true);
+		it('should write user input back into loginModel', async () => {
+			const emailInput = inputs()[0];
+			emailInput.value = 'typed@example.com';
+			emailInput.dispatchEvent(new Event('input'));
+			await fixture.whenStable();
 			fixture.detectChanges();
 
+			expect(component['loginModel']().email).toBe('typed@example.com');
+		});
+
+		it('should display spinner while submitting', async () => {
+			const login$ = new Subject<LoggedUserInfo>();
+			authService.login.mockReturnValue(login$);
+			component['loginModel'].set({ ...credentials });
+
+			const submitted = component['onLoginSubmit']();
+			await fixture.whenStable();
+			fixture.detectChanges();
+
+			expect(component['loginForm']().submitting()).toBe(true);
 			expect(fixture.nativeElement.querySelector('mat-spinner')).toBeTruthy();
+
+			login$.next(mockUserInfo);
+			login$.complete();
+			await submitted;
 		});
 
-		it('should enable submit button when not loading', () => {
-			component['isLoading'].set(false);
-			fixture.detectChanges();
-
+		it('should enable submit button when not submitting', () => {
 			const button = fixture.nativeElement.querySelector(
 				'button.main-btn',
 			) as HTMLButtonElement;

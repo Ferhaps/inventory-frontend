@@ -4,7 +4,14 @@ import {
 	inject,
 	signal,
 } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
+import {
+	email,
+	form,
+	FormField,
+	required,
+	submit,
+	validate,
+} from '@angular/forms/signals';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,30 +21,52 @@ import { Router } from '@angular/router';
 import { TOKEN_KEY } from '../shared/utils';
 import { MatIconModule } from '@angular/material/icon';
 import { LoggedUserInfo } from '../shared/types';
-import { PasswordValidatorDirective } from '@ferhaps/easy-ui-lib';
+import { validatePasswordRules } from '@ferhaps/easy-ui-lib';
 import { HttpErrorResponse } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+
+const PASSWORD_RULES = {
+	minLength: 8,
+	requireUppercase: true,
+	requireLowercase: true,
+	requireDigit: true,
+	requireSpecial: true,
+	specialChars: '!@#$%^&*',
+};
+
+const PASSWORD_MESSAGE =
+	'Requires 1 uppercase, 1 lowercase letter, 1 symbol, 1 number, 8 characters';
 
 @Component({
 	selector: 'app-login',
 	imports: [
-		FormsModule,
+		FormField,
 		MatIconModule,
 		MatInputModule,
 		MatButtonModule,
 		MatFormFieldModule,
 		MatProgressSpinnerModule,
-		PasswordValidatorDirective,
 	],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	templateUrl: './login.component.html',
 	styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-	protected loginModel: { email: string; password: string } = {
-		email: '',
-		password: '',
-	};
-	protected isLoading = signal(false);
+	protected loginModel = signal({ email: '', password: '' });
+	protected loginForm = form(this.loginModel, (path) => {
+		required(path.email, { message: 'Invalid email' });
+		email(path.email, { message: 'Invalid email' });
+
+		required(path.password, { message: PASSWORD_MESSAGE });
+		validate(path.password, ({ value }) => {
+			const failed = validatePasswordRules(value(), PASSWORD_RULES);
+			if (Object.keys(failed).length === 0) {
+				return null;
+			}
+			return { kind: 'password', message: PASSWORD_MESSAGE };
+		});
+	});
+
 	protected hidePass = signal(true);
 	protected loginErrorMessage = signal<string | null>(null);
 
@@ -56,41 +85,30 @@ export class LoginComponent {
 		this.hidePass.set(!this.hidePass());
 	}
 
-	protected onLoginSubmit(f: NgForm): void {
-		if (f.valid) {
-			this.loginErrorMessage.set(null);
-			this.isLoading.set(true);
-			this.authService.login(this.loginModel).subscribe({
-				next: (userInfo: LoggedUserInfo) => {
-					if (userInfo?.token) {
-						localStorage.setItem(TOKEN_KEY, JSON.stringify(userInfo));
-						this.router.navigateByUrl('dashboard');
-					} else {
-						this.loginErrorMessage.set(
-							'Login failed. Please verify your credentials and try again.',
-						);
-						this.isLoading.set(false);
-					}
-				},
-				error: (e: HttpErrorResponse) => {
-					this.loginErrorMessage.set(
-						e.error?.message || 'Invalid email or password. Please try again.',
-					);
-					this.isLoading.set(false);
-				},
-			});
-		}
-	}
+	protected async onLoginSubmit(): Promise<void> {
+		this.loginErrorMessage.set(null);
 
-	// private autoLogin(token: string): void {
-	//   this.authService.extendToken(token).subscribe({
-	//     next: () => {
-	//       localStorage.setItem(TOKEN_KEY, token);
-	//       this.router.navigateByUrl('products');
-	//     },
-	//     error: () => {
-	//       this.isLoading.set(false);
-	//     }
-	//   })
-	// }
+		await submit(this.loginForm, async () => {
+			try {
+				const userInfo: LoggedUserInfo = await firstValueFrom(
+					this.authService.login(this.loginModel()),
+				);
+				if (userInfo?.token) {
+					localStorage.setItem(TOKEN_KEY, JSON.stringify(userInfo));
+					this.router.navigateByUrl('dashboard');
+				} else {
+					this.loginErrorMessage.set(
+						'Login failed. Please verify your credentials and try again.',
+					);
+				}
+			} catch (e) {
+				const error = e as HttpErrorResponse;
+				this.loginErrorMessage.set(
+					error.error?.message ||
+						'Invalid email or password. Please try again.',
+				);
+			}
+			return null;
+		});
+	}
 }
